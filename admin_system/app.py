@@ -2398,12 +2398,16 @@ def uploaded_file(filename):
         'jpeg': 'image/jpeg',
         'png': 'image/png',
         'gif': 'image/gif',
-        'webp': 'image/webp'
+        'webp': 'image/webp',
+        'jfif': 'image/jpeg',
+        'jpe': 'image/jpeg',
+        'bmp': 'image/bmp',
+        'svg': 'image/svg+xml'
     }
     mime_type = mime_types.get(file_ext, 'application/octet-stream')
     
     # Serve with inline disposition for viewable files
-    if file_ext in ['pdf', 'jpg', 'jpeg', 'png', 'gif', 'webp', 'txt']:
+    if file_ext in ['pdf', 'jpg', 'jpeg', 'png', 'gif', 'webp', 'txt', 'jfif', 'jpe', 'bmp', 'svg']:
         response = send_from_directory(app.config['UPLOAD_FOLDER'], filename)
         response.headers['Content-Disposition'] = f'inline; filename="{filename}"'
         response.headers['Content-Type'] = mime_type
