@@ -1586,10 +1586,14 @@
                         ${profileHtml}
                         <div style="background: #f9fafb; padding: 20px; border-radius: 8px; margin-top: 20px; border: 1px solid #eee;">
                             <div style="display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap;">
-                                <h4 style="margin: 0; color: #0096d8;">🔒 Password Change History</h4>
+                                <h4 style="margin: 0; color: #0096d8;">Password Change History</h4>
                                 <button class="view-password-btn" onclick="loadPasswordHistory(${user.id})">Refresh</button>
                             </div>
                             <div id="passwordHistoryList" style="margin-top: 12px; color: #666;">Loading password history...</div>
+                        </div>
+                        <div style="margin-top: 20px; padding-top: 20px; border-top: 1px solid #ddd; display: flex; gap: 10px;">
+                            <button onclick="deleteUserAccount(${user.id}, '${user.email}')" style="padding: 12px 24px; background: #ef4444; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; transition: all 0.3s ease;">Delete User Account</button>
+                            <button onclick="document.getElementById('userDetailsModal').style.display = 'none'" style="padding: 12px 24px; background: #6b7280; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 600;">Cancel</button>
                         </div>
                     `;
 
@@ -1632,6 +1636,28 @@
                 if (container) {
                     container.innerHTML = '<div style="color: #999;">Unable to load password history</div>';
                 }
+            }
+        }
+
+        async function deleteUserAccount(userId, userEmail) {
+            const confirmDelete = confirm(`Are you sure you want to delete ${userEmail}? This action will delete the user and ALL their records permanently.`);
+            if (!confirmDelete) return;
+
+            try {
+                const response = await fetch(`/delete-user/${userId}`, {
+                    method: 'DELETE'
+                });
+                const data = await response.json();
+
+                if (data.success) {
+                    alert(`User ${userEmail} and all their records have been deleted successfully.`);
+                    document.getElementById('userDetailsModal').style.display = 'none';
+                    loadPendingAccounts();
+                } else {
+                    alert('Error deleting user: ' + (data.message || 'Unknown error'));
+                }
+            } catch (error) {
+                alert('Error deleting user: ' + error.message);
             }
         }
 
