@@ -11,4 +11,10 @@ services:
         value: production
       - key: SECRET_KEY
         fromSecret: SECRET_KEY
+      - key: UPLOAD_FOLDER
+        value: /var/data/uploads
+    disk:
+      name: uploads
+      mountPath: /var/data/uploads
+      sizeGB: 1
     autoDeploy: true
