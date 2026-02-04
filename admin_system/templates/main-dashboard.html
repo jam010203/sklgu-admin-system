@@ -215,6 +215,70 @@
             border-color: #e3f2fd;
         }
 
+        .procurement-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+        }
+
+        .procurement-card {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.98), rgba(227, 246, 255, 0.9));
+            border-radius: 14px;
+            padding: 18px;
+            border: 1px solid rgba(2, 136, 209, 0.18);
+            box-shadow: 0 10px 22px rgba(2, 136, 209, 0.12);
+            position: relative;
+            overflow: hidden;
+            transition: all 0.35s ease;
+        }
+
+        .procurement-card::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle at top right, rgba(3, 169, 244, 0.18), transparent 60%);
+            opacity: 0;
+            transition: opacity 0.35s ease;
+        }
+
+        .procurement-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 20px 40px rgba(2, 136, 209, 0.2);
+            border-color: rgba(2, 136, 209, 0.35);
+        }
+
+        .procurement-card:hover::before {
+            opacity: 1;
+        }
+
+        .procurement-label {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 12px;
+            border-radius: 999px;
+            background: rgba(2, 136, 209, 0.12);
+            color: #0288d1;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.3px;
+            text-transform: uppercase;
+        }
+
+        .procurement-title {
+            font-size: 15px;
+            font-weight: 700;
+            color: #1a3a52;
+            margin-top: 12px;
+        }
+
+        .procurement-desc {
+            color: #5a7184;
+            font-size: 12px;
+            margin-top: 8px;
+            line-height: 1.5;
+        }
+
         .card h3 {
             color: #0288d1;
             margin-bottom: 28px;
@@ -801,6 +865,7 @@
             <li><a data-tab="generate" onclick="switchTab('generate')" class="menu-link">Generate Account</a></li>
             <li><a data-tab="approve" onclick="switchTab('approve')" class="menu-link">Approve Accounts</a></li>
             <li><a data-tab="users" onclick="switchTab('users')" class="menu-link">View Users</a></li>
+            <li><a data-tab="procurement-steps" onclick="switchTab('procurement-steps')" class="menu-link">Procurement Process</a></li>
             <li><a onclick="logout()" class="menu-link">Logout</a></li>
         </ul>
     </div>
@@ -894,6 +959,47 @@
                         <strong>👥 View Users</strong>
                         <span>Search and manage users</span>
                     </button>
+                    <button type="button" class="quick-nav-card" data-tab="procurement-steps" onclick="switchTab('procurement-steps')">
+                        <strong>🧾 Procurement Process</strong>
+                        <span>Review the procurement steps</span>
+                    </button>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3>PROCUREMENT STEPS</h3>
+                <p style="color: #666; margin-bottom: 20px;">A guided view of the standard procurement flow for quick reference.</p>
+                <div class="procurement-grid">
+                    <div class="procurement-card">
+                        <span class="procurement-label">Step 1</span>
+                        <div class="procurement-title">PURCHASE REQUEST</div>
+                        <div class="procurement-desc">Initiate the procurement need with complete specifications.</div>
+                    </div>
+                    <div class="procurement-card">
+                        <span class="procurement-label">Step 2</span>
+                        <div class="procurement-title">CANVASS</div>
+                        <div class="procurement-desc">Collect quotations and evaluate supplier offers.</div>
+                    </div>
+                    <div class="procurement-card">
+                        <span class="procurement-label">Step 3</span>
+                        <div class="procurement-title">SUMMARY OF PRIZES</div>
+                        <div class="procurement-desc">Consolidate bids and validate the best price.</div>
+                    </div>
+                    <div class="procurement-card">
+                        <span class="procurement-label">Step 4</span>
+                        <div class="procurement-title">PURCHASE ORDER</div>
+                        <div class="procurement-desc">Issue the official order and confirm delivery terms.</div>
+                    </div>
+                    <div class="procurement-card">
+                        <span class="procurement-label">Step 5</span>
+                        <div class="procurement-title">BIR</div>
+                        <div class="procurement-desc">Ensure tax compliance and required documentation.</div>
+                    </div>
+                    <div class="procurement-card">
+                        <span class="procurement-label">Step 6</span>
+                        <div class="procurement-title">INSPECTION AND ACCEPTANCE</div>
+                        <div class="procurement-desc">Verify delivery and complete acceptance records.</div>
+                    </div>
                 </div>
             </div>
 
@@ -902,6 +1008,46 @@
                 <p style="color: #666; margin-bottom: 16px;">Inovision is a digital system created by Jammel R. Ibita and his team with the goal of making SK Financial Management and Transactions more efficient, transparent, and well-organized.</p>
                 <p style="color: #666; margin-bottom: 16px;">The system is designed to support standardized financial recording, accurate documentation, and proper tracking of SK transactions in compliance with required guidelines. Inovision helps ensure that all financial activities are on track, properly recorded, and easily monitored for accountability and reporting purposes.</p>
                 <p style="color: #666;">Through innovation and technology, Inovision aims to strengthen good governance, promote transparency, and simplify financial processes for the Sangguniang Kabataan.</p>
+            </div>
+        </div>
+
+        <!-- Procurement Process Tab -->
+        <div id="procurement-steps" class="tab-content">
+            <div class="card">
+                <h3>PROCUREMENT STEPS</h3>
+                <p style="color: #666; margin-bottom: 20px;">A guided view of the standard procurement flow for quick reference.</p>
+                <div class="procurement-grid">
+                    <div class="procurement-card">
+                        <span class="procurement-label">Step 1</span>
+                        <div class="procurement-title">PURCHASE REQUEST</div>
+                        <div class="procurement-desc">Initiate the procurement need with complete specifications.</div>
+                    </div>
+                    <div class="procurement-card">
+                        <span class="procurement-label">Step 2</span>
+                        <div class="procurement-title">CANVASS</div>
+                        <div class="procurement-desc">Collect quotations and evaluate supplier offers.</div>
+                    </div>
+                    <div class="procurement-card">
+                        <span class="procurement-label">Step 3</span>
+                        <div class="procurement-title">SUMMARY OF PRIZES</div>
+                        <div class="procurement-desc">Consolidate bids and validate the best price.</div>
+                    </div>
+                    <div class="procurement-card">
+                        <span class="procurement-label">Step 4</span>
+                        <div class="procurement-title">PURCHASE ORDER</div>
+                        <div class="procurement-desc">Issue the official order and confirm delivery terms.</div>
+                    </div>
+                    <div class="procurement-card">
+                        <span class="procurement-label">Step 5</span>
+                        <div class="procurement-title">BIR</div>
+                        <div class="procurement-desc">Ensure tax compliance and required documentation.</div>
+                    </div>
+                    <div class="procurement-card">
+                        <span class="procurement-label">Step 6</span>
+                        <div class="procurement-title">INSPECTION AND ACCEPTANCE</div>
+                        <div class="procurement-desc">Verify delivery and complete acceptance records.</div>
+                    </div>
+                </div>
             </div>
         </div>
 

@@ -561,6 +561,71 @@
             font-weight: 600;
         }
 
+        .procurement-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+        }
+
+        .procurement-card {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.98), rgba(240, 249, 255, 0.9));
+            border-radius: 16px;
+            padding: 20px;
+            border: 1px solid rgba(2, 132, 199, 0.18);
+            box-shadow: 0 10px 26px rgba(2, 132, 199, 0.12);
+            position: relative;
+            overflow: hidden;
+            transition: all 0.35s ease;
+            backdrop-filter: blur(8px);
+        }
+
+        .procurement-card::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle at top right, rgba(56, 189, 248, 0.2), transparent 60%);
+            opacity: 0;
+            transition: opacity 0.35s ease;
+        }
+
+        .procurement-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 20px 44px rgba(2, 132, 199, 0.2);
+            border-color: rgba(2, 132, 199, 0.35);
+        }
+
+        .procurement-card:hover::before {
+            opacity: 1;
+        }
+
+        .procurement-label {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 12px;
+            border-radius: 999px;
+            background: rgba(14, 165, 233, 0.12);
+            color: #0284c7;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.3px;
+            text-transform: uppercase;
+        }
+
+        .procurement-title {
+            font-size: 15px;
+            font-weight: 700;
+            color: #0f172a;
+            margin-top: 12px;
+        }
+
+        .procurement-desc {
+            color: #64748b;
+            font-size: 12px;
+            margin-top: 8px;
+            line-height: 1.5;
+        }
+
         .leaderboard-controls {
             display: grid;
             grid-template-columns: 220px 1fr;
@@ -1171,8 +1236,10 @@
             <li><a onclick="switchTab('budget-fy')" class="menu-link">Budget for F.Y</a></li>
             <li><a onclick="switchTab('liquidation')" class="menu-link">Liquidation Report</a></li>
             <li><a onclick="switchTab('app')" class="menu-link">Annual Procurement Plan</a></li>
+            <li><a onclick="switchTab('procurement-steps')" class="menu-link">Procurement Process</a></li>
             <li><a onclick="switchTab('inventory')" class="menu-link">Inventory</a></li>
             <li><a href="/disbursement-voucher" class="menu-link">Disbursement Voucher</a></li>
+            <li><a onclick="switchTab('procurement-steps')" class="menu-link">Procurement Process</a></li>
             <li class="menu-section">Records</li>
             <li><a onclick="switchTab('minutes')" class="menu-link">Meetings</a></li>
             <li><a onclick="switchTab('resolutions')" class="menu-link">Resolutions</a></li>
@@ -1189,10 +1256,11 @@
                     <h2>Welcome to your SKLGU dashboard</h2>
                     <p>Manage budgets, track reports, and organize records in a clean, modern workspace. Everything you need is grouped and easier to reach.</p>
                     <div class="hero-actions">
-                        <button class="btn btn-primary" onclick="switchTab('budget-fy')">📒 Open Budget for F.Y</button>
-                        <button class="btn btn-primary" onclick="openAnnouncementsPage()">📢 View Announcements</button>
-                        <button class="btn btn-primary" onclick="switchTab('members')">👥 Members</button>
-                        <button class="btn btn-primary" onclick="switchTab('inventory')">📦 Inventory</button>
+                        <button class="btn btn-primary" onclick="switchTab('budget-fy')">📒 OPEN BUDGET FOR F.Y</button>
+                        <button class="btn btn-primary" onclick="openAnnouncementsPage()">📢 VIEW ANNOUNCEMENTS</button>
+                        <button class="btn btn-primary" onclick="switchTab('members')">👥 MEMBERS</button>
+                        <button class="btn btn-primary" onclick="switchTab('inventory')">📦 INVENTORY</button>
+                        <button class="btn btn-primary" onclick="switchTab('procurement-steps')">🧾 PROCUREMENT STEPS</button>
                     </div>
                 </div>
                 <div class="hero-stats analytics-section">
@@ -1211,6 +1279,22 @@
                         </div>
                         <canvas id="totalBudgetChart" width="200" height="150"></canvas>
                         <div class="chart-footer">Click to view details →</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="section-header">
+                    <h2>🧾 Procurement Process</h2>
+                    <span class="pill">Quick Access</span>
+                </div>
+                <p style="color: #666; margin-bottom: 20px;">Open the procurement workflow and review each step in a modern card layout.</p>
+                <div class="feature-grid">
+                    <div class="feature-card" onclick="switchTab('procurement-steps')">
+                        <div class="feature-icon">🧾</div>
+                        <div class="feature-title">Procurement Steps</div>
+                        <div class="feature-desc">Purchase request to inspection and acceptance.</div>
+                        <span class="feature-meta">Open Steps →</span>
                     </div>
                 </div>
             </div>
@@ -1236,6 +1320,12 @@
                         <div class="feature-title">Annual Procurement Plan</div>
                         <div class="feature-desc">Plan and track annual procurement activities.</div>
                         <span class="feature-meta">Open APP →</span>
+                    </div>
+                    <div class="feature-card" onclick="switchTab('procurement-steps')">
+                        <div class="feature-icon">🧾</div>
+                        <div class="feature-title">Procurement Process</div>
+                        <div class="feature-desc">Review the standard procurement steps at a glance.</div>
+                        <span class="feature-meta">Open Process →</span>
                     </div>
                     <div class="feature-card" onclick="switchTab('inventory')">
                         <div class="feature-icon">📦</div>
@@ -1281,6 +1371,49 @@
                 <p style="color: #666; margin-bottom: 16px;">Inovision is a digital system created by Jammel R. Ibita and his team with the goal of making SK Financial Management and Transactions more efficient, transparent, and well-organized.</p>
                 <p style="color: #666; margin-bottom: 16px;">The system is designed to support standardized financial recording, accurate documentation, and proper tracking of SK transactions in compliance with required guidelines. Inovision helps ensure that all financial activities are on track, properly recorded, and easily monitored for accountability and reporting purposes.</p>
                 <p style="color: #666;">Through innovation and technology, Inovision aims to strengthen good governance, promote transparency, and simplify financial processes for the Sangguniang Kabataan.</p>
+            </div>
+        </div>
+
+        <!-- Procurement Process Tab -->
+        <div id="procurement-steps" class="tab-content">
+            <div class="card">
+                <div class="section-header">
+                    <h2>🧾 Procurement Steps</h2>
+                    <span class="pill">Workflow</span>
+                </div>
+                <p style="color: #666; margin-bottom: 20px;">A modern, guided view of the standard procurement flow. Track each stage at a glance.</p>
+                <div class="procurement-grid">
+                    <div class="procurement-card">
+                        <span class="procurement-label">Step 1</span>
+                        <div class="procurement-title">PURCHASE REQUEST</div>
+                        <div class="procurement-desc">Initiate the procurement need with complete specifications.</div>
+                    </div>
+                    <div class="procurement-card">
+                        <span class="procurement-label">Step 2</span>
+                        <div class="procurement-title">CANVASS</div>
+                        <div class="procurement-desc">Collect quotations and evaluate supplier offers.</div>
+                    </div>
+                    <div class="procurement-card">
+                        <span class="procurement-label">Step 3</span>
+                        <div class="procurement-title">SUMMARY OF PRIZES</div>
+                        <div class="procurement-desc">Consolidate bids and validate the best price.</div>
+                    </div>
+                    <div class="procurement-card">
+                        <span class="procurement-label">Step 4</span>
+                        <div class="procurement-title">PURCHASE ORDER</div>
+                        <div class="procurement-desc">Issue the official order and confirm delivery terms.</div>
+                    </div>
+                    <div class="procurement-card">
+                        <span class="procurement-label">Step 5</span>
+                        <div class="procurement-title">BIR</div>
+                        <div class="procurement-desc">Ensure tax compliance and required documentation.</div>
+                    </div>
+                    <div class="procurement-card">
+                        <span class="procurement-label">Step 6</span>
+                        <div class="procurement-title">INSPECTION AND ACCEPTANCE</div>
+                        <div class="procurement-desc">Verify delivery and complete acceptance records.</div>
+                    </div>
+                </div>
             </div>
         </div>
 

@@ -15,14 +15,15 @@ import csv
 from io import TextIOWrapper
 from dotenv import load_dotenv
 
-load_dotenv()
+# Load environment variables from admin_system/.env if present
+basedir = os.path.abspath(os.path.dirname(__file__))
+load_dotenv(os.path.join(basedir, '.env'))
 
 app = Flask(__name__)
 # Use persistent secret key from environment or generate once (not recommended for production)
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', secrets.token_hex(32))
 
 # Get absolute path for database
-basedir = os.path.abspath(os.path.dirname(__file__))
 db_path = os.path.join(basedir, 'database', 'sklgu_admin.db')
 
 # Ensure database directory exists for local SQLite fallback
