@@ -391,6 +391,17 @@ class VoucherBudgetAllocation(db.Model):
 with app.app_context():
     db.create_all()
     print("Database tables created successfully!")
+    
+    # Create default admin if none exists
+    if Admin.query.count() == 0:
+        default_admin = Admin(
+            email='admin@sklgu.gov.ph',
+            password_hash=generate_password_hash('admin123'),
+            is_super_admin=True
+        )
+        db.session.add(default_admin)
+        db.session.commit()
+        print("✓ Default admin created: admin@sklgu.gov.ph / admin123")
 
 
 # ==================== Routes ====================
@@ -2618,6 +2629,105 @@ def get_users():
             'created_at': user.created_at.isoformat()
         })
     return jsonify({'success': True, 'users': result})
+
+
+@app.route('/delete-user/<int:user_id>', methods=['DELETE'])
+def delete_user(user_id):
+    """Delete a user and all their associated records (Admin only)"""
+    if 'admin_id' not in session:
+        return jsonify({'success': False, 'message': 'Unauthorized'}), 401
+    
+    try:
+        user = User.query.get(user_id)
+        if not user:
+            return jsonify({'success': False, 'message': 'User not found'}), 404
+        
+        # Delete all associated records in order (respect foreign key constraints)
+        
+        # 1. Delete announcement-related records
+        announcements = Announcement.query.filter_by(user_id=user_id).all()
+        for announcement in announcements:
+            # Delete announcement comments
+            AnnouncementComment.query.filter_by(announcement_id=announcement.id).delete()
+            # Delete announcement views
+            AnnouncementView.query.filter_by(announcement_id=announcement.id).delete()
+            # Delete announcement files
+            AnnouncementFile.query.filter_by(announcement_id=announcement.id).delete()
+            # Delete announcement likes
+            AnnouncementLike.query.filter_by(announcement_id=announcement.id).delete()
+            # Delete announcement notifications
+            AnnouncementNotification.query.filter_by(announcement_id=announcement.id).delete()
+        
+        # Delete user's own announcement interactions
+        AnnouncementComment.query.filter_by(user_id=user_id).delete()
+        AnnouncementView.query.filter_by(user_id=user_id).delete()
+        AnnouncementFile.query.filter_by(user_id=user_id).delete()
+        AnnouncementLike.query.filter_by(user_id=user_id).delete()
+        AnnouncementNotification.query.filter_by(user_id=user_id).delete()
+        
+        # Delete announcements
+        Announcement.query.filter_by(user_id=user_id).delete()
+        
+        # 2. Delete disbursement vouchers and their line items
+        vouchers = DisVoucher.query.filter_by(user_id=user_id).all()
+        for voucher in vouchers:
+            DisVoucherLine.query.filter_by(voucher_id=voucher.id).delete()
+            VoucherBudgetAllocation.query.filter_by(voucher_id=voucher.id).delete()
+        DisVoucher.query.filter_by(user_id=user_id).delete()
+        
+        # 3. Delete liquidation reports and items
+        liquidation_reports = LiquidationReport.query.filter_by(user_id=user_id).all()
+        for report in liquidation_reports:
+            LiquidationItem.query.filter_by(report_id=report.id).delete()
+        LiquidationReport.query.filter_by(user_id=user_id).delete()
+        
+        # 4. Delete APP plans and items
+        app_plans = AnnualProcurementPlan.query.filter_by(user_id=user_id).all()
+        for plan in app_plans:
+            AppProcurementItem.query.filter_by(app_id=plan.id).delete()
+        AnnualProcurementPlan.query.filter_by(user_id=user_id).delete()
+        
+        # 5. Delete budget templates and rows
+        budget_templates = BudgetFYTemplate.query.filter_by(user_id=user_id).all()
+        for template in budget_templates:
+            BudgetFYRow.query.filter_by(template_id=template.id).delete()
+        BudgetFYTemplate.query.filter_by(user_id=user_id).delete()
+        
+        # 6. Delete budget projects
+        BudgetProject.query.filter_by(user_id=user_id).delete()
+        
+        # 7. Delete other user records
+        DisbursementReport.query.filter_by(user_id=user_id).delete()
+        Minute.query.filter_by(user_id=user_id).delete()
+        Resolution.query.filter_by(user_id=user_id).delete()
+        InventoryItem.query.filter_by(user_id=user_id).delete()
+        
+        # 8. Delete password-related records
+        PasswordChangeRequest.query.filter_by(user_id=user_id).delete()
+        PasswordHistory.query.filter_by(user_id=user_id).delete()
+        
+        # 9. Delete account approval records
+        AccountApproval.query.filter_by(user_id=user_id).delete()
+        
+        # 10. Delete user creation log
+        UserCreationLog.query.filter_by(user_id=user_id).delete()
+        
+        # 11. Delete user profile
+        UserProfile.query.filter_by(user_id=user_id).delete()
+        
+        # 12. Finally, delete the user
+        db.session.delete(user)
+        
+        db.session.commit()
+        
+        return jsonify({
+            'success': True, 
+            'message': f'User {user.email} and all associated records deleted successfully'
+        })
+        
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'success': False, 'message': f'Error deleting user: {str(e)}'}), 500
 
 
 @app.route('/get-analytics-data')
