@@ -386,6 +386,13 @@ class VoucherBudgetAllocation(db.Model):
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
 
+# ==================== Database Initialization ====================
+# Initialize database tables on app startup
+with app.app_context():
+    db.create_all()
+    print("Database tables created successfully!")
+
+
 # ==================== Routes ====================
 
 @app.route('/')
