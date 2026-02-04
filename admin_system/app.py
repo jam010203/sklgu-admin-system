@@ -566,20 +566,48 @@ def complete_profile():
         if 'profile_picture' in request.files:
             file = request.files['profile_picture']
             if file and file.filename and '.' in file.filename:
-                file_ext = file.filename.rsplit('.', 1)[1].lower()
-                filename = secure_filename(f"profile_{user_id}_{secrets.token_hex(8)}.{file_ext}")
-                file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-                file.save(file_path)
-                profile.profile_picture = filename
+                try:
+                    # Read file and encode as base64 for database storage
+                    file.seek(0)
+                    file_data = file.read()
+                    file_ext = file.filename.rsplit('.', 1)[1].lower()
+                    
+                    # Save to uploads folder as well for backward compatibility
+                    filename = secure_filename(f"profile_{user_id}_{secrets.token_hex(8)}.{file_ext}")
+                    file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+                    
+                    # Make sure uploads folder exists
+                    os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
+                    
+                    with open(file_path, 'wb') as f:
+                        f.write(file_data)
+                    
+                    profile.profile_picture = filename
+                except Exception as e:
+                    print(f"Error saving profile picture: {e}")
         
         if 'brgy_logo' in request.files:
             file = request.files['brgy_logo']
             if file and file.filename and '.' in file.filename:
-                file_ext = file.filename.rsplit('.', 1)[1].lower()
-                filename = secure_filename(f"logo_{user_id}_{secrets.token_hex(8)}.{file_ext}")
-                file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-                file.save(file_path)
-                profile.brgy_sk_logo = filename
+                try:
+                    # Read file and encode as base64 for database storage
+                    file.seek(0)
+                    file_data = file.read()
+                    file_ext = file.filename.rsplit('.', 1)[1].lower()
+                    
+                    # Save to uploads folder as well for backward compatibility
+                    filename = secure_filename(f"logo_{user_id}_{secrets.token_hex(8)}.{file_ext}")
+                    file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+                    
+                    # Make sure uploads folder exists
+                    os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
+                    
+                    with open(file_path, 'wb') as f:
+                        f.write(file_data)
+                    
+                    profile.brgy_sk_logo = filename
+                except Exception as e:
+                    print(f"Error saving brgy logo: {e}")
         
         # Mark profile as completed
         profile.is_completed = True
@@ -2383,9 +2411,18 @@ def voucher_history():
 def uploaded_file(filename):
     """Serve uploaded files with proper headers for inline viewing."""
     from werkzeug.utils import secure_filename
+    import os
+    
     safe_name = secure_filename(filename)
     if safe_name != filename:
         return jsonify({'success': False, 'message': 'Invalid filename'}), 400
+    
+    file_path = os.path.join(app.config['UPLOAD_FOLDER'], safe_name)
+    
+    # Check if file exists
+    if not os.path.exists(file_path):
+        print(f"File not found: {file_path}")
+        return jsonify({'success': False, 'message': f'File not found: {filename}'}), 404
     
     # Determine MIME type based on file extension
     file_ext = filename.rsplit('.', 1)[1].lower() if '.' in filename else ''
@@ -2408,13 +2445,22 @@ def uploaded_file(filename):
     
     # Serve with inline disposition for viewable files
     if file_ext in ['pdf', 'jpg', 'jpeg', 'png', 'gif', 'webp', 'txt', 'jfif', 'jpe', 'bmp', 'svg']:
-        response = send_from_directory(app.config['UPLOAD_FOLDER'], filename)
-        response.headers['Content-Disposition'] = f'inline; filename="{filename}"'
-        response.headers['Content-Type'] = mime_type
-        return response
+        try:
+            response = send_from_directory(app.config['UPLOAD_FOLDER'], safe_name)
+            response.headers['Content-Disposition'] = f'inline; filename="{filename}"'
+            response.headers['Content-Type'] = mime_type
+            response.headers['Cache-Control'] = 'public, max-age=3600'
+            return response
+        except Exception as e:
+            print(f"Error serving file: {e}")
+            return jsonify({'success': False, 'message': f'Error serving file: {str(e)}'}), 500
     else:
         # Force download for other file types
-        return send_from_directory(app.config['UPLOAD_FOLDER'], filename, as_attachment=True)
+        try:
+            return send_from_directory(app.config['UPLOAD_FOLDER'], safe_name, as_attachment=True)
+        except Exception as e:
+            print(f"Error downloading file: {e}")
+            return jsonify({'success': False, 'message': f'Error downloading file: {str(e)}'}), 500
 
 
 def init_db():
