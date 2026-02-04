@@ -41,6 +41,19 @@ app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # 16MB max file size
 # Create uploads directory if it doesn't exist
 os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
 
+
+def normalize_upload_filename(filename):
+    """Normalize uploaded file names to a safe basename for serving."""
+    if not filename:
+        return None
+    normalized = filename.replace('\\', '/').strip()
+    for prefix in ('uploads/', 'admin_system/uploads/', 'static/uploads/'):
+        if normalized.startswith(prefix):
+            normalized = normalized[len(prefix):]
+            break
+    normalized = os.path.basename(normalized)
+    return normalized or None
+
 db = SQLAlchemy(app)
 
 # ==================== Database Models ====================
@@ -703,7 +716,7 @@ def get_profile():
             'barangay': profile.barangay if profile else '',
             'municipality': profile.municipality if profile else '',
             'birthdate': profile.birthdate.isoformat() if profile and profile.birthdate else '',
-            'profile_picture': profile.profile_picture if profile else None,
+            'profile_picture': normalize_upload_filename(profile.profile_picture) if profile else None,
             'is_completed': profile.is_completed if profile else False
         }
     })
@@ -772,7 +785,7 @@ def get_member_leaderboard():
             'position': member.position,
             'barangay': member.barangay,
             'municipality': member.municipality,
-            'profile_picture': member.profile_picture,
+            'profile_picture': normalize_upload_filename(member.profile_picture),
             'barangay_budget_status': budget_status
         })
     
@@ -863,7 +876,7 @@ def get_user_announcements():
             poster = User.query.get(ann.user_id)
             poster_profile = UserProfile.query.filter_by(user_id=ann.user_id).first() if poster else None
             poster_name = poster_profile.full_name if poster_profile and poster_profile.full_name else (poster.email if poster else 'Unknown')
-            poster_profile_pic = poster_profile.profile_picture if poster_profile else None
+            poster_profile_pic = normalize_upload_filename(poster_profile.profile_picture) if poster_profile else None
         
         # Get likes count and check if current user liked
         likes_count = AnnouncementLike.query.filter_by(announcement_id=ann.id).count()
@@ -2356,8 +2369,8 @@ def get_user_full_details(user_id):
                 'barangay': profile.barangay if profile else None,
                 'municipality': profile.municipality if profile else None,
                 'birthdate': profile.birthdate.isoformat() if profile and profile.birthdate else None,
-                'profile_picture': profile.profile_picture if profile else None,
-                'brgy_sk_logo': profile.brgy_sk_logo if profile else None,
+                'profile_picture': normalize_upload_filename(profile.profile_picture) if profile else None,
+                'brgy_sk_logo': normalize_upload_filename(profile.brgy_sk_logo) if profile else None,
                 'is_completed': profile.is_completed if profile else False
             }
         }
@@ -2410,14 +2423,33 @@ def voucher_history():
 @app.route('/uploads/<path:filename>')
 def uploaded_file(filename):
     """Serve uploaded files with proper headers for inline viewing."""
-    from werkzeug.utils import secure_filename
     import os
+    import re
     
-    safe_name = secure_filename(filename)
-    if safe_name != filename:
-        return jsonify({'success': False, 'message': 'Invalid filename'}), 400
+    normalized_filename = normalize_upload_filename(filename)
+    if not normalized_filename:
+        print(f"Invalid filename format: {filename}")
+        return jsonify({'success': False, 'message': 'Invalid filename format'}), 400
+    filename = normalized_filename
     
-    file_path = os.path.join(app.config['UPLOAD_FOLDER'], safe_name)
+    # Validate filename - allow alphanumeric, underscore, hyphen, dot only
+    if not re.match(r'^[a-zA-Z0-9_\-\.]+$', filename):
+        print(f"Invalid filename format: {filename}")
+        return jsonify({'success': False, 'message': 'Invalid filename format'}), 400
+    
+    # Prevent directory traversal
+    if '..' in filename or '/' in filename:
+        print(f"Path traversal attempt: {filename}")
+        return jsonify({'success': False, 'message': 'Invalid path'}), 400
+    
+    file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+    
+    # Double-check that file_path is within UPLOAD_FOLDER
+    real_path = os.path.realpath(file_path)
+    real_upload_folder = os.path.realpath(app.config['UPLOAD_FOLDER'])
+    if not real_path.startswith(real_upload_folder):
+        print(f"Path traversal blocked: {real_path}")
+        return jsonify({'success': False, 'message': 'Invalid path'}), 400
     
     # Check if file exists
     if not os.path.exists(file_path):
@@ -2446,7 +2478,7 @@ def uploaded_file(filename):
     # Serve with inline disposition for viewable files
     if file_ext in ['pdf', 'jpg', 'jpeg', 'png', 'gif', 'webp', 'txt', 'jfif', 'jpe', 'bmp', 'svg']:
         try:
-            response = send_from_directory(app.config['UPLOAD_FOLDER'], safe_name)
+            response = send_from_directory(app.config['UPLOAD_FOLDER'], filename)
             response.headers['Content-Disposition'] = f'inline; filename="{filename}"'
             response.headers['Content-Type'] = mime_type
             response.headers['Cache-Control'] = 'public, max-age=3600'
@@ -2457,7 +2489,7 @@ def uploaded_file(filename):
     else:
         # Force download for other file types
         try:
-            return send_from_directory(app.config['UPLOAD_FOLDER'], safe_name, as_attachment=True)
+            return send_from_directory(app.config['UPLOAD_FOLDER'], filename, as_attachment=True)
         except Exception as e:
             print(f"Error downloading file: {e}")
             return jsonify({'success': False, 'message': f'Error downloading file: {str(e)}'}), 500
@@ -2692,7 +2724,7 @@ def get_users():
             'email': user.email,
             'full_name': profile.full_name if profile else '',
             'barangay': profile.barangay if profile else '',
-            'profile_picture': profile.profile_picture if profile and profile.profile_picture else '',
+            'profile_picture': normalize_upload_filename(profile.profile_picture) if profile and profile.profile_picture else '',
             'created_at': user.created_at.isoformat()
         })
     return jsonify({'success': True, 'users': result})
