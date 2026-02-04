@@ -1,0 +1,645 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SKLGU Admin Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f0f7fb;
+            color: #1a3a52;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .main-content {
+            padding: 30px;
+            min-height: 100vh;
+            background: #f0f7fb;
+            position: relative;
+            z-index: 2;
+        }
+
+        .top-bar {
+            background: linear-gradient(135deg, #0096d8 0%, #00a8d8 50%, #40c4e0 100%);
+            padding: 25px 40px;
+            border-radius: 0;
+            box-shadow: 0 4px 12px rgba(0, 150, 216, 0.15);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 40px;
+            color: white;
+            border: none;
+        }
+
+        .top-bar h2 {
+            color: white;
+            font-size: 32px;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+        }
+
+        .user-controls {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+
+        .user-email {
+            color: rgba(255, 255, 255, 0.95);
+            font-size: 15px;
+            font-weight: 600;
+        }
+
+        .logout-btn {
+            background: rgba(255, 255, 255, 0.25);
+            color: white;
+            border: 2px solid rgba(255, 255, 255, 0.8);
+            padding: 12px 24px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 700;
+            transition: all 0.3s ease;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .logout-btn:hover {
+            background: white;
+            color: #0096c7;
+            border-color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0, 150, 199, 0.3);
+        }
+
+        .container {
+            max-width: 1450px;
+            margin: 0 auto;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 32px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 150, 216, 0.08);
+            border: 1px solid #e0f0f8;
+            text-align: center;
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card:hover {
+            box-shadow: 0 12px 30px rgba(0, 150, 216, 0.15);
+            transform: translateY(-6px);
+            border-color: #b3e5fc;
+        }
+
+        .stat-number {
+            font-size: 48px;
+            font-weight: 900;
+            color: #0096d8;
+            margin-bottom: 10px;
+        }
+
+        .stat-label {
+            color: #666;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+            margin-bottom: 35px;
+        }
+
+        .card {
+            background: white;
+            padding: 32px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 150, 216, 0.08);
+            border: 1px solid #e0f0f8;
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card:hover {
+            box-shadow: 0 12px 30px rgba(0, 150, 216, 0.15);
+            transform: translateY(-6px);
+            border-color: #b3e5fc;
+        }
+
+        .card h2 {
+            color: #0096d8;
+            margin-bottom: 28px;
+            font-size: 22px;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .form-group {
+            margin-bottom: 26px;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .form-group:hover input,
+        .form-group:hover textarea {
+            border-color: #00b4d8;
+        }
+
+        label {
+            display: block;
+            color: #0096d8;
+            font-weight: 700;
+            margin-bottom: 12px;
+            font-size: 14px;
+            letter-spacing: 0.3px;
+        }
+
+        input[type="email"],
+        input[type="password"],
+        input[type="text"],
+        textarea {
+            width: 100%;
+            padding: 14px 16px;
+            border: 1px solid #d9ecf7;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            font-family: inherit;
+            background: #f8fdfe;
+            font-weight: 500;
+            color: #1a3a52;
+        }
+
+        input::placeholder,
+        textarea::placeholder {
+            color: #7eb3c4;
+            font-weight: 500;
+        }
+
+        input:focus,
+        textarea:focus {
+            outline: none;
+            border-color: #0096d8;
+            box-shadow: 0 0 0 3px rgba(0, 150, 216, 0.08);
+            background: white;
+        }
+
+        .btn {
+            padding: 14px 28px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            width: 100%;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #0096d8 0%, #00a8d8 100%);
+            color: white;
+            box-shadow: 0 4px 12px rgba(0, 150, 216, 0.2);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0, 150, 216, 0.3);
+        }
+
+        .btn-primary:active {
+            transform: translateY(-2px);
+        }
+
+        .users-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 25px;
+        }
+
+        .users-table th,
+        .users-table td {
+            padding: 14px 16px;
+            text-align: left;
+            border-bottom: 1px solid #e0f0f8;
+        }
+
+        .users-table th {
+            background: #f0f7fb;
+            font-weight: 700;
+            color: #0096d8;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+        }
+
+        .users-table tr:hover {
+            background: #f8fdfe;
+        }
+
+        .badge {
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .badge-success {
+            background: #d4f1f4;
+            color: #0096d8;
+        }
+
+        .view-password-btn {
+            background: #0096d8;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 11px;
+            font-weight: 700;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .view-password-btn:hover {
+            background: #0084b8;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 150, 216, 0.2);
+        }
+
+        .message {
+            padding: 16px 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: none;
+            font-size: 14px;
+            border-left: 4px solid;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            animation: slideDown 0.4s ease;
+            font-weight: 600;
+        }
+
+        .message.success {
+            background: #d4f1f4;
+            color: #0096d8;
+            border-left-color: #0096d8;
+        }
+
+        .message.error {
+            background: #ffebee;
+            color: #c62828;
+            border-left-color: #c62828;
+        }
+
+        .password-toggle {
+            position: absolute;
+            right: 16px;
+            top: 48px;
+            cursor: pointer;
+            font-size: 18px;
+            user-select: none;
+            transition: all 0.3s ease;
+        }
+
+        .password-toggle:hover {
+            transform: scale(1.2);
+        }
+
+        .admin-info {
+            color: #333;
+            margin-bottom: 15px;
+            line-height: 2.2;
+            font-size: 14px;
+        }
+
+        .admin-info li {
+            margin-left: 25px;
+            list-style: none;
+        }
+
+        .admin-info li:before {
+            content: "✓ ";
+            margin-right: 10px;
+            color: #0096d8;
+            font-weight: 900;
+            font-size: 16px;
+        }
+
+        code {
+            background: #e0f7fa;
+            color: #0096d8;
+            padding: 3px 6px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            font-weight: 600;
+            font-size: 12px;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="main-content">
+        <div class="container">
+            <div class="top-bar">
+                <h2>🏛️ SKLGU Admin Dashboard</h2>
+                <div class="user-controls">
+                    <span class="user-email" id="adminEmail">Loading...</span>
+                    <button class="logout-btn" onclick="logout()">Logout</button>
+                </div>
+            </div>
+
+            <div class="stats">
+                <div class="stat-card">
+                    <div class="stat-number" id="totalUsers">0</div>
+                    <div class="stat-label">Total Users</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="todayUsers">0</div>
+                    <div class="stat-label">Created Today</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="activeUsers">0</div>
+                    <div class="stat-label">Active Users</div>
+                </div>
+            </div>
+
+            <div class="dashboard-grid">
+                <!-- Create User Account -->
+                <div class="card">
+                    <h2>👤 Create User Account</h2>
+                    <div id="createUserMessage" class="message"></div>
+                    <form id="createUserForm">
+                        <div class="form-group">
+                            <label for="userEmail">User Email</label>
+                            <input 
+                                type="email" 
+                                id="userEmail" 
+                                name="userEmail" 
+                                placeholder="user@sklgu.gov.ph"
+                                required
+                            >
+                        </div>
+                        <div class="form-group">
+                            <label for="userPassword">Initial Password</label>
+                            <input 
+                                type="text" 
+                                id="userPassword" 
+                                name="userPassword" 
+                                placeholder="Enter initial password"
+                                required
+                            >
+                            <span class="password-toggle" onclick="togglePasswordVisibility()" title="Show/Hide Password">👁️</span>
+                        </div>
+                        <button type="submit" class="btn btn-primary">
+                            ✨ Create Account
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Admin Controls -->
+                <div class="card">
+                    <h2>📊 Admin Controls</h2>
+                    <p style="color: #666; margin-bottom: 15px; font-weight: 500;">As the main admin, you can:</p>
+                    <ul class="admin-info">
+                        <li>Create user accounts</li>
+                        <li>View user passwords</li>
+                        <li>Monitor password changes</li>
+                        <li>Approve new users</li>
+                        <li>Manage all system data</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Users List -->
+            <div class="card">
+                <h2>👥 User Accounts</h2>
+                <table class="users-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Email</th>
+                            <th>Current Password</th>
+                            <th>Created At</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="usersTableBody">
+                        <tr>
+                            <td colspan="6" style="text-align: center; color: #999;">No users created yet</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Toggle password visibility
+        function togglePasswordVisibility() {
+            const passwordInput = document.getElementById('userPassword');
+            const toggle = document.querySelector('.password-toggle');
+            
+            if (passwordInput.type === 'text') {
+                passwordInput.type = 'password';
+                toggle.textContent = '👁️';
+            } else {
+                passwordInput.type = 'text';
+                toggle.textContent = '🙈';
+            }
+        }
+
+        // Check if admin is logged in
+        async function checkAuth() {
+            try {
+                const response = await fetch('/check-auth');
+                if (!response.ok) {
+                    window.location.href = '/';
+                }
+                const data = await response.json();
+                document.getElementById('adminEmail').textContent = data.email;
+            } catch (error) {
+                window.location.href = '/';
+            }
+        }
+
+        // Load users
+        async function loadUsers() {
+            try {
+                const response = await fetch('/get-users');
+                const data = await response.json();
+                
+                if (data.success) {
+                    const tbody = document.getElementById('usersTableBody');
+                    
+                    if (data.users.length === 0) {
+                        tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: #999;">No users created yet</td></tr>';
+                    } else {
+                        tbody.innerHTML = data.users.map(user => `
+                            <tr>
+                                <td>${user.id}</td>
+                                <td>${user.email}</td>
+                                <td>
+                                    <code>${user.current_password || '********'}</code>
+                                </td>
+                                <td>${new Date(user.created_at).toLocaleString()}</td>
+                                <td><span class="badge badge-success">Active</span></td>
+                                <td>
+                                    <button class="view-password-btn" onclick="viewPasswordHistory(${user.id}, '${user.email}')">
+                                        View History
+                                    </button>
+                                </td>
+                            </tr>
+                        `).join('');
+                    }
+                    
+                    // Update stats
+                    document.getElementById('totalUsers').textContent = data.users.length;
+                    document.getElementById('activeUsers').textContent = data.users.length;
+                }
+            } catch (error) {
+                console.error('Error loading users:', error);
+            }
+        }
+
+        // Create user
+        document.getElementById('createUserForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const email = document.getElementById('userEmail').value.trim();
+            const password = document.getElementById('userPassword').value;
+            const messageDiv = document.getElementById('createUserMessage');
+            
+            try {
+                const response = await fetch('/create-user', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ email, password })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    messageDiv.className = 'message success';
+                    messageDiv.textContent = '✓ User account created successfully!';
+                    messageDiv.style.display = 'block';
+                    
+                    // Clear form
+                    document.getElementById('createUserForm').reset();
+                    
+                    // Reload users
+                    loadUsers();
+                    
+                    setTimeout(() => {
+                        messageDiv.style.display = 'none';
+                    }, 3000);
+                } else {
+                    messageDiv.className = 'message error';
+                    messageDiv.textContent = '✗ ' + data.message;
+                    messageDiv.style.display = 'block';
+                }
+            } catch (error) {
+                messageDiv.className = 'message error';
+                messageDiv.textContent = '✗ Error creating user account';
+                messageDiv.style.display = 'block';
+            }
+        });
+
+        // View password history
+        async function viewPasswordHistory(userId, email) {
+            try {
+                const response = await fetch(`/get-user-passwords/${userId}`);
+                const data = await response.json();
+                
+                if (data.success) {
+                    let historyText = `Password History for ${email}\n\n`;
+                    historyText += `Current Password: ${data.current_password}\n\n`;
+                    historyText += `Change History:\n`;
+                    
+                    data.history.forEach((record, index) => {
+                        historyText += `${index + 1}. ${record.password} - Changed by ${record.changed_by} on ${new Date(record.changed_at).toLocaleString()}\n`;
+                    });
+                    
+                    alert(historyText);
+                }
+            } catch (error) {
+                alert('Error loading password history');
+            }
+        }
+
+        // Logout
+        function logout() {
+            fetch('/logout', { method: 'POST' })
+                .then(() => {
+                    window.location.href = '/';
+                });
+        }
+
+        // Initialize
+        checkAuth();
+        loadUsers();
+        setInterval(loadUsers, 5000); // Refresh every 5 seconds
+
+        // Add smooth animations on page load
+        window.addEventListener('load', () => {
+            const cards = document.querySelectorAll('.card, .stat-card');
+            cards.forEach((card, index) => {
+                card.style.animation = `slideIn 0.5s ease forwards`;
+                card.style.animationDelay = `${index * 0.1}s`;
+            });
+        });
+    </script>
+</body>
+</html>

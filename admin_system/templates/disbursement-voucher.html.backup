@@ -1,0 +1,684 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Disbursement Voucher</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            background: #f5f5f5;
+            color: #000000;
+        }
+        .navbar {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .navbar-brand {
+            color: white !important;
+            font-weight: bold;
+        }
+        .nav-link {
+            color: white !important;
+        }
+        .container-wrapper {
+            padding: 20px;
+        }
+        .action-buttons {
+            text-align: center;
+            margin: 20px 0;
+        }
+        .btn-action {
+            margin: 0 5px;
+            padding: 8px 20px;
+            font-size: 14px;
+        }
+        .records-section {
+            background: white;
+            padding: 20px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+        .filter-controls {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+        .filter-input {
+            flex: 1;
+            min-width: 200px;
+        }
+        .records-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
+        .records-table th {
+            background: #667eea;
+            color: white;
+            padding: 10px;
+            text-align: left;
+            font-weight: bold;
+        }
+        .records-table td {
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+        }
+        .records-table tr:hover {
+            background: #f9f9f9;
+        }
+        .record-actions {
+            display: flex;
+            gap: 5px;
+        }
+        .record-actions button {
+            padding: 4px 8px;
+            font-size: 12px;
+        }
+        .page {
+            width: 210mm;
+            min-height: 297mm;
+            margin: 0 auto;
+            background: white;
+            padding: 10mm;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+        }
+        .title-row {
+            display: flex;
+            border-bottom: 2px solid #000;
+        }
+        .title-cell {
+            flex: 1;
+            text-align: center;
+            font-weight: bold;
+            padding: 8px 0;
+            border-right: 2px solid #000;
+            font-size: 14px;
+        }
+        .dvno-cell {
+            width: 130px;
+            padding: 6px;
+            font-size: 11px;
+            text-align: center;
+            border-left: 2px solid #000;
+        }
+        .dvno-cell .line {
+            display: inline-block;
+            border-bottom: 1px solid #000;
+            width: 75px;
+            vertical-align: middle;
+            margin-left: 4px;
+        }
+        .dvno-display {
+            font-weight: bold;
+            color: #667eea;
+            margin-top: 4px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 0;
+        }
+        td, th {
+            border: 1px solid #000;
+            padding: 6px 4px;
+            vertical-align: top;
+            font-size: 11px;
+        }
+        .section-header {
+            font-weight: bold;
+            font-size: 10px;
+            text-align: center;
+            background-color: #f0f0f0;
+        }
+        .small {
+            font-size: 9px;
+            line-height: 1.3;
+        }
+        .input-line {
+            border: none;
+            border-bottom: 1px solid #000;
+            width: 100%;
+            font-size: 11px;
+            outline: none;
+            background: transparent;
+            padding: 2px 0;
+        }
+        .input-line.inline {
+            width: 100px;
+            display: inline-block;
+            margin: 0 4px;
+        }
+        .textarea-box {
+            width: 100%;
+            border: none;
+            height: 100%;
+            min-height: 60px;
+            resize: none;
+            outline: none;
+            background: transparent;
+            font-size: 10px;
+            padding: 2px;
+        }
+        .particulars-area {
+            min-height: 120px;
+        }
+        .signature-line {
+            border-bottom: 1px solid #000;
+            height: 12px;
+            margin: 2px 0;
+        }
+        .center {
+            text-align: center;
+        }
+        .label-bold {
+            font-weight: bold;
+            font-size: 10px;
+        }
+        .form-section {
+            background: white;
+            padding: 20px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+        .success-message {
+            display: none;
+            background: #d4edda;
+            color: #155724;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+        .success-message.show {
+            display: block;
+        }
+        @media print {
+            body {
+                background: white;
+            }
+            .navbar, .action-buttons, .records-section {
+                display: none;
+            }
+            .form-section {
+                display: block;
+            }
+            .form-section h5 {
+                display: none;
+            }
+            .container-wrapper {
+                padding: 0;
+                background: white;
+            }
+            .page {
+                box-shadow: none;
+                margin: 0;
+                width: 100%;
+                padding: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="/user-dashboard">
+                <i class="fas fa-university me-2"></i>SKLGU Admin System
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/user-dashboard">
+                            <i class="fas fa-home me-1"></i>Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="/disbursement-voucher">
+                            <i class="fas fa-file-invoice me-1"></i>Disbursement Voucher
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/logout">
+                            <i class="fas fa-sign-out-alt me-1"></i>Logout
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container-wrapper">
+        <!-- Success Message -->
+        <div id="successMessage" class="success-message">
+            <i class="fas fa-check-circle me-2"></i>
+            <strong>Voucher Saved Successfully!</strong> 
+            <span id="savedCheckNo"></span>
+        </div>
+
+        <!-- Records Section -->
+        <div class="records-section">
+            <h5><i class="fas fa-list me-2"></i>Saved Disbursement Vouchers</h5>
+            <div class="filter-controls">
+                <input type="text" id="filterInput" class="form-control filter-input" placeholder="Search by DV No, Payee, or Check No...">
+                <select id="statusFilter" class="form-control" style="width: 150px;">
+                    <option value="">All Status</option>
+                    <option value="draft">Draft</option>
+                    <option value="saved">Saved</option>
+                </select>
+                <button class="btn btn-secondary" onclick="loadAllRecords()">
+                    <i class="fas fa-refresh me-1"></i>Refresh
+                </button>
+            </div>
+            <div id="recordsContainer">
+                <p class="text-muted text-center">No records found</p>
+            </div>
+        </div>
+
+        <!-- Form Section -->
+        <div class="form-section">
+            <h5><i class="fas fa-edit me-2"></i>Create/Edit Disbursement Voucher</h5>
+            <div class="action-buttons">
+                <button class="btn btn-primary btn-action" onclick="saveVoucher()">
+                    <i class="fas fa-save me-2"></i>Save Voucher
+                </button>
+                <button class="btn btn-info btn-action" onclick="window.print()">
+                    <i class="fas fa-print me-2"></i>Print
+                </button>
+                <button class="btn btn-warning btn-action" onclick="newVoucher()">
+                    <i class="fas fa-plus me-2"></i>New Voucher
+                </button>
+            </div>
+        </div>
+
+        <div class="page">
+            <!-- Title -->
+            <div class="title-row">
+                <div class="title-cell">DISBURSEMENT VOUCHER</div>
+                <div class="dvno-cell">
+                    <span class="label-bold">DV No.</span><br>
+                    <div id="dvNoDisplay" class="dvno-display">Auto-generated</div>
+                    <input type="hidden" id="dvNumber">
+                </div>
+            </div>
+
+            <!-- Row 1: Barangay, City/Municipality, Date -->
+            <table>
+                <tr>
+                    <td style="width: 33.33%;"><span class="label-bold">Barangay:</span><br><input class="input-line" type="text" id="barangay"></td>
+                    <td style="width: 33.33%;"><span class="label-bold">City/Municipality:</span><br><input class="input-line" type="text" id="municipality"></td>
+                    <td style="width: 33.33%;"><span class="label-bold">Date:</span><br><input class="input-line" type="date" id="dvDate"></td>
+                </tr>
+
+                <!-- Row 2: Payee, Province, Fund -->
+                <tr>
+                    <td><span class="label-bold">Payee:</span><br><input class="input-line" type="text" id="payee"></td>
+                    <td><span class="label-bold">Province:</span><br><input class="input-line" type="text" id="province"></td>
+                    <td><span class="label-bold">Fund:</span><br><input class="input-line" type="text" id="fund"></td>
+                </tr>
+
+                <!-- Row 3: Address, TIN -->
+                <tr>
+                    <td colspan="2"><span class="label-bold">Address:</span><br><input class="input-line" type="text" id="address"></td>
+                    <td><span class="label-bold">TIN:</span><br><input class="input-line" type="text" id="tin"></td>
+                </tr>
+
+                <!-- Particulars Header -->
+                <tr>
+                    <td colspan="2" class="section-header center">PARTICULARS</td>
+                    <td class="section-header center">AMOUNT</td>
+                </tr>
+
+                <!-- Particulars Area -->
+                <tr>
+                    <td colspan="2" class="particulars-area">
+                        <textarea class="textarea-box" id="particulars"></textarea>
+                    </td>
+                    <td class="particulars-area">
+                        <textarea class="textarea-box" id="amount"></textarea>
+                    </td>
+                </tr>
+            </table>
+
+            <!-- Certification Section -->
+            <table>
+                <tr>
+                    <td style="width: 33.33%;">
+                        <div class="small"><strong>A. Certified as to Existence of Appropriation for Obligation.</strong></div>
+                        <div style="margin-top: 4px;"></div>
+                        <div class="signature-line"></div>
+                        <div class="small center">(Signature Over Printed Name)</div>
+                        <div class="small center" style="margin-top: 4px;"><input class="input-line" type="text" id="nameA" placeholder="SK Budget Monitoring Officer" style="width: 100%; text-align: center; border: none; border-bottom: 1px solid #000; padding: 2px 0;"></div>
+                        <div class="small" style="margin-top: 4px;">Date: <input class="input-line inline" type="date" id="dateA"></div>
+                    </td>
+                    <td style="width: 33.33%;">
+                        <div class="small"><strong>B. Certified as to Availability of Funds for the Purpose, and Completeness and Propriety of Supporting Documents.</strong></div>
+                        <div style="margin-top: 4px;"></div>
+                        <div class="signature-line"></div>
+                        <div class="small center">(Signature Over Printed Name)</div>
+                        <div class="small center" style="margin-top: 4px;"><input class="input-line" type="text" id="nameB" placeholder="SK Treasurer" style="width: 100%; text-align: center; border: none; border-bottom: 1px solid #000; padding: 2px 0;"></div>
+                        <div class="small" style="margin-top: 4px;">Date: <input class="input-line inline" type="date" id="dateB"></div>
+                    </td>
+                    <td style="width: 33.33%;">
+                        <div class="small"><strong>C. Certified as to Validity, Propriety, and Legality of Claim and Approved for Payment.</strong></div>
+                        <div style="margin-top: 4px;"></div>
+                        <div class="signature-line"></div>
+                        <div class="small center">(Signature Over Printed Name)</div>
+                        <div class="small center" style="margin-top: 4px;"><input class="input-line" type="text" id="nameC" placeholder="SK Chairperson" style="width: 100%; text-align: center; border: none; border-bottom: 1px solid #000; padding: 2px 0;"></div>
+                        <div class="small" style="margin-top: 4px;">Date: <input class="input-line inline" type="date" id="dateC"></div>
+                    </td>
+                </tr>
+            </table>
+
+            <!-- Received Payment Section -->
+            <table>
+                <tr>
+                    <td>
+                        <div class="label-bold">D. Received Payment</div>
+                        <div style="margin-top: 6px; display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+                            <span class="small">Check No.:</span>
+                            <input class="input-line inline" type="text" id="checkNo" placeholder="e.g., CHK-001">
+                            <span class="small">Bank Name:</span>
+                            <input class="input-line inline" type="text" id="bankName">
+                            <span class="small">Date:</span>
+                            <input class="input-line inline" type="text" id="dateD" style="width: 80px;">
+                        </div>
+                        <div style="margin-top: 6px;">
+                            <span class="small">OR No.:</span>
+                            <input class="input-line inline" type="text" id="orNo">
+                        </div>
+                        <div class="signature-line" style="margin-top: 8px;"></div>
+                        <div class="small center">Signature Over Printed Name</div>
+                    </td>
+                </tr>
+            </table>
+
+            <!-- Accounting Entries Section -->
+            <table>
+                <tr>
+                    <td colspan="4" class="section-header">E. Accounting Entries</td>
+                </tr>
+                <tr>
+                    <td class="center" style="width: 40%;"><strong>Account</strong></td>
+                    <td class="center" style="width: 20%;"><strong>Account Code</strong></td>
+                    <td class="center" style="width: 20%;"><strong>Debit</strong></td>
+                    <td class="center" style="width: 20%;"><strong>Credit</strong></td>
+                </tr>
+                <tr>
+                    <td><input class="input-line" type="text" class="account1"></td>
+                    <td><input class="input-line" type="text" class="code1"></td>
+                    <td><input class="input-line" type="text" class="debit1"></td>
+                    <td><input class="input-line" type="text" class="credit1"></td>
+                </tr>
+                <tr>
+                    <td><input class="input-line" type="text" class="account2"></td>
+                    <td><input class="input-line" type="text" class="code2"></td>
+                    <td><input class="input-line" type="text" class="debit2"></td>
+                    <td><input class="input-line" type="text" class="credit2"></td>
+                </tr>
+                <tr>
+                    <td><input class="input-line" type="text" class="account3"></td>
+                    <td><input class="input-line" type="text" class="code3"></td>
+                    <td><input class="input-line" type="text" class="debit3"></td>
+                    <td><input class="input-line" type="text" class="credit3"></td>
+                </tr>
+            </table>
+
+            <!-- Footer Section -->
+            <table>
+                <tr>
+                    <td style="width: 50%;">
+                        <div class="small" style="margin-top: 6px;"><strong>Prepared by:</strong></div>
+                        <div class="signature-line" style="margin-top: 10px;"></div>
+                        <div class="small center" style="margin-top: 4px;"><input class="input-line" type="text" id="namePrepared" placeholder="Barangay Bookkeeper" style="width: 100%; text-align: center; border: none; border-bottom: 1px solid #000; padding: 2px 0;"></div>
+                        <div class="small">Date: <input class="input-line inline" type="date" id="preparedDate"></div>
+                    </td>
+                    <td style="width: 50%;">
+                        <div class="small" style="margin-top: 6px;"><strong>Approved by:</strong></div>
+                        <div class="signature-line" style="margin-top: 10px;"></div>
+                        <div class="small center" style="margin-top: 4px;\"><input class="input-line" type="text" id="nameApproved" placeholder="City/Municipal Accountant" style="width: 100%; text-align: center; border: none; border-bottom: 1px solid #000; padding: 2px 0;"></div>
+                        <div class="small">Date: <input class="input-line inline" type="date" id="approvedDate"></div>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        let allRecords = [];
+        let currentDVNo = null;
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            // Set today's date
+            const today = new Date();
+            const year = today.getFullYear();
+            const month = String(today.getMonth() + 1).padStart(2, '0');
+            const day = String(today.getDate()).padStart(2, '0');
+            document.getElementById('dvDate').value = `${year}-${month}-${day}`;
+            
+            loadAllRecords();
+            setupFilters();
+            generateNewDVNo();
+        });
+
+        function generateNewDVNo() {
+            const now = new Date();
+            const year = now.getFullYear();
+            const month = String(now.getMonth() + 1).padStart(2, '0');
+            
+            // Get all records and filter by current month/year
+            let allRecords = JSON.parse(localStorage.getItem('disbursementVouchers') || '[]');
+            const currentMonthRecords = allRecords.filter(r => r.dvNo.startsWith(`${year}-${month}-`));
+            
+            // Get the next sequence number
+            const nextSequence = currentMonthRecords.length + 1;
+            const dvNo = `${year}-${month}-${String(nextSequence).padStart(3, '0')}`;
+            
+            document.getElementById('dvNumber').value = dvNo;
+            document.getElementById('dvNoDisplay').textContent = dvNo;
+            currentDVNo = dvNo;
+        }
+
+        function saveVoucher() {
+            const voucherData = {
+                dvNo: document.getElementById('dvNumber').value,
+                barangay: document.getElementById('barangay').value,
+                municipality: document.getElementById('municipality').value,
+                date: document.getElementById('dvDate').value,
+                payee: document.getElementById('payee').value,
+                province: document.getElementById('province').value,
+                fund: document.getElementById('fund').value,
+                address: document.getElementById('address').value,
+                tin: document.getElementById('tin').value,
+                particulars: document.getElementById('particulars').value,
+                amount: document.getElementById('amount').value,
+                checkNo: document.getElementById('checkNo').value,
+                bankName: document.getElementById('bankName').value,
+                orNo: document.getElementById('orNo').value,
+                dateD: document.getElementById('dateD').value,
+                dateA: document.getElementById('dateA').value,
+                dateB: document.getElementById('dateB').value,
+                dateC: document.getElementById('dateC').value,
+                nameA: document.getElementById('nameA').value,
+                nameB: document.getElementById('nameB').value,
+                nameC: document.getElementById('nameC').value,
+                namePrepared: document.getElementById('namePrepared').value,
+                nameApproved: document.getElementById('nameApproved').value,
+                preparedDate: document.getElementById('preparedDate').value,
+                approvedDate: document.getElementById('approvedDate').value,
+                status: 'saved',
+                savedTime: new Date().toLocaleString()
+            };
+
+            // Check if record exists, update or add
+            const existingIndex = allRecords.findIndex(r => r.dvNo === voucherData.dvNo);
+            if (existingIndex >= 0) {
+                allRecords[existingIndex] = voucherData;
+            } else {
+                allRecords.push(voucherData);
+            }
+
+            // Save to localStorage
+            localStorage.setItem('disbursementVouchers', JSON.stringify(allRecords));
+
+            // Show success message
+            const successMsg = document.getElementById('successMessage');
+            document.getElementById('savedCheckNo').textContent = voucherData.checkNo ? 
+                `(Check No.: <strong>${voucherData.checkNo}</strong>)` : '';
+            successMsg.classList.add('show');
+            setTimeout(() => {
+                successMsg.classList.remove('show');
+            }, 4000);
+
+            loadAllRecords();
+        }
+
+        function loadAllRecords() {
+            const stored = localStorage.getItem('disbursementVouchers');
+            allRecords = stored ? JSON.parse(stored) : [];
+            displayRecords(allRecords);
+        }
+
+        function displayRecords(records) {
+            const container = document.getElementById('recordsContainer');
+            
+            if (records.length === 0) {
+                container.innerHTML = '<p class="text-muted text-center">No records found</p>';
+                return;
+            }
+
+            let html = `
+                <table class="records-table">
+                    <thead>
+                        <tr>
+                            <th>DV No.</th>
+                            <th>Payee</th>
+                            <th>Check No.</th>
+                            <th>Amount</th>
+                            <th>Date</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
+
+            records.forEach((record, index) => {
+                html += `
+                    <tr>
+                        <td><strong>${record.dvNo}</strong></td>
+                        <td>${record.payee || '-'}</td>
+                        <td><strong class="text-primary">${record.checkNo || '-'}</strong></td>
+                        <td>${record.amount || '-'}</td>
+                        <td>${record.date || '-'}</td>
+                        <td><span class="badge bg-success">${record.status || 'draft'}</span></td>
+                        <td>
+                            <div class="record-actions">
+                                <button class="btn btn-sm btn-primary" onclick="loadRecord('${record.dvNo}')">
+                                    <i class="fas fa-edit"></i> Edit
+                                </button>
+                                <button class="btn btn-sm btn-danger" onclick="deleteRecord('${record.dvNo}')">
+                                    <i class="fas fa-trash"></i> Delete
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            });
+
+            html += `
+                    </tbody>
+                </table>
+            `;
+
+            container.innerHTML = html;
+        }
+
+        function loadRecord(dvNo) {
+            const record = allRecords.find(r => r.dvNo === dvNo);
+            if (!record) return;
+
+            document.getElementById('dvNumber').value = record.dvNo;
+            document.getElementById('dvNoDisplay').textContent = record.dvNo;
+            document.getElementById('barangay').value = record.barangay || '';
+            document.getElementById('municipality').value = record.municipality || '';
+            document.getElementById('dvDate').value = record.date || '';
+            document.getElementById('payee').value = record.payee || '';
+            document.getElementById('province').value = record.province || '';
+            document.getElementById('fund').value = record.fund || '';
+            document.getElementById('address').value = record.address || '';
+            document.getElementById('tin').value = record.tin || '';
+            document.getElementById('particulars').value = record.particulars || '';
+            document.getElementById('amount').value = record.amount || '';
+            document.getElementById('checkNo').value = record.checkNo || '';
+            document.getElementById('bankName').value = record.bankName || '';
+            document.getElementById('orNo').value = record.orNo || '';
+            document.getElementById('dateD').value = record.dateD || '';
+            document.getElementById('dateA').value = record.dateA || '';
+            document.getElementById('dateB').value = record.dateB || '';
+            document.getElementById('dateC').value = record.dateC || '';
+            document.getElementById('nameA').value = record.nameA || '';
+            document.getElementById('nameB').value = record.nameB || '';
+            document.getElementById('nameC').value = record.nameC || '';
+            document.getElementById('namePrepared').value = record.namePrepared || '';
+            document.getElementById('nameApproved').value = record.nameApproved || '';
+            document.getElementById('preparedDate').value = record.preparedDate || '';
+            document.getElementById('approvedDate').value = record.approvedDate || '';
+
+            currentDVNo = dvNo;
+            window.scrollTo(0, 0);
+        }
+
+        function deleteRecord(dvNo) {
+            if (!confirm(`Delete voucher ${dvNo}?`)) return;
+            
+            allRecords = allRecords.filter(r => r.dvNo !== dvNo);
+            localStorage.setItem('disbursementVouchers', JSON.stringify(allRecords));
+            loadAllRecords();
+        }
+
+        function newVoucher() {
+            document.querySelectorAll('.input-line, .textarea-box').forEach(el => el.value = '');
+            generateNewDVNo();
+            currentDVNo = null;
+            window.scrollTo(0, 0);
+        }
+
+        function setupFilters() {
+            document.getElementById('filterInput').addEventListener('keyup', applyFilters);
+            document.getElementById('statusFilter').addEventListener('change', applyFilters);
+        }
+
+        function applyFilters() {
+            const filterText = document.getElementById('filterInput').value.toLowerCase();
+            const statusFilter = document.getElementById('statusFilter').value;
+
+            let filtered = allRecords.filter(record => {
+                const matchesText = !filterText || 
+                    record.dvNo.toLowerCase().includes(filterText) ||
+                    (record.payee && record.payee.toLowerCase().includes(filterText)) ||
+                    (record.checkNo && record.checkNo.toLowerCase().includes(filterText));
+
+                const matchesStatus = !statusFilter || record.status === statusFilter;
+
+                return matchesText && matchesStatus;
+            });
+
+            displayRecords(filtered);
+        }
+    </script>
+</body>
+</html>

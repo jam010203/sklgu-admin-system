@@ -1,0 +1,1312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SKLGU User Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f6fa;
+            color: #333;
+        }
+
+        .top-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 25px 30px;
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .user-info-section {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+
+        .user-avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            border: 2px solid white;
+        }
+
+        .user-avatar img {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .user-details h3 {
+            font-size: 16px;
+            margin-bottom: 3px;
+        }
+
+        .user-details p {
+            font-size: 12px;
+            opacity: 0.9;
+        }
+
+        .top-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn-small {
+            padding: 10px 20px;
+            border: 2px solid white;
+            background: transparent;
+            color: white;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            font-size: 12px;
+        }
+
+        .btn-small:hover {
+            background: white;
+            color: #667eea;
+        }
+
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 90px;
+            width: 250px;
+            height: calc(100vh - 90px);
+            background: white;
+            padding: 20px;
+            overflow-y: auto;
+            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .sidebar-menu {
+            list-style: none;
+        }
+
+        .sidebar-menu li {
+            margin-bottom: 12px;
+        }
+
+        .sidebar-menu a {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            text-decoration: none;
+            color: #666;
+            transition: all 0.3s ease;
+            font-size: 14px;
+        }
+
+        .sidebar-menu a:hover {
+            background: #f0f0f0;
+            color: #667eea;
+        }
+
+        .sidebar-menu a.active {
+            background: #e8eaf6;
+            color: #667eea;
+            font-weight: 600;
+        }
+
+        .main-content {
+            margin-left: 250px;
+            margin-top: 90px;
+            padding: 30px;
+            min-height: calc(100vh - 90px);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            margin-bottom: 20px;
+        }
+
+        .card h2 {
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 22px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        label {
+            display: block;
+            color: #333;
+            font-weight: 600;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        input[type="text"],
+        input[type="email"],
+        input[type="number"],
+        input[type="date"],
+        textarea,
+        select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+            font-family: inherit;
+            transition: all 0.3s ease;
+        }
+
+        input:focus,
+        textarea:focus,
+        select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 120px;
+        }
+
+        .btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .stat-box {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 32px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        .table th,
+        .table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .table th {
+            background: #f5f5f5;
+            font-weight: 600;
+        }
+
+        .table tr:hover {
+            background: #f9f9f9;
+        }
+
+        .message {
+            padding: 12px 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            display: none;
+            font-size: 14px;
+        }
+
+        .message.success {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .message.error {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .item-list {
+            list-style: none;
+        }
+
+        .item-list li {
+            padding: 12px;
+            background: #f9f9f9;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            border-left: 4px solid #667eea;
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 200px;
+            }
+
+            .main-content {
+                margin-left: 200px;
+            }
+
+            .grid-2 {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="top-header">
+        <div class="user-info-section">
+            <div class="user-avatar" id="userAvatar">👤</div>
+            <div class="user-details">
+                <h3 id="userName">Loading...</h3>
+                <p id="userPosition">Position</p>
+            </div>
+        </div>
+        <div class="top-buttons">
+            <button class="btn-small" onclick="switchTab('settings')">⚙️ Settings</button>
+            <button class="btn-small" onclick="logout()">🚪 Logout</button>
+        </div>
+    </div>
+
+    <div id="coverPhoto" style="
+        width: 100%;
+        height: 0;
+        background-size: cover;
+        background-position: center;
+        background-color: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    "></div>
+
+    <div class="sidebar">
+        <ul class="sidebar-menu">
+            <li><a onclick="switchTab('dashboard')" class="menu-link active">📊 Dashboard</a></li>
+            <li>
+                <a onclick="switchTab('announcements')" class="menu-link" style="position: relative;">
+                    📢 Announcements
+                    <span id="announcementBadge" style="display: none; position: absolute; top: 5px; right: 10px; background: #e74c3c; color: white; border-radius: 50%; width: 20px; height: 20px; font-size: 10px; display: flex; align-items: center; justify-content: center; font-weight: bold;">0</span>
+                </a>
+            </li>
+            <li><a onclick="switchTab('budget')" class="menu-link">💰 Budget</a></li>
+            <li><a onclick="switchTab('disbursement')" class="menu-link">💸 Disbursement</a></li>
+            <li><a onclick="switchTab('liquidation')" class="menu-link">📋 Liquidations</a></li>
+            <li><a onclick="switchTab('inventory')" class="menu-link">📦 Inventory</a></li>
+            <li><a onclick="switchTab('status')" class="menu-link">📈 Budget Status</a></li>
+            <li><a onclick="switchTab('analytics')" class="menu-link">📊 Analytics</a></li>
+            <li><a onclick="switchTab('minutes')" class="menu-link">📝 Meetings</a></li>
+            <li><a onclick="switchTab('resolutions')" class="menu-link">📄 Resolutions</a></li>
+            <li><a onclick="switchTab('settings')" class="menu-link">⚙️ Settings</a></li>
+        </ul>
+    </div>
+
+    <div class="main-content">
+        <!-- Dashboard Tab -->
+        <div id="dashboard" class="tab-content active">
+            <div class="card">
+                <h2>📊 Dashboard Overview</h2>
+                <div class="grid-2">
+                    <div class="stat-box">
+                        <div class="stat-number" id="totalBudget">₱0</div>
+                        <div class="stat-label">Total Budget</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-number" id="disbursedAmount">₱0</div>
+                        <div class="stat-label">Disbursed Amount</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>📌 Quick Links</h2>
+                <div class="grid-2">
+                    <button class="btn btn-primary" onclick="switchTab('budget')">💰 Manage Budget</button>
+                    <button class="btn btn-primary" onclick="switchTab('inventory')">📦 View Inventory</button>
+                    <button class="btn btn-primary" onclick="switchTab('minutes')">📝 Meeting Minutes</button>
+                    <button class="btn btn-primary" onclick="switchTab('resolutions')">📄 View Resolutions</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Announcements Tab -->
+        <div id="announcements" class="tab-content">
+            <div class="card">
+                <h2>📢 Announcements</h2>
+                <p style="color: #666; margin-bottom: 20px;">View and interact with announcements posted by administration</p>
+                <button class="btn btn-primary" onclick="openAnnouncementsPage()">📢 View Announcements (Full Page)</button>
+            </div>
+        </div>
+
+        <!-- Budget Tab -->
+        <div id="budget" class="tab-content">
+            <div class="card">
+                <h2>💰 Budget Management</h2>
+                <div id="budgetMessage" class="message"></div>
+                
+                <!-- File Upload Section -->
+                <div style="border: 2px dashed #667eea; padding: 20px; border-radius: 8px; margin-bottom: 30px; background: #f9f9f9;">
+                    <h3 style="margin-top: 0;">📤 Upload Budget File</h3>
+                    <p style="color: #666; margin: 10px 0;">Upload a CSV or Excel file with your budget data. The system will automatically scan and record all entries.</p>
+                    <form id="budgetUploadForm">
+                        <div class="form-group">
+                            <label>Select Budget File (CSV or Excel)</label>
+                            <input type="file" id="budgetFile" accept=".csv,.xlsx,.xls" required style="padding: 10px; border: 1px solid #ddd; border-radius: 4px;">
+                            <small style="display: block; margin-top: 5px; color: #999;">Supported formats: CSV, XLSX, XLS</small>
+                        </div>
+                        <button type="submit" class="btn btn-primary">📤 Upload & Process</button>
+                    </form>
+                </div>
+
+                <!-- Uploaded Files Section -->
+                <div style="margin-bottom: 30px;">
+                    <h3>📁 Uploaded Budget Files</h3>
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Filename</th>
+                                <th>Total Amount</th>
+                                <th>Records</th>
+                                <th>Status</th>
+                                <th>Date Uploaded</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="uploadedFilesList">
+                            <tr><td colspan="6" style="text-align: center; color: #999;">No files uploaded yet</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Proceed Results Section -->
+                <div id="proceedResults" style="margin-bottom: 30px; display: none;">
+                    <h3>📋 Listed Projects (Proceed Results)</h3>
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Title</th>
+                                <th>Category</th>
+                                <th>Amount</th>
+                                <th>Description</th>
+                                <th>Status</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="proceedProjectsList">
+                            <tr><td colspan="6" style="text-align: center; color: #999;">No projects listed</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Manual Budget Entry Section -->
+                <div style="border-top: 2px solid #eee; padding-top: 20px;">
+                    <h3>➕ Manual Budget Entry</h3>
+                    <form id="budgetForm">
+                        <div class="grid-2">
+                            <div class="form-group">
+                                <label>Budget Title</label>
+                                <input type="text" id="budgetTitle" placeholder="e.g., SK General Fund" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Category/Sector</label>
+                                <select id="budgetCategory" style="padding: 12px; border: 2px solid #e0e0e0; border-radius: 8px;">
+                                    <option value="general">General</option>
+                                    <option value="Health">Health</option>
+                                    <option value="MOOE">MOOE</option>
+                                    <option value="Education">Education</option>
+                                    <option value="Capital Outlay">Capital Outlay</option>
+                                    <option value="Personal Services">Personal Services</option>
+                                    <option value="Infrastructure">Infrastructure</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Amount (₱)</label>
+                            <input type="number" id="budgetAmount" placeholder="0" step="0.01" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Description</label>
+                            <textarea id="budgetDesc" placeholder="Budget details and purpose"></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary">➕ Add Budget</button>
+                    </form>
+                </div>
+
+                <div style="margin-top: 30px;">
+                    <h3>Budget Records for F.Y 2026</h3>
+                    <div style="margin: 10px 0; font-weight: 600; color: white; font-size: 20px; padding: 15px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 8px; text-align: center;">
+                        TOTAL BUDGET FOR F.Y 2026: <span id="budgetTotal">₱0.00</span>
+                    </div>
+                    <div style="display: grid; grid-template-columns: 1fr 150px 150px 150px 150px 140px; gap: 10px; margin: 10px 0;">
+                        <input type="text" id="budgetSearch" placeholder="Search title/description" style="padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+                        <select id="budgetCategoryFilter" style="padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+                            <option value="">All Sectors</option>
+                            <option value="Health">Health</option>
+                            <option value="MOOE">MOOE</option>
+                            <option value="Education">Education</option>
+                            <option value="Capital Outlay">Capital Outlay</option>
+                            <option value="Personal Services">Personal Services</option>
+                            <option value="Infrastructure">Infrastructure</option>
+                            <option value="general">General</option>
+                        </select>
+                        <input type="number" id="budgetMin" placeholder="Min ₱" step="0.01" style="padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+                        <input type="number" id="budgetMax" placeholder="Max ₱" step="0.01" style="padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+                        <select id="budgetStatusFilter" style="padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+                            <option value="">All Status</option>
+                            <option value="active">active</option>
+                            <option value="completed">completed</option>
+                            <option value="cancelled">cancelled</option>
+                        </select>
+                        <select id="budgetSort" style="padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+                            <option value="created_at_desc">Newest</option>
+                            <option value="created_at_asc">Oldest</option>
+                            <option value="amount_desc">Amount ↓</option>
+                            <option value="amount_asc">Amount ↑</option>
+                            <option value="title_asc">Title A–Z</option>
+                            <option value="title_desc">Title Z–A</option>
+                        </select>
+                    </div>
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Title</th>
+                                <th>Category/Sector</th>
+                                <th>Amount</th>
+                                <th>Description</th>
+                                <th>Status</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="budgetList">
+                            <tr><td colspan="6" style="text-align: center; color: #999;">No budgets created yet</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Disbursement Tab -->
+        <div id="disbursement" class="tab-content">
+            <div class="card">
+                <h2>💸 Disbursement Budget</h2>
+                <div id="disbursementMessage" class="message"></div>
+                <form id="disbursementForm">
+                    <div class="form-group">
+                        <label>Disbursement Description</label>
+                        <textarea id="disbursementDesc" placeholder="Details of disbursement" required></textarea>
+                    </div>
+                    <div class="grid-2">
+                        <div class="form-group">
+                            <label>Amount (₱)</label>
+                            <input type="number" id="disbursementAmount" placeholder="0" step="0.01" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Date</label>
+                            <input type="date" id="disbursementDate" required>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary">💳 Record Disbursement</button>
+                </form>
+
+                <div style="margin-top: 30px;">
+                    <h3>Disbursement Records</h3>
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Description</th>
+                                <th>Amount</th>
+                                <th>Date</th>
+                            </tr>
+                        </thead>
+                        <tbody id="disbursementList">
+                            <tr><td colspan="3" style="text-align: center; color: #999;">No disbursements recorded</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Liquidation Tab -->
+        <div id="liquidation" class="tab-content">
+            <div class="card">
+                <h2>📋 Liquidations</h2>
+                <div id="liquidationMessage" class="message"></div>
+                <form id="liquidationForm">
+                    <div class="form-group">
+                        <label>Liquidation Title</label>
+                        <input type="text" id="liquidationTitle" placeholder="Enter liquidation title" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Details</label>
+                        <textarea id="liquidationDetails" placeholder="Liquidation details" required></textarea>
+                    </div>
+                    <div class="grid-2">
+                        <div class="form-group">
+                            <label>Amount (₱)</label>
+                            <input type="number" id="liquidationAmount" placeholder="0" step="0.01" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Date</label>
+                            <input type="date" id="liquidationDate" required>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary">📝 Add Liquidation</button>
+                </form>
+
+                <div style="margin-top: 30px;">
+                    <h3>Liquidation Records</h3>
+                    <ul id="liquidationList" class="item-list"></ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Inventory Tab -->
+        <div id="inventory" class="tab-content">
+            <div class="card">
+                <h2>📦 Inventory</h2>
+                <div id="inventoryMessage" class="message"></div>
+                <form id="inventoryForm">
+                    <div class="form-group">
+                        <label>Item Name</label>
+                        <input type="text" id="itemName" placeholder="Enter item name" required>
+                    </div>
+                    <div class="grid-2">
+                        <div class="form-group">
+                            <label>Quantity</label>
+                            <input type="number" id="itemQuantity" placeholder="0" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Unit Price (₱)</label>
+                            <input type="number" id="itemPrice" placeholder="0" step="0.01" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Description</label>
+                        <textarea id="itemDesc" placeholder="Item details"></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary">➕ Add Item</button>
+                </form>
+
+                <div style="margin-top: 30px;">
+                    <h3>Inventory Items</h3>
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Item Name</th>
+                                <th>Quantity</th>
+                                <th>Unit Price</th>
+                                <th>Total Value</th>
+                            </tr>
+                        </thead>
+                        <tbody id="inventoryList">
+                            <tr><td colspan="4" style="text-align: center; color: #999;">No items in inventory</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Budget Status Tab -->
+        <div id="status" class="tab-content">
+            <div class="card">
+                <h2>📈 Budget Status</h2>
+                <p style="color: #666; margin-bottom: 20px;">Real-time budget allocation and spending overview</p>
+                <div class="grid-2">
+                    <div style="background: #e8eaf6; padding: 20px; border-radius: 8px;">
+                        <h3>Total Allocated</h3>
+                        <p style="font-size: 24px; color: #667eea; font-weight: bold; margin-top: 10px;" id="totalAllocated">₱0</p>
+                    </div>
+                    <div style="background: #fff3e0; padding: 20px; border-radius: 8px;">
+                        <h3>Total Spent</h3>
+                        <p style="font-size: 24px; color: #f57c00; font-weight: bold; margin-top: 10px;" id="totalSpent">₱0</p>
+                    </div>
+                    <div style="background: #e0f2f1; padding: 20px; border-radius: 8px;">
+                        <h3>Remaining</h3>
+                        <p style="font-size: 24px; color: #00796b; font-weight: bold; margin-top: 10px;" id="totalRemaining">₱0</p>
+                    </div>
+                    <div style="background: #f3e5f5; padding: 20px; border-radius: 8px;">
+                        <h3>Usage %</h3>
+                        <p style="font-size: 24px; color: #6a1b9a; font-weight: bold; margin-top: 10px;" id="usagePercent">0%</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Analytics Tab -->
+        <div id="analytics" class="tab-content">
+            <div class="card">
+                <h2>📊 Analytics & Reports</h2>
+                <p style="color: #666; margin-bottom: 20px;">Financial analytics and performance metrics</p>
+                <div id="analyticsContent">
+                    <p style="color: #999; padding: 20px; text-align: center;">Analytics dashboard will display here</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Meeting Minutes Tab -->
+        <div id="minutes" class="tab-content">
+            <div class="card">
+                <h2>📝 Minutes of Meetings</h2>
+                <div id="minutesMessage" class="message"></div>
+                <form id="minutesForm">
+                    <div class="form-group">
+                        <label>Meeting Title</label>
+                        <input type="text" id="meetingTitle" placeholder="e.g., SK Regular Meeting" required>
+                    </div>
+                    <div class="grid-2">
+                        <div class="form-group">
+                            <label>Meeting Date</label>
+                            <input type="date" id="meetingDate" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Minutes Content</label>
+                        <textarea id="minutesContent" placeholder="Write meeting minutes here..." required></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary">📤 Save Minutes</button>
+                </form>
+
+                <div style="margin-top: 30px;">
+                    <h3>Meeting Records</h3>
+                    <ul id="minutesList" class="item-list"></ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Resolutions Tab -->
+        <div id="resolutions" class="tab-content">
+            <div class="card">
+                <h2>📄 Resolutions</h2>
+                <div id="resolutionsMessage" class="message"></div>
+                <form id="resolutionsForm">
+                    <div class="grid-2">
+                        <div class="form-group">
+                            <label>Resolution Number</label>
+                            <input type="text" id="resolutionNumber" placeholder="e.g., No. 001 2026" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Title</label>
+                            <input type="text" id="resolutionTitle" placeholder="Resolution title" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Resolution Content</label>
+                        <textarea id="resolutionContent" placeholder="Write resolution here..." required></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary">📝 Add Resolution</button>
+                </form>
+
+                <div style="margin-top: 30px;">
+                    <h3>Resolutions</h3>
+                    <ul id="resolutionsList" class="item-list"></ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Settings Tab -->
+        <div id="settings" class="tab-content">
+            <div class="card">
+                <h2>⚙️ Settings</h2>
+                <h3 style="margin-top: 20px; margin-bottom: 15px;">Edit Profile Information</h3>
+                <form id="settingsForm">
+                    <div class="grid-2">
+                        <div class="form-group">
+                            <label>Full Name</label>
+                            <input type="text" id="settingsName" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Position</label>
+                            <input type="text" id="settingsPosition" required>
+                        </div>
+                    </div>
+                    <div class="grid-2">
+                        <div class="form-group">
+                            <label>Barangay</label>
+                            <input type="text" id="settingsBarangay" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Municipality</label>
+                            <input type="text" id="settingsMunicipality" required>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary">💾 Save Changes</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Load user profile
+        async function loadUserProfile() {
+            try {
+                const response = await fetch('/get-user-profile');
+                const data = await response.json();
+
+                if (data.success) {
+                    document.getElementById('userName').textContent = data.profile.full_name;
+                    document.getElementById('userPosition').textContent = data.profile.position;
+
+                    // Display profile picture in avatar
+                    const userAvatar = document.getElementById('userAvatar');
+                    if (data.profile.profile_picture) {
+                        const img = document.createElement('img');
+                        img.src = `/uploads/${data.profile.profile_picture}`;
+                        img.alt = 'Profile Picture';
+                        userAvatar.innerHTML = '';
+                        userAvatar.appendChild(img);
+                    }
+
+                    // Display logo as cover photo
+                    const coverPhoto = document.getElementById('coverPhoto');
+                    if (data.profile.brgy_sk_logo) {
+                        coverPhoto.style.backgroundImage = `url('/uploads/${data.profile.brgy_sk_logo}')`;
+                        coverPhoto.style.height = '200px';
+                    }
+
+                    // Fill settings form
+                    document.getElementById('settingsName').value = data.profile.full_name;
+                    document.getElementById('settingsPosition').value = data.profile.position;
+                    document.getElementById('settingsBarangay').value = data.profile.barangay;
+                    document.getElementById('settingsMunicipality').value = data.profile.municipality;
+                }
+            } catch (error) {
+                console.error('Error loading profile:', error);
+            }
+        }
+
+        // Switch tabs
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.menu-link').forEach(link => link.classList.remove('active'));
+
+            document.getElementById(tabName).classList.add('active');
+            event.target.classList.add('active');
+        }
+
+        // Logout
+        function logout() {
+            fetch('/logout', { method: 'POST' })
+                .then(() => {
+                    window.location.href = '/';
+                });
+        }
+
+        function openAnnouncementsPage() {
+            window.location.href = '/user-announcements';
+        }
+
+        // Form handlers
+        // Budget Upload Handler
+        document.getElementById('budgetUploadForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const fileInput = document.getElementById('budgetFile');
+            const file = fileInput.files[0];
+
+            if (!file) {
+                alert('Please select a file');
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('file', file);
+
+            try {
+                const response = await fetch('/upload-budget', {
+                    method: 'POST',
+                    body: formData
+                });
+                const data = await response.json();
+
+                const messageDiv = document.getElementById('budgetMessage');
+                if (data.success) {
+                    messageDiv.className = 'message success';
+                    messageDiv.textContent = `✓ ${data.message}`;
+                    fileInput.value = '';
+                    loadBudgetUploads(); // Refresh the list
+                    loadBudgets(); // Refresh regular budgets
+                } else {
+                    messageDiv.className = 'message error';
+                    messageDiv.textContent = `✗ ${data.message}`;
+                }
+                messageDiv.style.display = 'block';
+            } catch (error) {
+                console.error('Error:', error);
+                const messageDiv = document.getElementById('budgetMessage');
+                messageDiv.className = 'message error';
+                messageDiv.textContent = '✗ Error uploading file';
+                messageDiv.style.display = 'block';
+            }
+        });
+
+        // Load Budget Uploads
+        async function loadBudgetUploads() {
+            try {
+                const response = await fetch('/get-budget-uploads');
+                const data = await response.json();
+
+                const tableBody = document.getElementById('uploadedFilesList');
+                if (data.success && data.uploads.length > 0) {
+                    tableBody.innerHTML = data.uploads.map(upload => `
+                        <tr>
+                            <td>${upload.filename}</td>
+                            <td>₱${upload.total_amount.toLocaleString('en-US', {minimumFractionDigits: 2})}</td>
+                            <td>${upload.record_count}</td>
+                            <td><span style="color: #27ae60; font-weight: bold;">${upload.status}</span></td>
+                            <td>${new Date(upload.uploaded_at).toLocaleDateString()}</td>
+                            <td style="display: flex; gap: 6px; flex-wrap: wrap;">
+                                <button onclick="viewBudgetUploadDetails(${upload.id})" style="padding: 5px 10px; background: #667eea; color: white; border: none; border-radius: 4px; cursor: pointer;">View</button>
+                                <button onclick="proceedBudgetUpload(${upload.id})" style="padding: 5px 10px; background: #27ae60; color: white; border: none; border-radius: 4px; cursor: pointer;">Proceed</button>
+                                <button onclick="deleteBudgetUpload(${upload.id})" style="padding: 5px 10px; background: #e74c3c; color: white; border: none; border-radius: 4px; cursor: pointer;">Delete</button>
+                            </td>
+                        </tr>
+                    `).join('');
+                } else {
+                    tableBody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: #999;">No files uploaded yet</td></tr>';
+                }
+            } catch (error) {
+                console.error('Error loading uploads:', error);
+            }
+        }
+
+        let budgetsCache = [];
+
+        function renderBudgets(list, totalOverall) {
+            const tableBody = document.getElementById('budgetList');
+            const totalEl = document.getElementById('budgetTotal');
+            totalEl.textContent = `₱${(totalOverall || 0).toLocaleString('en-US', {minimumFractionDigits: 2})}`;
+
+            if (list.length > 0) {
+                tableBody.innerHTML = list.map(budget => `
+                    <tr>
+                        <td>
+                            <input type="text" value="${budget.title}" data-id="${budget.id}" data-field="title" style="width: 100%; padding: 6px;">
+                        </td>
+                        <td>
+                            <select data-id="${budget.id}" data-field="category" style="padding: 6px; width: 100%;">
+                                <option value="general" ${budget.category === 'general' ? 'selected' : ''}>General</option>
+                                <option value="Health" ${budget.category === 'Health' ? 'selected' : ''}>Health</option>
+                                <option value="MOOE" ${budget.category === 'MOOE' ? 'selected' : ''}>MOOE</option>
+                                <option value="Education" ${budget.category === 'Education' ? 'selected' : ''}>Education</option>
+                                <option value="Capital Outlay" ${budget.category === 'Capital Outlay' ? 'selected' : ''}>Capital Outlay</option>
+                                <option value="Personal Services" ${budget.category === 'Personal Services' ? 'selected' : ''}>Personal Services</option>
+                                <option value="Infrastructure" ${budget.category === 'Infrastructure' ? 'selected' : ''}>Infrastructure</option>
+                            </select>
+                        </td>
+                        <td>
+                            <input type="number" value="${budget.amount}" data-id="${budget.id}" data-field="amount" step="0.01" style="width: 120px; padding: 6px;" onchange="updateBudgetAmountRealtime(${budget.id}, this.value)">
+                        </td>
+                        <td>
+                            <input type="text" value="${budget.description || ''}" data-id="${budget.id}" data-field="description" style="width: 100%; padding: 6px;">
+                        </td>
+                        <td>
+                            <select data-id="${budget.id}" data-field="status" style="padding: 6px;">
+                                <option value="active" ${budget.status === 'active' ? 'selected' : ''}>active</option>
+                                <option value="completed" ${budget.status === 'completed' ? 'selected' : ''}>completed</option>
+                                <option value="cancelled" ${budget.status === 'cancelled' ? 'selected' : ''}>cancelled</option>
+                            </select>
+                        </td>
+                        <td>
+                            <button onclick="saveBudget(${budget.id})" style="padding: 6px 10px; background: #27ae60; color: white; border: none; border-radius: 4px; cursor: pointer;">Save</button>
+                        </td>
+                    </tr>
+                `).join('');
+            } else {
+                tableBody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: #999;">No budgets match the filter</td></tr>';
+            }
+        }
+
+        // Real-time budget amount update
+        function updateBudgetAmountRealtime(budgetId, newAmount) {
+            const budget = budgetsCache.find(b => b.id === budgetId);
+            if (budget) {
+                budget.amount = parseFloat(newAmount) || 0;
+                const total = budgetsCache.reduce((sum, b) => sum + (parseFloat(b.amount) || 0), 0);
+                document.getElementById('budgetTotal').textContent = `₱${total.toLocaleString('en-US', {minimumFractionDigits: 2})}`;
+            }
+        }
+
+        function applyBudgetFilters() {
+            const search = document.getElementById('budgetSearch').value.toLowerCase().trim();
+            const category = document.getElementById('budgetCategoryFilter').value;
+            const min = parseFloat(document.getElementById('budgetMin').value || '');
+            const max = parseFloat(document.getElementById('budgetMax').value || '');
+            const status = document.getElementById('budgetStatusFilter').value;
+            const sort = document.getElementById('budgetSort').value;
+
+            let list = budgetsCache.filter(b => {
+                const title = (b.title || '').toLowerCase();
+                const desc = (b.description || '').toLowerCase();
+                const amount = parseFloat(b.amount) || 0;
+                if (search && !title.includes(search) && !desc.includes(search)) return false;
+                if (category && b.category !== category) return false;
+                if (!isNaN(min) && amount < min) return false;
+                if (!isNaN(max) && amount > max) return false;
+                if (status && b.status !== status) return false;
+                return true;
+            });
+
+            const [field, dir] = sort.split('_');
+            list.sort((a, b) => {
+                let av = a[field];
+                let bv = b[field];
+                if (field === 'amount') {
+                    av = parseFloat(av) || 0;
+                    bv = parseFloat(bv) || 0;
+                }
+                if (field === 'created' || field === 'created_at') {
+                    av = new Date(a.created_at).getTime();
+                    bv = new Date(b.created_at).getTime();
+                }
+                if (typeof av === 'string') av = av.toLowerCase();
+                if (typeof bv === 'string') bv = bv.toLowerCase();
+                if (av < bv) return dir === 'asc' ? -1 : 1;
+                if (av > bv) return dir === 'asc' ? 1 : -1;
+                return 0;
+            });
+
+            renderBudgets(list, budgetsCache.reduce((sum, b) => sum + (parseFloat(b.amount) || 0), 0));
+        }
+
+        // Load Budgets
+        async function loadBudgets() {
+            try {
+                const response = await fetch('/get-budgets');
+                const data = await response.json();
+                if (data.success) {
+                    budgetsCache = data.budgets || [];
+                    applyBudgetFilters();
+                } else {
+                    budgetsCache = [];
+                    renderBudgets([], 0);
+                }
+            } catch (error) {
+                console.error('Error loading budgets:', error);
+            }
+        }
+
+        async function saveBudget(budgetId) {
+            const fields = document.querySelectorAll(`[data-id="${budgetId}"]`);
+            const payload = { id: budgetId };
+            fields.forEach(el => {
+                payload[el.dataset.field] = el.value;
+            });
+
+            try {
+                const response = await fetch('/update-budget', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                const data = await response.json();
+
+                const messageDiv = document.getElementById('budgetMessage');
+                if (data.success) {
+                    messageDiv.className = 'message success';
+                    messageDiv.textContent = '✓ Budget updated successfully!';
+                    loadBudgets();
+                } else {
+                    messageDiv.className = 'message error';
+                    messageDiv.textContent = `✗ ${data.message || 'Error updating budget'}`;
+                }
+                messageDiv.style.display = 'block';
+            } catch (error) {
+                console.error('Error saving budget:', error);
+            }
+        }
+
+        // View Budget Upload Details
+        async function viewBudgetUploadDetails(uploadId) {
+            try {
+                const response = await fetch(`/get-budget-upload-details/${uploadId}`);
+                const data = await response.json();
+
+                if (data.success) {
+                    const upload = data.upload;
+                    const dataStr = JSON.stringify(upload.data, null, 2);
+                    alert(`Budget File: ${upload.filename}\n\nTotal Amount: ₱${upload.total_amount.toLocaleString()}\nRecords: ${upload.record_count}\n\nData Preview:\n${dataStr.substring(0, 500)}...`);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error loading details');
+            }
+        }
+
+        // Proceed Budget Upload: scan and list projects
+        async function proceedBudgetUpload(uploadId) {
+            try {
+                const response = await fetch(`/proceed-budget-upload/${uploadId}`, {
+                    method: 'POST'
+                });
+                const data = await response.json();
+
+                if (data.success) {
+                    renderProceedProjects(data.projects || []);
+                } else {
+                    alert(`✗ ${data.message || 'Error processing upload'}`);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error processing upload');
+            }
+        }
+
+        function renderProceedProjects(projects) {
+            const container = document.getElementById('proceedResults');
+            const list = document.getElementById('proceedProjectsList');
+
+            if (!projects.length) {
+                container.style.display = 'none';
+                list.innerHTML = '<tr><td colspan="6" style="text-align: center; color: #999;">No projects listed</td></tr>';
+                return;
+            }
+
+            container.style.display = 'block';
+            list.innerHTML = projects.map(p => `
+                <tr data-id="${p.id || ''}">
+                    <td><input type="text" value="${p.title || ''}" data-field="title" style="width: 100%; padding: 6px;"></td>
+                    <td>
+                        <select data-field="category" style="padding: 6px; width: 100%;">
+                            <option value="general" ${p.category === 'general' ? 'selected' : ''}>General</option>
+                            <option value="Health" ${p.category === 'Health' ? 'selected' : ''}>Health</option>
+                            <option value="MOOE" ${p.category === 'MOOE' ? 'selected' : ''}>MOOE</option>
+                            <option value="Education" ${p.category === 'Education' ? 'selected' : ''}>Education</option>
+                            <option value="Capital Outlay" ${p.category === 'Capital Outlay' ? 'selected' : ''}>Capital Outlay</option>
+                            <option value="Personal Services" ${p.category === 'Personal Services' ? 'selected' : ''}>Personal Services</option>
+                            <option value="Infrastructure" ${p.category === 'Infrastructure' ? 'selected' : ''}>Infrastructure</option>
+                        </select>
+                    </td>
+                    <td><input type="number" value="${p.amount || 0}" data-field="amount" step="0.01" style="width: 120px; padding: 6px;"></td>
+                    <td><input type="text" value="${p.description || ''}" data-field="description" style="width: 100%; padding: 6px;"></td>
+                    <td>
+                        <select data-field="status" style="padding: 6px;">
+                            <option value="active" ${p.status === 'active' ? 'selected' : ''}>active</option>
+                            <option value="completed" ${p.status === 'completed' ? 'selected' : ''}>completed</option>
+                            <option value="cancelled" ${p.status === 'cancelled' ? 'selected' : ''}>cancelled</option>
+                        </select>
+                    </td>
+                    <td>
+                        ${p.id ? `<button onclick="deleteProceedProject(${p.id})" style="padding: 5px 10px; background: #e74c3c; color: white; border: none; border-radius: 4px; cursor: pointer;">Delete</button>` : ''}
+                    </td>
+                </tr>
+            `).join('');
+
+            // Auto-save on change
+            list.querySelectorAll('input, select').forEach(el => {
+                el.addEventListener('change', () => {
+                    const row = el.closest('tr');
+                    const id = row.getAttribute('data-id');
+                    if (!id) return;
+                    const payload = { id: parseInt(id, 10) };
+                    row.querySelectorAll('[data-field]').forEach(field => {
+                        payload[field.getAttribute('data-field')] = field.value;
+                    });
+                    updateBudgetRecord(payload);
+                });
+            });
+        }
+
+        async function updateBudgetRecord(payload) {
+            try {
+                const response = await fetch('/update-budget', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                const data = await response.json();
+                if (!data.success) {
+                    console.error('Auto-save failed:', data.message);
+                }
+            } catch (error) {
+                console.error('Auto-save error:', error);
+            }
+        }
+
+        async function deleteProceedProject(budgetId) {
+            if (!confirm('Delete this project?')) return;
+            try {
+                const response = await fetch(`/delete-budget/${budgetId}`, {
+                    method: 'DELETE'
+                });
+                const data = await response.json();
+                if (data.success) {
+                    // Remove row from proceed list
+                    const row = document.querySelector(`#proceedProjectsList tr[data-id="${budgetId}"]`);
+                    if (row) row.remove();
+                    loadBudgets();
+                } else {
+                    alert(`✗ ${data.message || 'Error deleting project'}`);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error deleting project');
+            }
+        }
+
+        // Delete Budget Upload
+        async function deleteBudgetUpload(uploadId) {
+            if (!confirm('Delete this uploaded file?')) return;
+            try {
+                const response = await fetch(`/delete-budget-upload/${uploadId}`, {
+                    method: 'DELETE'
+                });
+                const data = await response.json();
+                if (data.success) {
+                    loadBudgetUploads();
+                } else {
+                    alert(`✗ ${data.message || 'Error deleting upload'}`);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error deleting upload');
+            }
+        }
+
+        // Budget Form Handler (Manual Entry)
+        document.getElementById('budgetForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const formData = {
+                title: document.getElementById('budgetTitle').value,
+                amount: parseFloat(document.getElementById('budgetAmount').value),
+                description: document.getElementById('budgetDesc').value,
+                category: document.getElementById('budgetCategory').value
+            };
+
+            try {
+                const response = await fetch('/add-budget', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(formData)
+                });
+                const data = await response.json();
+
+                const messageDiv = document.getElementById('budgetMessage');
+                if (data.success) {
+                    messageDiv.className = 'message success';
+                    messageDiv.textContent = '✓ Budget added successfully!';
+                    document.getElementById('budgetForm').reset();
+                    loadBudgets();
+                } else {
+                    messageDiv.className = 'message error';
+                    messageDiv.textContent = '✗ Error adding budget';
+                }
+                messageDiv.style.display = 'block';
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        });
+
+        document.getElementById('settingsForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const formData = {
+                full_name: document.getElementById('settingsName').value,
+                position: document.getElementById('settingsPosition').value,
+                barangay: document.getElementById('settingsBarangay').value,
+                municipality: document.getElementById('settingsMunicipality').value
+            };
+
+            try {
+                const response = await fetch('/update-profile', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(formData)
+                });
+                const data = await response.json();
+
+                alert(data.success ? '✓ Profile updated!' : '✗ Error updating profile');
+            } catch (error) {
+                alert('Error: ' + error.message);
+            }
+        });
+
+        // Load notification count
+        async function loadNotificationCount() {
+            try {
+                const response = await fetch('/get-unread-notifications-count');
+                const data = await response.json();
+
+                const badge = document.getElementById('announcementBadge');
+                if (data.success && data.count > 0) {
+                    badge.textContent = data.count;
+                    badge.style.display = 'flex';
+                } else {
+                    badge.style.display = 'none';
+                }
+            } catch (error) {
+                console.error('Error loading notifications:', error);
+            }
+        }
+
+        // Initialize
+        loadUserProfile();
+        loadNotificationCount();
+        loadBudgetUploads();
+        loadBudgets();
+
+        document.getElementById('budgetSearch').addEventListener('input', applyBudgetFilters);
+        document.getElementById('budgetCategoryFilter').addEventListener('change', applyBudgetFilters);
+        document.getElementById('budgetMin').addEventListener('input', applyBudgetFilters);
+        document.getElementById('budgetMax').addEventListener('input', applyBudgetFilters);
+        document.getElementById('budgetStatusFilter').addEventListener('change', applyBudgetFilters);
+        document.getElementById('budgetSort').addEventListener('change', applyBudgetFilters);
+        
+        // Refresh notification count every 30 seconds
+        setInterval(loadNotificationCount, 30000);
+    </script>
+</body>
+</html>

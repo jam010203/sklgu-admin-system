@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SKLGU Admin System - Login</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: linear-gradient(135deg, #ffffff 0%, #f0f9ff 50%, #e0f2fe 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: -10%;
+            right: -5%;
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, #0ea5e9 0%, transparent 70%);
+            border-radius: 50%;
+            opacity: 0.1;
+            z-index: 0;
+        }
+
+        body::after {
+            content: '';
+            position: fixed;
+            bottom: -10%;
+            left: -5%;
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, #0284c7 0%, transparent 70%);
+            border-radius: 50%;
+            opacity: 0.1;
+            z-index: 0;
+        }
+
+        .login-container {
+            background: rgba(255, 255, 255, 0.96);
+            border-radius: 18px;
+            box-shadow: 0 20px 60px rgba(2, 132, 199, 0.15);
+            max-width: 450px;
+            width: 100%;
+            padding: 48px;
+            position: relative;
+            z-index: 1;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(2, 132, 199, 0.15);
+        }
+
+        .login-header {
+            text-align: center;
+            margin-bottom: 36px;
+        }
+
+        .login-header h1 {
+            font-size: 32px;
+            background: linear-gradient(135deg, #0284c7 0%, #0ea5e9 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 8px;
+            font-weight: 700;
+        }
+
+        .login-header p {
+            color: #64748b;
+            font-size: 15px;
+            font-weight: 500;
+        }
+
+        .login-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 32px;
+            border-bottom: 2px solid rgba(2, 132, 199, 0.1);
+        }
+
+        .login-tab {
+            flex: 1;
+            padding: 14px;
+            text-align: center;
+            cursor: pointer;
+            border: none;
+            background: none;
+            font-size: 15px;
+            font-weight: 600;
+            color: #94a3b8;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            border-bottom: 3px solid transparent;
+            margin-bottom: -2px;
+            position: relative;
+        }
+
+        .login-tab.active {
+            color: #0284c7;
+            border-bottom-color: #0284c7;
+        }
+
+        .login-tab:hover {
+            color: #0ea5e9;
+        }
+
+        .login-form {
+            display: none;
+        }
+
+        .login-form.active {
+            display: block;
+            animation: fadeIn 0.4s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .form-group {
+            margin-bottom: 22px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 14px;
+            font-weight: 600;
+            color: #1e293b;
+            margin-bottom: 9px;
+            letter-spacing: 0.3px;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 13px 16px;
+            border: 2px solid rgba(2, 132, 199, 0.15);
+            border-radius: 10px;
+            font-size: 15px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            background: rgba(255, 255, 255, 0.92);
+            font-family: inherit;
+            font-weight: 500;
+            color: #1e293b;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #0284c7;
+            box-shadow: 0 0 0 4px rgba(2, 132, 199, 0.12);
+            background: rgba(255, 255, 255, 0.98);
+            transform: scale(1.01);
+        }
+
+        .form-group input::placeholder {
+            color: #94a3b8;
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #0284c7 0%, #0ea5e9 50%, #06b6d4 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            margin-top: 24px;
+            box-shadow: 0 8px 25px rgba(2, 132, 199, 0.3);
+            letter-spacing: 0.3px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .submit-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.6s ease;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 15px 40px rgba(2, 132, 199, 0.45);
+            background: linear-gradient(135deg, #0272a8 0%, #0c8ad4 50%, #0499c6 100%);
+        }
+
+        .submit-btn:hover::before {
+            left: 100%;
+        }
+
+        .submit-btn:active {
+            transform: translateY(-1px);
+        }
+
+        .error-message {
+            background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
+            color: #991b1b;
+            padding: 14px 16px;
+            border-radius: 10px;
+            margin-bottom: 22px;
+            font-size: 14px;
+            display: none;
+            border-left: 4px solid #dc2626;
+            box-shadow: 0 4px 12px rgba(220, 38, 38, 0.12);
+            font-weight: 500;
+        }
+
+        .error-message.show {
+            display: block;
+            animation: slideDown 0.3s ease-out;
+        }
+
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .login-footer {
+            text-align: center;
+            margin-top: 28px;
+            font-size: 13px;
+            color: #94a3b8;
+            border-top: 1px solid rgba(2, 132, 199, 0.1);
+            padding-top: 20px;
+            letter-spacing: 0.2px;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <div class="login-header">
+            <h1>SKLGU Portal</h1>
+            <p>Admin System</p>
+        </div>
+
+        <div class="login-tabs">
+            <button class="login-tab active" onclick="switchTab('user')">User Login</button>
+            <button class="login-tab" onclick="switchTab('admin')">Admin Login</button>
+        </div>
+
+        <!-- User Login Form -->
+        <form id="userLoginForm" class="login-form active" method="POST" action="/login">
+            {% if error %}
+                <div class="error-message show">{{ error }}</div>
+            {% endif %}
+            <input type="hidden" name="login_type" value="user">
+            
+            <div class="form-group">
+                <label for="userEmail">Email Address</label>
+                <input type="email" id="userEmail" name="email" placeholder="you@example.com" required>
+            </div>
+
+            <div class="form-group">
+                <label for="userPassword">Password</label>
+                <input type="password" id="userPassword" name="password" placeholder="Enter your password" required>
+            </div>
+
+            <button type="submit" class="submit-btn">Sign In</button>
+        </form>
+
+        <!-- Admin Login Form -->
+        <form id="adminLoginForm" class="login-form" method="POST" action="/login">
+            <input type="hidden" name="login_type" value="admin">
+            
+            <div class="form-group">
+                <label for="adminEmail">Admin Email</label>
+                <input type="email" id="adminEmail" name="email" placeholder="admin@sklgu.gov.ph" required>
+            </div>
+
+            <div class="form-group">
+                <label for="adminPassword">Password</label>
+                <input type="password" id="adminPassword" name="password" placeholder="Enter admin password" required>
+            </div>
+
+            <button type="submit" class="submit-btn">Admin Sign In</button>
+        </form>
+
+        <div class="login-footer">
+            <p>© 2026 SKLGU Admin System. All rights reserved.</p>
+        </div>
+    </div>
+
+    <script>
+        function switchTab(tab) {
+            const userForm = document.getElementById('userLoginForm');
+            const adminForm = document.getElementById('adminLoginForm');
+            const tabs = document.querySelectorAll('.login-tab');
+
+            if (tab === 'user') {
+                userForm.classList.add('active');
+                adminForm.classList.remove('active');
+                tabs[0].classList.add('active');
+                tabs[1].classList.remove('active');
+            } else {
+                adminForm.classList.add('active');
+                userForm.classList.remove('active');
+                tabs[1].classList.add('active');
+                tabs[0].classList.remove('active');
+            }
+        }
+
+        // Make both forms submit to the same endpoint
+        document.getElementById('userLoginForm').addEventListener('submit', (e) => {
+            e.target.action = '/login';
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Voucher Save</title>
+</head>
+<body>
+    <h1>Test Voucher Save</h1>
+    <button onclick="testSave()">Test Save Voucher</button>
+    <pre id="output"></pre>
+
+    <script>
+        async function testSave() {
+            const output = document.getElementById('output');
+            output.textContent = 'Sending request...\n';
+            
+            const testData = {
+                barangay: 'TEST BARANGAY',
+                payee: 'TEST PAYEE',
+                address: 'TEST ADDRESS',
+                tin: '123-456-789',
+                province: 'TEST PROVINCE',
+                responsibility_center: 'TEST CITY',
+                fund_cluster: 'TEST FUND',
+                voucher_date: '2026-02-02',
+                particulars: 'TEST PARTICULARS',
+                amount_due: 1000.50
+            };
+            
+            output.textContent += 'Data to send:\n' + JSON.stringify(testData, null, 2) + '\n\n';
+            
+            try {
+                const response = await fetch('/api/disbursement-voucher', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    credentials: 'include',
+                    body: JSON.stringify(testData)
+                });
+                
+                output.textContent += 'Response status: ' + response.status + '\n';
+                output.textContent += 'Response headers:\n' + JSON.stringify([...response.headers.entries()], null, 2) + '\n\n';
+                
+                const result = await response.json();
+                output.textContent += 'Response body:\n' + JSON.stringify(result, null, 2) + '\n';
+                
+                if (result.success) {
+                    output.textContent += '\n✅ SUCCESS! DV Number: ' + result.dv_number;
+                } else {
+                    output.textContent += '\n❌ FAILED: ' + result.message;
+                }
+            } catch (error) {
+                output.textContent += '\n❌ ERROR: ' + error.message + '\n' + error.stack;
+            }
+        }
+    </script>
+</body>
+</html>

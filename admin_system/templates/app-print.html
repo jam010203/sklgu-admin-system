@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Annual Procurement Plan</title>
+    <style>
+        @page { 
+            size: A4 landscape; 
+            margin: 8mm;
+        }
+        @media print {
+            * {
+                margin: 0 !important;
+                padding: 0 !important;
+            }
+            html, body {
+                width: 100%;
+                margin: 0;
+                padding: 0;
+                background: white;
+            }
+            .controls { display: none !important; }
+            .report { 
+                page-break-inside: avoid;
+                margin: 0 !important;
+                box-shadow: none !important;
+                max-width: 100% !important;
+                padding: 0 !important;
+            }
+        }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        html, body {
+            width: 100%;
+        }
+        body {
+            font-family: "Segoe UI", "Arial", sans-serif;
+            color: #1a1a1a;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 15px;
+            overflow-y: auto;
+        }
+        .controls {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+            position: sticky;
+            top: 20px;
+            z-index: 100;
+            justify-content: center;
+        }
+        .btn {
+            padding: 14px 32px;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: 700;
+            font-size: 15px;
+            transition: all 0.3s ease;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .btn-print {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        .btn-print:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.5);
+        }
+        .btn-back {
+            background: white;
+            color: #667eea;
+            border: 2px solid #667eea;
+        }
+        .btn-back:hover {
+            background: #667eea;
+            color: white;
+            transform: translateY(-3px);
+        }
+        .report {
+            background: white;
+            border: 3px solid #2d3748;
+            margin: 0 auto 20px;
+            padding: 0;
+            width: 100%;
+            max-width: 100%;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: auto;
+        }
+        .report-header {
+            text-align: center;
+            background: linear-gradient(135deg, #2d3748 0%, #1a202c 100%);
+            color: white;
+            padding: 15px 10px;
+            border-bottom: 4px solid #667eea;
+        }
+        .report-header h1 {
+            font-size: 14px;
+            font-weight: 800;
+            letter-spacing: 1px;
+            margin: 0;
+        }
+        .report-header .subtitle {
+            font-size: 10px;
+            font-weight: 600;
+            margin-top: 3px;
+        }
+        .header-info {
+            text-align: center;
+            padding: 10px;
+            background: white;
+            border-bottom: 2px solid #667eea;
+            font-size: 9px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        td {
+            border: 1px solid #333;
+            padding: 4px 6px;
+            font-size: 8px;
+            vertical-align: middle;
+        }
+        .label-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            font-weight: 800;
+            text-align: center;
+            padding: 5px 4px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .desc-col {
+            width: 20%;
+        }
+        .unit-cost-col {
+            width: 8%;
+            text-align: right;
+        }
+        .qty-col {
+            width: 5%;
+            text-align: right;
+        }
+        .unit-col {
+            width: 6%;
+            text-align: center;
+        }
+        .total-col {
+            width: 8%;
+            text-align: right;
+        }
+        .quarter-col {
+            width: 6%;
+            text-align: right;
+        }
+        .data-row td {
+            height: 18px;
+            background: white;
+        }
+        .data-row:nth-child(even) td {
+            background: #f7fafc;
+        }
+    </style>
+</head>
+<body>
+    <div class="controls">
+        <button class="btn btn-print" onclick="handlePrint()">🖨️ Print</button>
+        <button class="btn btn-back" onclick="goBack()">← Back</button>
+    </div>
+
+    <div class="report">
+        <!-- Header -->
+        <div class="report-header">
+            <h1>ANNUAL PROCUREMENT PLAN (APP)</h1>
+            <div class="subtitle">{{ plan.office_name or 'Office of the Sangguiniang Kabataan' }}</div>
+        </div>
+
+        <!-- Header Info -->
+        <div class="header-info">
+            <div><strong>Barangay:</strong> {{ plan.barangay or '' }} | <strong>Municipality:</strong> {{ plan.municipality or '' }} | <strong>Province:</strong> {{ plan.province or '' }} | <strong>Calendar Year:</strong> {{ plan.calendar_year or '' }}</div>
+            <div style="margin-top: 4px;"><strong>APP No.:</strong> {{ plan.app_no or '' }}</div>
+        </div>
+
+        <!-- Items Table -->
+        <table>
+            <thead>
+                <tr>
+                    <td class="label-header desc-col">DESCRIPTION</td>
+                    <td class="label-header unit-cost-col">UNIT COST</td>
+                    <td class="label-header qty-col">QTY</td>
+                    <td class="label-header unit-col">UNIT</td>
+                    <td class="label-header total-col">TOTAL COST</td>
+                    <td class="label-header quarter-col">Q1 QTY</td>
+                    <td class="label-header quarter-col">Q1 AMT</td>
+                    <td class="label-header quarter-col">Q2 QTY</td>
+                    <td class="label-header quarter-col">Q2 AMT</td>
+                    <td class="label-header quarter-col">Q3 QTY</td>
+                    <td class="label-header quarter-col">Q3 AMT</td>
+                    <td class="label-header quarter-col">Q4 QTY</td>
+                    <td class="label-header quarter-col">Q4 AMT</td>
+                </tr>
+            </thead>
+            <tbody>
+                {% set q1_qty_total = 0 %}
+                {% set q1_amt_total = 0 %}
+                {% set q2_qty_total = 0 %}
+                {% set q2_amt_total = 0 %}
+                {% set q3_qty_total = 0 %}
+                {% set q3_amt_total = 0 %}
+                {% set q4_qty_total = 0 %}
+                {% set q4_amt_total = 0 %}
+                {% set grand_total_cost = 0 %}
+                
+                {% for item in items %}
+                    {% if item.row_type == 'LABEL' %}
+                    <tr style="background: #fff3cd;">
+                        <td colspan="4" style="background: #f0ad4e; color: white; padding: 8px 6px; font-weight: bold; border: 2px solid #ec971f; text-align: left; font-size: 11px; text-transform: uppercase;">
+                            {{ item.description or '' }}
+                        </td>
+                        <td style="background: #f0ad4e; border: 2px solid #ec971f;"></td>
+                        <td colspan="8" style="background: #f0ad4e; border: 2px solid #ec971f;"></td>
+                    </tr>
+                    {% elif item.row_type == 'TOTAL' %}
+                    <tr style="background: #f5f5f5;">
+                        <td colspan="4" style="background: #ddd; color: #333; padding: 8px 6px; font-weight: bold; text-align: right; font-size: 10px; border: 2px solid #999; text-transform: uppercase;">
+                            TOTAL
+                        </td>
+                        <td style="background: #ddd; color: #333; padding: 8px 6px; font-weight: bold; text-align: right; font-size: 10px; border: 2px solid #999;">
+                            ₱{{ '{:,.2f}'.format(item.total_cost or 0) }}
+                        </td>
+                        <td style="background: #ddd; color: #333; padding: 8px 6px; font-weight: bold; text-align: right; font-size: 10px; border: 2px solid #999;">{{ item.q1_qty or '' }}</td>
+                        <td style="background: #ddd; color: #333; padding: 8px 6px; font-weight: bold; text-align: right; font-size: 10px; border: 2px solid #999;">₱{{ '{:,.2f}'.format(item.q1_amt or 0) }}</td>
+                        <td style="background: #ddd; color: #333; padding: 8px 6px; font-weight: bold; text-align: right; font-size: 10px; border: 2px solid #999;">{{ item.q2_qty or '' }}</td>
+                        <td style="background: #ddd; color: #333; padding: 8px 6px; font-weight: bold; text-align: right; font-size: 10px; border: 2px solid #999;">₱{{ '{:,.2f}'.format(item.q2_amt or 0) }}</td>
+                        <td style="background: #ddd; color: #333; padding: 8px 6px; font-weight: bold; text-align: right; font-size: 10px; border: 2px solid #999;">{{ item.q3_qty or '' }}</td>
+                        <td style="background: #ddd; color: #333; padding: 8px 6px; font-weight: bold; text-align: right; font-size: 10px; border: 2px solid #999;">₱{{ '{:,.2f}'.format(item.q3_amt or 0) }}</td>
+                        <td style="background: #ddd; color: #333; padding: 8px 6px; font-weight: bold; text-align: right; font-size: 10px; border: 2px solid #999;">{{ item.q4_qty or '' }}</td>
+                        <td style="background: #ddd; color: #333; padding: 8px 6px; font-weight: bold; text-align: right; font-size: 10px; border: 2px solid #999;">₱{{ '{:,.2f}'.format(item.q4_amt or 0) }}</td>
+                    </tr>
+                    {% elif item.row_type == 'GRAND_TOTAL' %}
+                    <tr style="background: #e0e7ff;">
+                        <td colspan="4" style="background: #0284c7; color: white; padding: 8px 6px; font-weight: bold; text-align: right; font-size: 11px; border: 2px solid #0ea5e9; text-transform: uppercase;">
+                            GRAND TOTAL
+                        </td>
+                        <td style="background: #0284c7; color: white; padding: 8px 6px; font-weight: bold; text-align: right; font-size: 11px; border: 2px solid #0ea5e9;">
+                            ₱{{ '{:,.2f}'.format(item.total_cost or 0) }}
+                        </td>
+                        <td style="background: #0284c7; color: white; padding: 8px 6px; font-weight: bold; text-align: right; font-size: 10px; border: 2px solid #0ea5e9;">{{ item.q1_qty or '' }}</td>
+                        <td style="background: #0284c7; color: white; padding: 8px 6px; font-weight: bold; text-align: right; font-size: 10px; border: 2px solid #0ea5e9;">₱{{ '{:,.2f}'.format(item.q1_amt or 0) }}</td>
+                        <td style="background: #0284c7; color: white; padding: 8px 6px; font-weight: bold; text-align: right; font-size: 10px; border: 2px solid #0ea5e9;">{{ item.q2_qty or '' }}</td>
+                        <td style="background: #0284c7; color: white; padding: 8px 6px; font-weight: bold; text-align: right; font-size: 10px; border: 2px solid #0ea5e9;">₱{{ '{:,.2f}'.format(item.q2_amt or 0) }}</td>
+                        <td style="background: #0284c7; color: white; padding: 8px 6px; font-weight: bold; text-align: right; font-size: 10px; border: 2px solid #0ea5e9;">{{ item.q3_qty or '' }}</td>
+                        <td style="background: #0284c7; color: white; padding: 8px 6px; font-weight: bold; text-align: right; font-size: 10px; border: 2px solid #0ea5e9;">₱{{ '{:,.2f}'.format(item.q3_amt or 0) }}</td>
+                        <td style="background: #0284c7; color: white; padding: 8px 6px; font-weight: bold; text-align: right; font-size: 10px; border: 2px solid #0ea5e9;">{{ item.q4_qty or '' }}</td>
+                        <td style="background: #0284c7; color: white; padding: 8px 6px; font-weight: bold; text-align: right; font-size: 10px; border: 2px solid #0ea5e9;">₱{{ '{:,.2f}'.format(item.q4_amt or 0) }}</td>
+                    </tr>
+                    {% else %}
+                    <tr class="data-row">
+                        <td class="desc-col">{{ item.description or '' }}</td>
+                        <td class="unit-cost-col">₱{{ '{:,.2f}'.format(item.unit_cost or 0) }}</td>
+                        <td class="qty-col">{{ item.quantity or '' }}</td>
+                        <td class="unit-col">{{ item.unit or '' }}</td>
+                        <td class="total-col">₱{{ '{:,.2f}'.format(item.total_cost or 0) }}</td>
+                        <td class="quarter-col">{{ item.q1_qty or '' }}</td>
+                        <td class="quarter-col">₱{{ '{:,.2f}'.format(item.q1_amt or 0) }}</td>
+                        <td class="quarter-col">{{ item.q2_qty or '' }}</td>
+                        <td class="quarter-col">₱{{ '{:,.2f}'.format(item.q2_amt or 0) }}</td>
+                        <td class="quarter-col">{{ item.q3_qty or '' }}</td>
+                        <td class="quarter-col">₱{{ '{:,.2f}'.format(item.q3_amt or 0) }}</td>
+                        <td class="quarter-col">{{ item.q4_qty or '' }}</td>
+                        <td class="quarter-col">₱{{ '{:,.2f}'.format(item.q4_amt or 0) }}</td>
+                    </tr>
+                    {% endif %}
+                {% endfor %}
+                {% if items|length < 15 %}
+                    {% for i in range(15 - items|length) %}
+                    <tr class="data-row">
+                        <td class="desc-col"></td>
+                        <td class="unit-cost-col"></td>
+                        <td class="qty-col"></td>
+                        <td class="unit-col"></td>
+                        <td class="total-col"></td>
+                        <td class="quarter-col"></td>
+                        <td class="quarter-col"></td>
+                        <td class="quarter-col"></td>
+                        <td class="quarter-col"></td>
+                        <td class="quarter-col"></td>
+                        <td class="quarter-col"></td>
+                        <td class="quarter-col"></td>
+                        <td class="quarter-col"></td>
+                    </tr>
+                    {% endfor %}
+                {% endif %}
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        function handlePrint() {
+            window.print();
+        }
+        function goBack() {
+            window.location.href = '/user-dashboard';
+        }
+    </script>
+</body>
+</html>

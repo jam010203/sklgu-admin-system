@@ -1,0 +1,4218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SKLGU User Dashboard</title>
+    <style>
+        :root {
+            color-scheme: light;
+            --bg: #ffffff;
+            --bg-soft: #f8fafc;
+            --surface: rgba(255, 255, 255, 0.98);
+            --surface-2: rgba(255, 255, 255, 0.95);
+            --border: rgba(100, 150, 255, 0.15);
+            --text: #1e293b;
+            --muted: #64748b;
+            --primary: #0284c7;
+            --primary-2: #0ea5e9;
+            --accent: #06b6d4;
+            --accent-2: #00d9ff;
+            --success: #06b6d4;
+            --danger: #ef4444;
+            --shadow: 0 20px 45px rgba(2, 132, 199, 0.12);
+            --glow: 0 0 0 1px rgba(2, 132, 199, 0.3), 0 16px 40px rgba(2, 132, 199, 0.15);
+            --shadow-lg: 0 25px 50px rgba(2, 132, 199, 0.15);
+            --shadow-sm: 0 4px 12px rgba(2, 132, 199, 0.08);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: linear-gradient(135deg, #ffffff 0%, #f0f9ff 50%, #e0f2fe 100%);
+            color: var(--text);
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 20%;
+            right: -10%;
+            width: 700px;
+            height: 700px;
+            background: radial-gradient(circle, #0ea5e9 0%, transparent 70%);
+            border-radius: 50%;
+            opacity: 0.08;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        body::after {
+            content: '';
+            position: fixed;
+            bottom: -5%;
+            left: -5%;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, #0284c7 0%, transparent 70%);
+            border-radius: 50%;
+            opacity: 0.08;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .top-header {
+            background: linear-gradient(135deg, #0284c7 0%, #0ea5e9 50%, #06b6d4 100%);
+            padding: 30px;
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 12px 50px rgba(2, 132, 199, 0.25);
+            position: sticky;
+            top: 0;
+            z-index: 20;
+            backdrop-filter: blur(15px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.25);
+        }
+
+        .top-header::after {
+            content: 'SK Youth Governance Hub';
+            position: absolute;
+            right: 32px;
+            bottom: 8px;
+            font-size: 11px;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            color: rgba(255, 255, 255, 0.75);
+        }
+
+        .user-info-section {
+            display: flex;
+            gap: 18px;
+            align-items: center;
+        }
+
+        .user-avatar {
+            width: 70px;
+            height: 70px;
+            border-radius: 14px;
+            background: rgba(255, 255, 255, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+            backdrop-filter: blur(8px);
+        }
+
+        .user-avatar img {
+            width: 100%;
+            height: 100%;
+            border-radius: 18px;
+            object-fit: cover;
+        }
+
+        .user-details h3 {
+            font-size: 16px;
+            margin-bottom: 4px;
+            font-weight: 700;
+        }
+
+        .user-details p {
+            font-size: 12px;
+            opacity: 0.85;
+        }
+
+        .top-buttons {
+            display: flex;
+            gap: 12px;
+        }
+
+        .btn-small {
+            padding: 12px 24px;
+            border: none;
+            background: linear-gradient(135deg, #0284c7 0%, #0ea5e9 100%);
+            color: white;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            font-size: 13px;
+            box-shadow: 0 6px 20px rgba(2, 132, 199, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-small::before {
+            content: '';
+            display: none;
+        }
+
+        .btn-small::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, transparent 30%, rgba(255, 255, 255, 0.1) 50%, transparent 70%);
+            opacity: 0;
+            animation: shine 0.5s;
+        }
+
+        .btn-small:hover {
+            background: linear-gradient(135deg, #0272a8 0%, #0c8ad4 100%);
+            transform: translateY(-3px);
+            box-shadow: 0 12px 35px rgba(2, 132, 199, 0.45);
+            letter-spacing: 0.5px;
+        }
+
+        .btn-small:active {
+            transform: translateY(-1px);
+        }
+
+        @keyframes shine {
+            0% { left: -100%; opacity: 0; }
+            50% { opacity: 1; }
+            100% { left: 100%; opacity: 0; }
+        }
+
+        .sidebar {
+            position: fixed;
+            left: 18px;
+            top: 100px;
+            width: 250px;
+            height: calc(100vh - 120px);
+            background: var(--surface-2);
+            padding: 18px;
+            overflow-y: auto;
+            border-radius: 18px;
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow);
+            backdrop-filter: blur(12px);
+        }
+
+        .sidebar::before {
+            content: 'Youth Council';
+            display: block;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.24em;
+            color: var(--muted);
+            margin-bottom: 12px;
+        }
+
+        .sidebar-menu {
+            list-style: none;
+        }
+
+        .sidebar-menu .menu-section {
+            margin: 18px 0 8px;
+            font-size: 11px;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            color: rgba(100, 116, 139, 0.9);
+            font-weight: 700;
+            padding-left: 8px;
+        }
+
+        .sidebar-menu li {
+            margin-bottom: 10px;
+        }
+
+        .sidebar-menu a {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 14px;
+            border-radius: 8px;
+            cursor: pointer;
+            text-decoration: none;
+            color: var(--muted);
+            transition: all 0.3s ease;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .sidebar-menu a:hover {
+            background: rgba(2, 132, 199, 0.12);
+            color: #0284c7;
+            transform: translateX(4px);
+            box-shadow: 0 4px 12px rgba(2, 132, 199, 0.15);
+        }
+
+        .sidebar-menu a.active {
+            background: linear-gradient(135deg, rgba(2, 132, 199, 0.2), rgba(6, 182, 212, 0.2));
+            color: #0284c7;
+            font-weight: 700;
+            box-shadow: 0 4px 16px rgba(2, 132, 199, 0.2);
+            border-left: 3px solid #0284c7;
+            padding-left: 11px;
+        }
+
+        .main-content {
+            margin-left: 290px;
+            margin-top: 110px;
+            padding: 30px 40px 50px;
+            min-height: calc(100vh - 110px);
+        }
+
+        .tab-content {
+            display: none;
+            animation: fadeUp 0.5s ease;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 16px;
+            padding: 32px;
+            box-shadow: 0 4px 20px rgba(2, 132, 199, 0.12);
+            margin-bottom: 28px;
+            border: 1px solid rgba(2, 132, 199, 0.15);
+            position: relative;
+            overflow: hidden;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            backdrop-filter: blur(10px);
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(2, 132, 199, 0.05), rgba(6, 182, 212, 0.05));
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .card:hover {
+            box-shadow: 0 16px 45px rgba(2, 132, 199, 0.18);
+            transform: translateY(-6px);
+            background: rgba(255, 255, 255, 0.98);
+            border-color: rgba(2, 132, 199, 0.25);
+        }
+
+        .card:hover::before {
+            opacity: 1;
+        }
+            border-color: rgba(240, 147, 251, 0.6);
+        }
+
+        .card::after {
+            content: '';
+            position: absolute;
+            top: -120px;
+            right: -120px;
+            width: 220px;
+            height: 220px;
+            background: radial-gradient(circle, rgba(29, 78, 216, 0.2), transparent 70%);
+            opacity: 0.6;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            bottom: -80px;
+            left: -80px;
+            width: 180px;
+            height: 180px;
+            background: radial-gradient(circle, rgba(245, 158, 11, 0.18), transparent 70%);
+            opacity: 0.7;
+        }
+
+        .dashboard-hero {
+            background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 50%, #cffafe 100%);
+            color: #1e293b;
+            border-radius: 22px;
+            padding: 36px;
+            box-shadow: 0 18px 50px rgba(2, 132, 199, 0.15);
+            display: grid;
+            grid-template-columns: 1.4fr 1fr;
+            gap: 28px;
+            margin-bottom: 22px;
+            border: 1px solid rgba(2, 132, 199, 0.25);
+        }
+
+        .dashboard-hero h2 {
+            font-size: 26px;
+            margin-bottom: 10px;
+            font-weight: 700;
+            color: #1e293b;
+        }
+
+        .dashboard-hero p {
+            color: rgba(30, 41, 59, 0.75);
+            line-height: 1.6;
+            margin-bottom: 18px;
+        }
+
+        .hero-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .hero-actions .btn {
+            border-radius: 14px;
+        }
+
+        .hero-stats {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 14px;
+        }
+
+        .hero-stat {
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 16px;
+            padding: 16px;
+            border: 1px solid rgba(148, 163, 184, 0.25);
+        }
+
+        .hero-stat .stat-number {
+            color: #f8fafc;
+            font-size: 20px;
+            font-weight: 700;
+        }
+
+        .hero-stat .stat-label {
+            color: rgba(248, 250, 252, 0.7);
+            font-size: 12px;
+            margin-top: 4px;
+        }
+
+        .analytics-section {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 14px;
+        }
+
+        .analytics-chart {
+            background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+            border-radius: 16px;
+            padding: 18px;
+            border: 2px solid rgba(2, 132, 199, 0.15);
+            box-shadow: 0 8px 32px rgba(2, 132, 199, 0.12);
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            backdrop-filter: blur(10px);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .analytics-chart:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 16px 48px rgba(2, 132, 199, 0.2);
+            background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+            border-color: rgba(2, 132, 199, 0.3);
+        }
+
+        .analytics-chart::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle, rgba(2, 132, 199, 0.3), transparent 70%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .analytics-chart:hover::before {
+            opacity: 1;
+        }
+
+        .chart-header {
+            margin-bottom: 12px;
+        }
+
+        .chart-header h3 {
+            color: #1e293b;
+            font-size: 14px;
+            font-weight: 600;
+            margin: 0 0 6px 0;
+            letter-spacing: 0.3px;
+        }
+
+        .chart-value {
+            color: #0284c7;
+            font-size: 22px;
+            font-weight: 700;
+            text-shadow: 0 2px 8px rgba(2, 132, 199, 0.1);
+        }
+
+        .analytics-chart canvas {
+            width: 100% !important;
+            height: 140px !important;
+            display: block;
+            margin: 8px 0;
+        }
+
+        .chart-footer {
+            color: rgba(30, 41, 59, 0.7);
+            font-size: 11px;
+            margin-top: 8px;
+            text-align: center;
+            font-weight: 500;
+            letter-spacing: 0.3px;
+        }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 16px;
+        }
+
+        .feature-card {
+            background: var(--surface);
+            border-radius: 16px;
+            padding: 24px;
+            border: 1px solid rgba(2, 132, 199, 0.15);
+            box-shadow: 0 8px 30px rgba(2, 132, 199, 0.1);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            backdrop-filter: blur(8px);
+        }
+
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle, rgba(2, 132, 199, 0.3), transparent 70%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .feature-card::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, rgba(2, 132, 199, 0.08), transparent 70%);
+            opacity: 0;
+            transition: opacity 0.25s ease;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 25px 50px rgba(2, 132, 199, 0.2);
+            border-color: rgba(2, 132, 199, 0.3);
+        }
+
+        .feature-card:hover::before {
+            opacity: 1;
+        }
+
+        .feature-card:hover::after {
+            opacity: 1;
+        }
+
+        .feature-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            background: rgba(99, 102, 241, 0.12);
+            margin-bottom: 12px;
+        }
+
+        .feature-title {
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+
+        .feature-desc {
+            color: var(--muted);
+            font-size: 13px;
+            line-height: 1.5;
+        }
+
+        .feature-meta {
+            margin-top: 12px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 12px;
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        .leaderboard-controls {
+            display: grid;
+            grid-template-columns: 220px 1fr;
+            gap: 16px;
+            margin: 18px 0 24px;
+        }
+
+        .leaderboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 16px;
+        }
+
+        .member-card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 18px;
+            padding: 18px;
+            border: 1px solid var(--border);
+            box-shadow: 0 12px 30px rgba(15, 23, 42, 0.1);
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .member-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .member-avatar {
+            width: 54px;
+            height: 54px;
+            border-radius: 16px;
+            background: rgba(99, 102, 241, 0.12);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            color: var(--primary);
+            overflow: hidden;
+        }
+
+        .member-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .member-name {
+            font-weight: 700;
+            color: var(--text);
+        }
+
+        .member-role {
+            font-size: 12px;
+            color: var(--muted);
+        }
+
+        .member-meta {
+            display: grid;
+            gap: 6px;
+            font-size: 13px;
+            color: #475569;
+        }
+
+        .status-pill {
+            align-self: flex-start;
+            padding: 6px 12px;
+            border-radius: 999px;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .status-active {
+            background: rgba(34, 197, 94, 0.15);
+            color: #15803d;
+        }
+
+        .status-completed {
+            background: rgba(59, 130, 246, 0.15);
+            color: #1d4ed8;
+        }
+
+        .status-review {
+            background: rgba(249, 115, 22, 0.2);
+            color: #c2410c;
+        }
+
+        .status-empty {
+            background: rgba(148, 163, 184, 0.2);
+            color: #475569;
+        }
+
+        .password-status {
+            margin-top: 12px;
+            font-size: 13px;
+            color: var(--muted);
+        }
+
+        .password-status strong {
+            color: var(--text);
+        }
+
+        .input-with-icon {
+            position: relative;
+        }
+
+        .input-with-icon input {
+            padding-right: 44px;
+        }
+
+        .toggle-visibility {
+            position: absolute;
+            top: 50%;
+            right: 14px;
+            transform: translateY(-50%);
+            background: rgba(255, 255, 255, 0.7);
+            border: 1px solid rgba(148, 163, 184, 0.4);
+            border-radius: 10px;
+            width: 32px;
+            height: 32px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.2s ease;
+        }
+
+        .toggle-visibility:hover {
+            background: rgba(99, 102, 241, 0.12);
+            border-color: rgba(99, 102, 241, 0.4);
+        }
+
+        .card h2 {
+            color: var(--text);
+            margin-bottom: 18px;
+            font-size: 22px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 700;
+        }
+
+        .form-group {
+            margin-bottom: 18px;
+            position: relative;
+        }
+
+        label {
+            display: block;
+            color: var(--text);
+            font-weight: 700;
+            margin-bottom: 10px;
+            font-size: 14px;
+            letter-spacing: 0.3px;
+        }
+
+        input[type="text"],
+        input[type="email"],
+        input[type="number"],
+        input[type="date"],
+        textarea,
+        select {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid rgba(2, 132, 199, 0.15);
+            border-radius: 10px;
+            font-size: 15px;
+            font-family: inherit;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            background: rgba(255, 255, 255, 0.92);
+            backdrop-filter: blur(5px);
+            font-weight: 500;
+            color: var(--text);
+        }
+
+        input:focus,
+        textarea:focus,
+        select:focus {
+            outline: none;
+            border-color: #0284c7;
+            background: rgba(255, 255, 255, 0.98);
+            box-shadow: 0 0 0 4px rgba(2, 132, 199, 0.12);
+            transform: scale(1.01);
+        }
+        select:focus {
+            outline: none;
+            border-color: #0284c7;
+            box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.15), inset 0 0 0 1px rgba(102, 126, 234, 0.1);
+            background: rgba(255, 255, 255, 0.98);
+            transform: translateY(-2px);
+        }
+
+        input::placeholder,
+        textarea::placeholder {
+            color: #999;
+            font-weight: 500;
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 120px;
+        }
+
+        .btn {
+            padding: 14px 28px;
+            border: none;
+            border-radius: 12px;
+            font-size: 15px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #0284c7 0%, #0ea5e9 50%, #06b6d4 100%);
+            color: white;
+            box-shadow: 0 8px 25px rgba(2, 132, 199, 0.3);
+            border: none;
+            font-weight: 600;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            padding: 12px 28px;
+            border-radius: 10px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 15px 40px rgba(2, 132, 199, 0.45);
+            background: linear-gradient(135deg, #0272a8 0%, #0c8ad4 50%, #0499c6 100%);
+            letter-spacing: 0.3px;
+        }
+
+        .btn-primary:active {
+            transform: translateY(-1px);
+            box-shadow: 0 6px 20px rgba(2, 132, 199, 0.3);
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 20px;
+        }
+
+        .stat-box {
+            background: linear-gradient(135deg, rgba(29, 78, 216, 0.95), rgba(245, 158, 11, 0.85));
+            color: white;
+            padding: 22px;
+            border-radius: 16px;
+            text-align: left;
+            box-shadow: 0 12px 25px rgba(29, 78, 216, 0.25);
+        }
+
+        .stat-number {
+            font-size: 30px;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+
+        .stat-label {
+            font-size: 13px;
+            opacity: 0.9;
+        }
+
+        .table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0 10px;
+            margin-top: 10px;
+        }
+
+        .table th,
+        .table td {
+            padding: 12px 14px;
+            text-align: left;
+            background: white;
+        }
+
+        .table th {
+            background: rgba(148, 163, 184, 0.15);
+            font-weight: 700;
+            color: var(--muted);
+        }
+
+        .table th:first-child {
+            border-top-left-radius: 10px;
+        }
+
+        .table th:last-child {
+            border-top-right-radius: 10px;
+        }
+
+        .table tr {
+            box-shadow: 0 10px 20px rgba(15, 23, 42, 0.06);
+        }
+
+        .table tr:hover {
+            transform: translateY(-2px);
+            transition: transform 0.2s ease;
+        }
+
+        .fy-table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 980px;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .fy-table th,
+        .fy-table td {
+            border: 1px solid #e0e7ff;
+            padding: 12px;
+            vertical-align: top;
+            background: #ffffff;
+        }
+
+        .fy-table thead th {
+            background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+            font-size: 13px;
+            color: #1e3a8a;
+            position: sticky;
+            top: 0;
+            z-index: 20;
+            font-weight: 700;
+            border-bottom: 2px solid rgba(2, 132, 199, 0.2);
+        }
+
+        .fy-table tbody tr:nth-child(even) td {
+            background: #f9fbfd;
+        }
+        
+        .fy-table tbody tr[data-type="total"] td,
+        .fy-table tbody tr[data-type="grand-total"] td {
+            background: inherit !important;
+        }
+
+        .fy-input {
+            width: 100%;
+            border: 1px solid #cbd5f5;
+            border-radius: 8px;
+            padding: 8px 10px;
+            font-size: 13px;
+            background: #ffffff;
+        }
+
+        .fy-input:focus {
+            outline: none;
+            border-color: #6366f1;
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
+        }
+
+        .fy-delete {
+            background: #ef4444;
+            color: #ffffff;
+            border: none;
+            padding: 6px 10px;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        .fy-delete:hover {
+            opacity: 0.9;
+        }
+
+        @media print {
+            body {
+                background: #ffffff;
+            }
+
+            .sidebar,
+            .topbar,
+            .hero,
+            .feature-hub,
+            .menu-link,
+            .tab-button,
+            .btn {
+                display: none !important;
+            }
+
+            #budgetFyTemplates,
+            #budgetFyMessage {
+                display: none !important;
+            }
+
+            #budgetFyEditor {
+                display: block !important;
+            }
+
+            .main-content {
+                margin: 0 !important;
+                padding: 0 !important;
+            }
+
+            .card {
+                box-shadow: none !important;
+                border: none !important;
+            }
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+        }
+
+        .pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 10px;
+            border-radius: 999px;
+            background: rgba(99, 102, 241, 0.12);
+            color: var(--primary);
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .profile-card {
+            display: grid;
+            grid-template-columns: 140px 1fr;
+            gap: 20px;
+            align-items: center;
+            padding: 18px;
+            border-radius: 16px;
+            border: 1px solid var(--border);
+            background: rgba(255, 255, 255, 0.8);
+            box-shadow: var(--shadow);
+            margin-bottom: 20px;
+        }
+
+        .profile-preview {
+            width: 120px;
+            height: 120px;
+            border-radius: 16px;
+            background: rgba(99, 102, 241, 0.12);
+            display: grid;
+            place-items: center;
+            overflow: hidden;
+            border: 1px solid rgba(99, 102, 241, 0.3);
+        }
+
+        .profile-preview img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .upload-hint {
+            font-size: 12px;
+            color: var(--muted);
+            margin-top: 6px;
+        }
+
+        .btn-ghost {
+            background: rgba(99, 102, 241, 0.12);
+            color: var(--primary);
+            border: 1px solid rgba(99, 102, 241, 0.3);
+        }
+
+        .btn-ghost:hover {
+            background: rgba(99, 102, 241, 0.2);
+        }
+
+        .message {
+            padding: 12px 15px;
+            border-radius: 12px;
+            margin-bottom: 15px;
+            display: none;
+            font-size: 14px;
+            border: 1px solid transparent;
+        }
+
+        .message.success {
+            background: rgba(22, 163, 74, 0.1);
+            color: #166534;
+            border-color: rgba(22, 163, 74, 0.3);
+        }
+
+        .message.error {
+            background: rgba(239, 68, 68, 0.1);
+            color: #991b1b;
+            border-color: rgba(239, 68, 68, 0.3);
+        }
+
+        .item-list {
+            list-style: none;
+        }
+
+        .item-list li {
+            padding: 14px;
+            background: white;
+            border-radius: 12px;
+            margin-bottom: 10px;
+            border-left: 4px solid var(--primary);
+            box-shadow: 0 10px 18px rgba(15, 23, 42, 0.08);
+        }
+
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(-20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        @keyframes glow {
+            0%, 100% { box-shadow: 0 0 20px rgba(2, 132, 199, 0.2); }
+            50% { box-shadow: 0 0 30px rgba(2, 132, 199, 0.4); }
+        }
+
+        .tab-content {
+            animation: fadeUp 0.5s ease-out forwards;
+        }
+
+        .sidebar-menu li {
+            animation: slideIn 0.3s ease-out forwards;
+        }
+
+        @media (max-width: 1024px) {
+            .sidebar {
+                width: 220px;
+                left: 12px;
+            }
+
+            .main-content {
+                margin-left: 250px;
+                padding: 24px;
+            }
+
+            .dashboard-hero {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                position: static;
+                width: 100%;
+                height: auto;
+                margin: 20px 0;
+            }
+
+            .main-content {
+                margin-left: 0;
+                margin-top: 20px;
+                padding: 20px;
+            }
+
+            .top-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 12px;
+            }
+
+            .profile-card {
+                grid-template-columns: 1fr;
+                text-align: center;
+                justify-items: center;
+            }
+
+            .hero-stats {
+                grid-template-columns: 1fr;
+            }
+
+            .leaderboard-controls {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="top-header">
+        <div class="user-info-section">
+            <div class="user-avatar" id="userAvatar">👤</div>
+            <div class="user-details">
+                <h3 id="userName">Loading...</h3>
+                <p id="userPosition">Position</p>
+            </div>
+        </div>
+        <div class="top-buttons">
+            <button class="btn-small" onclick="switchTab('settings')">Settings</button>
+            <button class="btn-small" onclick="logout()">Logout</button>
+        </div>
+    </div>
+
+    <div class="sidebar">
+        <ul class="sidebar-menu">
+            <li class="menu-section">Overview</li>
+            <li><a onclick="switchTab('dashboard')" class="menu-link active">Dashboard</a></li>
+            <li>
+                <a onclick="switchTab('announcements')" class="menu-link" style="position: relative;">
+                    Announcements
+                    <span id="announcementBadge" style="display: none; position: absolute; top: 5px; right: 10px; background: #e74c3c; color: white; border-radius: 50%; width: 20px; height: 20px; font-size: 10px; display: flex; align-items: center; justify-content: center; font-weight: bold;">0</span>
+                </a>
+            </li>
+            <li><a onclick="switchTab('members')" class="menu-link">Members</a></li>
+            <li class="menu-section">Finance</li>
+            <li><a onclick="switchTab('budget-fy')" class="menu-link">Budget for F.Y</a></li>
+            <li><a onclick="switchTab('liquidation')" class="menu-link">Liquidation Report</a></li>
+            <li><a onclick="switchTab('app')" class="menu-link">Annual Procurement Plan</a></li>
+            <li><a onclick="switchTab('inventory')" class="menu-link">Inventory</a></li>
+            <li><a href="/disbursement-voucher" class="menu-link">Disbursement Voucher</a></li>
+            <li class="menu-section">Records</li>
+            <li><a onclick="switchTab('minutes')" class="menu-link">Meetings</a></li>
+            <li><a onclick="switchTab('resolutions')" class="menu-link">Resolutions</a></li>
+            <li class="menu-section">Account</li>
+            <li><a onclick="switchTab('settings')" class="menu-link">Settings</a></li>
+        </ul>
+    </div>
+
+    <div class="main-content">
+        <!-- Dashboard Tab -->
+        <div id="dashboard" class="tab-content active">
+            <div class="dashboard-hero">
+                <div>
+                    <h2>Welcome to your SKLGU dashboard</h2>
+                    <p>Manage budgets, track reports, and organize records in a clean, modern workspace. Everything you need is grouped and easier to reach.</p>
+                    <div class="hero-actions">
+                        <button class="btn btn-primary" onclick="switchTab('budget-fy')">📒 Open Budget for F.Y</button>
+                        <button class="btn btn-primary" onclick="openAnnouncementsPage()">📢 View Announcements</button>
+                        <button class="btn btn-primary" onclick="switchTab('members')">👥 Members</button>
+                        <button class="btn btn-primary" onclick="switchTab('inventory')">📦 Inventory</button>
+                    </div>
+                </div>
+                <div class="hero-stats analytics-section">
+                    <div class="analytics-chart" onclick="openTransactionHistory()">
+                        <div class="chart-header">
+                            <h3>Used Budget</h3>
+                            <div class="chart-value" id="usedBudgetValue">₱0</div>
+                        </div>
+                        <canvas id="usedBudgetChart" width="200" height="150"></canvas>
+                        <div class="chart-footer">Click to view details →</div>
+                    </div>
+                    <div class="analytics-chart" onclick="openBudgetAnalytics()">
+                        <div class="chart-header">
+                            <h3>Total Budget</h3>
+                            <div class="chart-value" id="totalBudgetValue">₱0</div>
+                        </div>
+                        <canvas id="totalBudgetChart" width="200" height="150"></canvas>
+                        <div class="chart-footer">Click to view details →</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>✨ Feature Hub</h2>
+                <p style="color: #666; margin-bottom: 20px;">Jump straight to the tools you use most. Each feature is grouped for faster access.</p>
+                <div class="feature-grid">
+                    <div class="feature-card" onclick="switchTab('budget-fy')">
+                        <div class="feature-icon">📒</div>
+                        <div class="feature-title">Budget for F.Y</div>
+                        <div class="feature-desc">Fill, save, and print the annual budget template.</div>
+                        <span class="feature-meta">Open Budget for F.Y →</span>
+                    </div>
+                    <div class="feature-card" onclick="switchTab('liquidation')">
+                        <div class="feature-icon">📋</div>
+                        <div class="feature-title">Liquidation Report</div>
+                        <div class="feature-desc">Prepare liquidation records based on SK format.</div>
+                        <span class="feature-meta">Open Liquidation →</span>
+                    </div>
+                    <div class="feature-card" onclick="switchTab('app')">
+                        <div class="feature-icon">📋</div>
+                        <div class="feature-title">Annual Procurement Plan</div>
+                        <div class="feature-desc">Plan and track annual procurement activities.</div>
+                        <span class="feature-meta">Open APP →</span>
+                    </div>
+                    <div class="feature-card" onclick="switchTab('inventory')">
+                        <div class="feature-icon">📦</div>
+                        <div class="feature-title">Inventory</div>
+                        <div class="feature-desc">Monitor items, quantities, and total values.</div>
+                        <span class="feature-meta">Open Inventory →</span>
+                    </div>
+                    <div class="feature-card" onclick="switchTab('minutes')">
+                        <div class="feature-icon">📝</div>
+                        <div class="feature-title">Meetings</div>
+                        <div class="feature-desc">Keep all minutes documented and searchable.</div>
+                        <span class="feature-meta">View Meetings →</span>
+                    </div>
+                    <div class="feature-card" onclick="switchTab('resolutions')">
+                        <div class="feature-icon">📄</div>
+                        <div class="feature-title">Resolutions</div>
+                        <div class="feature-desc">Store official resolutions in one place.</div>
+                        <span class="feature-meta">Open Resolutions →</span>
+                    </div>
+                    <div class="feature-card" onclick="openAnnouncementsPage()">
+                        <div class="feature-icon">📢</div>
+                        <div class="feature-title">Announcements</div>
+                        <div class="feature-desc">Stay updated with official notices.</div>
+                        <span class="feature-meta">View Announcements →</span>
+                    </div>
+                    <div class="feature-card" onclick="switchTab('members')">
+                        <div class="feature-icon">👥</div>
+                        <div class="feature-title">Members</div>
+                        <div class="feature-desc">Browse all SKLGU members and barangay budgeting status.</div>
+                        <span class="feature-meta">Open Members →</span>
+                    </div>
+                    <div class="feature-card" onclick="window.location.href='/disbursement-voucher'">
+                        <div class="feature-icon">📑</div>
+                        <div class="feature-title">Disbursement Voucher</div>
+                        <div class="feature-desc">Generate standardized vouchers for reports.</div>
+                        <span class="feature-meta">Open Voucher →</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>ℹ️ About Us</h2>
+                <p style="color: #666; margin-bottom: 16px;">Inovision is a digital system created by Jammel R. Ibita and his team with the goal of making SK Financial Management and Transactions more efficient, transparent, and well-organized.</p>
+                <p style="color: #666; margin-bottom: 16px;">The system is designed to support standardized financial recording, accurate documentation, and proper tracking of SK transactions in compliance with required guidelines. Inovision helps ensure that all financial activities are on track, properly recorded, and easily monitored for accountability and reporting purposes.</p>
+                <p style="color: #666;">Through innovation and technology, Inovision aims to strengthen good governance, promote transparency, and simplify financial processes for the Sangguniang Kabataan.</p>
+            </div>
+        </div>
+
+        <!-- Announcements Tab -->
+        <div id="announcements" class="tab-content">
+            <div class="card">
+                <h2>📢 Announcements</h2>
+                <p style="color: #666; margin-bottom: 20px;">View and interact with announcements posted by administration</p>
+                <button class="btn btn-primary" onclick="openAnnouncementsPage()">📢 View Announcements (Full Page)</button>
+            </div>
+        </div>
+
+        <!-- Members Tab -->
+        <div id="members" class="tab-content">
+            <div class="card">
+                <h2>🏆 Member Leaderboard</h2>
+                <p style="color: #666; margin-bottom: 10px;">View all members using the system and track barangay budgeting status.</p>
+
+                <div class="leaderboard-controls">
+                    <div class="form-group">
+                        <label>Filter by Municipality</label>
+                        <select id="memberMunicipalityFilter">
+                            <option value="">All Municipalities</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Search Members</label>
+                        <input type="text" id="memberSearch" placeholder="Search name, barangay, position">
+                    </div>
+                </div>
+
+                <div id="membersList" class="leaderboard-grid">
+                    <div style="text-align: center; color: #999; padding: 20px;">Loading members...</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Budget for F.Y Tab -->
+        <div id="budget-fy" class="tab-content">
+            <div class="card">
+                <h2>📒 Budget for F.Y</h2>
+                <div id="budgetFyMessage" class="message"></div>
+                <p style="color: #666; margin-bottom: 20px;">Fill in the annual budget template, add rows, and print when ready.</p>
+
+                <div class="grid-2">
+                    <div class="form-group">
+                        <label>Template Title</label>
+                        <input type="text" id="budgetFyTitle" placeholder="e.g., SK Approved Annual Budget" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Fiscal Year</label>
+                        <input type="text" id="budgetFyYear" placeholder="e.g., 2025">
+                    </div>
+                </div>
+                <div class="grid-2">
+                    <div class="form-group">
+                        <label>Address</label>
+                        <input type="text" id="budgetFyAddress" placeholder="e.g., San Nicolas, Candon City" required>
+                    </div>
+                </div>
+                <div style="display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 20px;">
+                    <button class="btn btn-primary" onclick="createBudgetFyTemplate()">Create Template</button>
+                    <button class="btn btn-primary" onclick="saveBudgetFyTemplate()">Save Template</button>
+                    <button class="btn btn-info" onclick="displayBudgetFyOnDashboard()" style="background: #0ea5e9; color: white;">Display on Dashboard</button>
+                    <button class="btn btn-primary" onclick="deleteBudgetFyTemplate()">Delete Template</button>
+                </div>
+
+                <div id="budgetFyTemplates" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; margin-bottom: 20px;"></div>
+
+                <div id="budgetFyEditor" style="display: none;">
+                    <div style="margin-bottom: 12px; font-weight: 600; color: #334155;">Editing: <span id="budgetFyActiveTitle">None</span></div>
+                    <div style="overflow-x: auto; max-height: 600px; overflow-y: auto; border: 1px solid #ddd; border-radius: 8px;">
+                        <table class="fy-table">
+                            <thead>
+                                <tr>
+                                    <th rowspan="2">Program</th>
+                                    <th rowspan="2">Project/Activities (object of Expenditures)</th>
+                                    <th rowspan="2">Account Code</th>
+                                    <th rowspan="2">Duration of projects/activities</th>
+                                    <th colspan="2">Expenditures Class</th>
+                                    <th rowspan="2">Amount</th>
+                                    <th rowspan="2">Action</th>
+                                </tr>
+                                <tr>
+                                    <th>MOOE</th>
+                                    <th>CO</th>
+                                </tr>
+                            </thead>
+                            <tbody id="budgetFyBody"></tbody>
+                        </table>
+                    </div>
+                    <div style="margin-top: 12px; display: flex; gap: 12px; flex-wrap: wrap;">
+                        <button class="btn btn-primary" onclick="addBudgetFyRow()">Add Row</button>
+                        <button class="btn btn-info" onclick="addBudgetFyLabelRow()" style="background: #0ea5e9; color: white; padding: 10px 16px; border: none; border-radius: 6px; cursor: pointer;">Add Label</button>
+                        <button class="btn btn-info" onclick="addBudgetFyTotalRow()" style="background: #10b981; color: white; padding: 10px 16px; border: none; border-radius: 6px; cursor: pointer;">Add Total</button>
+                        <button class="btn btn-info" onclick="addBudgetFyGrandTotalRow()" style="background: #8b5cf6; color: white; padding: 10px 16px; border: none; border-radius: 6px; cursor: pointer;">Grand Total</button>
+                        <button class="btn btn-info" onclick="printBudgetFyTemplate()" style="background: #f59e0b; color: white; padding: 10px 16px; border: none; border-radius: 6px; cursor: pointer;">Print Label</button>
+                    </div>
+                    <div style="margin-top: 14px; font-weight: 700;">Total Amount: <span id="budgetFyTotal">₱0.00</span></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Liquidation Report Tab -->
+        <div id="liquidation" class="tab-content">
+            <div class="card">
+                <h2>📋 Liquidation Report</h2>
+                <div id="liquidationMessage" class="message"></div>
+
+                <div class="grid-2">
+                    <div class="form-group">
+                        <label>LR No.</label>
+                        <input type="text" id="liquidationLrNo" placeholder="Enter LR No.">
+                    </div>
+                    <div class="form-group">
+                        <label>Date</label>
+                        <input type="date" id="liquidationReportDate">
+                    </div>
+                </div>
+
+                <div class="grid-2">
+                    <div class="form-group">
+                        <label>Barangay</label>
+                        <input type="text" id="liquidationBarangay" placeholder="Barangay">
+                    </div>
+                    <div class="form-group">
+                        <label>City/Municipality</label>
+                        <input type="text" id="liquidationMunicipality" placeholder="City/Municipality">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Province</label>
+                    <input type="text" id="liquidationProvince" placeholder="Province">
+                </div>
+
+                <div style="margin: 20px 0 10px; font-weight: 700;">Particulars</div>
+                <div style="overflow-x: auto;">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th style="min-width: 240px;">Particulars</th>
+                                <th style="width: 160px;">Amount</th>
+                                <th style="width: 120px;">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="liquidationItemsBody"></tbody>
+                    </table>
+                </div>
+                <div style="margin-top: 10px;">
+                    <button class="btn btn-primary" onclick="addLiquidationItemRow()">➕ Add Row</button>
+                </div>
+
+                <div style="margin-top: 16px; font-weight: 700;">Total Amount Spent: <span id="liquidationTotalSpent">₱0.00</span></div>
+
+                <div style="margin-top: 20px; font-weight: 700;">Cash Advance</div>
+                <div class="grid-2">
+                    <div class="form-group">
+                        <label>Amount (₱)</label>
+                        <input type="number" id="liquidationCashAdvanceAmount" step="0.01" placeholder="0.00">
+                    </div>
+                    <div class="form-group">
+                        <label>DV No.</label>
+                        <input type="text" id="liquidationCashAdvanceDvNo" placeholder="DV No.">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>DV Date</label>
+                    <input type="date" id="liquidationCashAdvanceDate">
+                </div>
+
+                <div style="margin-top: 16px; font-weight: 700;">Refunded</div>
+                <div class="grid-2">
+                    <div class="form-group">
+                        <label>Amount (₱)</label>
+                        <input type="number" id="liquidationRefundedAmount" step="0.01" placeholder="0.00">
+                    </div>
+                    <div class="form-group">
+                        <label>OR No.</label>
+                        <input type="text" id="liquidationRefundedOrNo" placeholder="OR No.">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>OR Date</label>
+                    <input type="date" id="liquidationRefundedDate">
+                </div>
+
+                <div class="form-group">
+                    <label>Amount to be Reimbursed (₱)</label>
+                    <input type="number" id="liquidationReimbursedAmount" step="0.01" placeholder="0.00">
+                </div>
+
+                <div style="margin-top: 16px; font-weight: 700;">Certified By</div>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px;">
+                    <div class="form-group">
+                        <label>Accountable SK Official</label>
+                        <input type="text" id="liquidationCertifiedA" placeholder="Printed name">
+                    </div>
+                    <div class="form-group">
+                        <label>SK Chairperson</label>
+                        <input type="text" id="liquidationCertifiedB" placeholder="Printed name">
+                    </div>
+                    <div class="form-group">
+                        <label>SK Treasurer</label>
+                        <input type="text" id="liquidationCertifiedC" placeholder="Printed name">
+                    </div>
+                </div>
+
+                <div style="margin-top: 20px; display: flex; flex-wrap: wrap; gap: 12px;">
+                    <button class="btn btn-primary" onclick="saveLiquidationReport()">💾 Save Report</button>
+                    <button class="btn btn-primary" onclick="resetLiquidationForm()">🧹 New Report</button>
+                    <button class="btn btn-primary" onclick="printLiquidationReport()">🖨️ Print</button>
+                    <button class="btn btn-primary" onclick="deleteLiquidationReport()">🗑️ Delete</button>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>📚 Liquidation Records</h2>
+                <div class="grid-2">
+                    <div class="form-group">
+                        <label>Search</label>
+                        <input type="text" id="liquidationSearch" placeholder="Search LR No, barangay, municipality">
+                    </div>
+                    <div class="form-group">
+                        <label>Sort By</label>
+                        <select id="liquidationSort">
+                            <option value="date_desc">Date ↓</option>
+                            <option value="date_asc">Date ↑</option>
+                            <option value="amount_desc">Amount ↓</option>
+                            <option value="amount_asc">Amount ↑</option>
+                            <option value="lr_asc">LR No A–Z</option>
+                            <option value="lr_desc">LR No Z–A</option>
+                        </select>
+                    </div>
+                </div>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>LR No.</th>
+                            <th>Date</th>
+                            <th>Barangay</th>
+                            <th>Municipality</th>
+                            <th>Total Amount</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="liquidationRecords">
+                        <tr><td colspan="6" style="text-align: center; color: #999;">No liquidation reports yet</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Annual Procurement Plan (APP) Tab -->
+        <div id="app" class="tab-content">
+            <div class="card">
+                <h2>📋 Annual Procurement Plan</h2>
+                <div id="appMessage" class="message"></div>
+                
+                <!-- APP Form Header Section -->
+                <div style="background: linear-gradient(135deg, #0284c7 0%, #0ea5e9 100%); color: white; padding: 16px; border-radius: 8px; margin-bottom: 16px;">
+                    <h3 style="margin: 0 0 12px 0; font-size: 18px;">CREATE / EDIT PLAN</h3>
+                    <p style="margin: 0; opacity: 0.9; font-size: 14px;">Fill in the plan details and procurement items below</p>
+                </div>
+                
+                <!-- APP Form -->
+                <form id="appForm">
+                    <div id="appHeaderSection" style="display: block;">
+                    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px;">
+                        <div class="form-group">
+                            <label>APP No.</label>
+                            <input type="text" id="appNo" placeholder="APP No.">
+                        </div>
+                        <div class="form-group">
+                            <label>Office Name</label>
+                            <input type="text" id="appOfficeName" placeholder="Office Name">
+                        </div>
+                        <div class="form-group">
+                            <label>Calendar Year</label>
+                            <input type="number" id="appCalendarYear" placeholder="2025" min="2000" max="2099">
+                        </div>
+                    </div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px;">
+                        <div class="form-group">
+                            <label>Barangay</label>
+                            <input type="text" id="appBarangay" placeholder="Barangay">
+                        </div>
+                        <div class="form-group">
+                            <label>Municipality</label>
+                            <input type="text" id="appMunicipality" placeholder="Municipality">
+                        </div>
+                        <div class="form-group">
+                            <label>Province</label>
+                            <input type="text" id="appProvince" placeholder="Province">
+                        </div>
+                    </div>
+
+                    <!-- Items Table -->
+                    <table style="width: 100%; border-collapse: collapse; margin-top: 16px;">
+                        <thead>
+                            <tr style="background: #0284c7; color: white;">
+                                <th colspan="5" style="border: 1px solid #333; padding: 8px; text-align: left;">BASIC INFORMATION</th>
+                                <th colspan="2" style="border: 1px solid #333; padding: 8px; text-align: center;">1ST QUARTER</th>
+                                <th colspan="2" style="border: 1px solid #333; padding: 8px; text-align: center;">2ND QUARTER</th>
+                                <th colspan="2" style="border: 1px solid #333; padding: 8px; text-align: center;">3RD QUARTER</th>
+                                <th colspan="2" style="border: 1px solid #333; padding: 8px; text-align: center;">4TH QUARTER</th>
+                                <th style="border: 1px solid #333; padding: 8px; text-align: center;">Action</th>
+                            </tr>
+                            <tr style="background: #7c8eea; color: white;">
+                                <th style="border: 1px solid #333; padding: 8px; text-align: left;">Description</th>
+                                <th style="border: 1px solid #333; padding: 8px; text-align: right; width: 70px;">Unit Cost</th>
+                                <th style="border: 1px solid #333; padding: 8px; text-align: right; width: 60px;">Qty</th>
+                                <th style="border: 1px solid #333; padding: 8px; text-align: center; width: 50px;">Unit</th>
+                                <th style="border: 1px solid #333; padding: 8px; text-align: right; width: 70px;">Total Cost</th>
+                                <th style="border: 1px solid #333; padding: 8px; text-align: right; width: 50px;">Qty 1</th>
+                                <th style="border: 1px solid #333; padding: 8px; text-align: right; width: 60px;">Amount 1</th>
+                                <th style="border: 1px solid #333; padding: 8px; text-align: right; width: 50px;">Qty 1</th>
+                                <th style="border: 1px solid #333; padding: 8px; text-align: right; width: 60px;">Amount 1</th>
+                                <th style="border: 1px solid #333; padding: 8px; text-align: right; width: 50px;">Qty 1</th>
+                                <th style="border: 1px solid #333; padding: 8px; text-align: right; width: 60px;">Amount 1</th>
+                                <th style="border: 1px solid #333; padding: 8px; text-align: right; width: 50px;">Qty 1</th>
+                                <th style="border: 1px solid #333; padding: 8px; text-align: right; width: 60px;">Amount 1</th>
+                                <th style="border: 1px solid #333; padding: 8px; text-align: center; width: 80px;">Remove</th>
+                            </tr>
+                        </thead>
+                        <tbody id="appItemsBody"></tbody>
+                    </table>
+                    
+                    <button type="button" class="btn btn-primary" onclick="addAppItemRow()" style="margin-top: 12px; margin-right: 8px;">➕ Add Row</button>
+                    <button type="button" class="btn btn-info" onclick="addAppLabelRow()" style="margin-top: 12px; margin-right: 8px; background: #0ea5e9; color: white; padding: 10px 16px; border: none; border-radius: 6px; cursor: pointer;">🏷️ Add Label</button>
+                    <button type="button" class="btn btn-info" onclick="addAppTotalRow()" style="margin-top: 12px; margin-right: 8px; background: #10b981; color: white; padding: 10px 16px; border: none; border-radius: 6px; cursor: pointer;">📊 Add Total</button>
+                    <button type="button" class="btn btn-info" onclick="addAppGrandTotalRow()" style="margin-top: 12px; margin-right: 8px; background: #8b5cf6; color: white; padding: 10px 16px; border: none; border-radius: 6px; cursor: pointer;">🎯 Grand Total</button>
+                    <button type="submit" class="btn btn-success" style="margin-top: 12px;">💾 Save Plan</button>
+                    <button type="reset" class="btn btn-secondary" style="margin-top: 12px;">🔄 Reset</button>
+                    </div>
+                </form>
+
+                <!-- APP Records List -->
+                <div id="appRecordsContainer" style="margin-top: 24px;">
+                    <h3>Saved Plans</h3>
+                    <div style="display: flex; gap: 12px; margin-bottom: 16px;">
+                        <input type="text" id="appSearch" placeholder="Search by office name, barangay..." style="flex: 1; padding: 10px; border: 1px solid #ddd; border-radius: 6px;">
+                        <select id="appSort" style="padding: 10px; border: 1px solid #ddd; border-radius: 6px;">
+                            <option value="">Sort by</option>
+                            <option value="date_desc">Date (Newest)</option>
+                            <option value="date_asc">Date (Oldest)</option>
+                            <option value="year_asc">Year (Ascending)</option>
+                            <option value="year_desc">Year (Descending)</option>
+                        </select>
+                    </div>
+                    <table style="width: 100%; border-collapse: collapse; border: 1px solid #ddd;">
+                        <thead>
+                            <tr style="background: #f5f5f5;">
+                                <th style="border: 1px solid #ddd; padding: 12px; text-align: left;">APP No.</th>
+                                <th style="border: 1px solid #ddd; padding: 12px; text-align: left;">Office</th>
+                                <th style="border: 1px solid #ddd; padding: 12px; text-align: left;">Barangay</th>
+                                <th style="border: 1px solid #ddd; padding: 12px; text-align: left;">Year</th>
+                                <th style="border: 1px solid #ddd; padding: 12px; text-align: center;">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="appRecordsList">
+                            <tr><td colspan="5" style="text-align: center; padding: 20px; color: #999;">No plans yet</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Inventory Tab -->
+        <div id="inventory" class="tab-content">
+            <div class="card">
+                <h2>📦 Inventory</h2>
+                <div id="inventoryMessage" class="message"></div>
+                <form id="inventoryForm">
+                    <div class="form-group">
+                        <label>Item Name</label>
+                        <input type="text" id="itemName" placeholder="Enter item name" required>
+                    </div>
+                    <div class="grid-2">
+                        <div class="form-group">
+                            <label>Quantity</label>
+                            <input type="number" id="itemQuantity" placeholder="0" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Unit Price (₱)</label>
+                            <input type="number" id="itemPrice" placeholder="0" step="0.01" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Description</label>
+                        <textarea id="itemDesc" placeholder="Item details"></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary">➕ Add Item</button>
+                </form>
+
+                <div style="margin-top: 30px;">
+                    <h3>Inventory Items</h3>
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Item Name</th>
+                                <th>Quantity</th>
+                                <th>Unit Price</th>
+                                <th>Total Value</th>
+                            </tr>
+                        </thead>
+                        <tbody id="inventoryList">
+                            <tr><td colspan="4" style="text-align: center; color: #999;">No items in inventory</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Analytics Tab -->
+        <div id="analytics" class="tab-content">
+            <div class="card">
+                <h2>📊 Analytics & Reports</h2>
+                <p style="color: #666; margin-bottom: 20px;">Financial analytics and performance metrics</p>
+                <div id="analyticsContent">
+                    <p style="color: #999; padding: 20px; text-align: center;">Analytics dashboard will display here</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Meeting Minutes Tab -->
+        <div id="minutes" class="tab-content">
+            <div class="card">
+                <h2>📝 Minutes of Meetings</h2>
+                <div id="minutesMessage" class="message"></div>
+                <form id="minutesForm">
+                    <div class="grid-2">
+                        <div class="form-group">
+                            <label>Meeting Title</label>
+                            <input type="text" id="meetingTitle" placeholder="e.g., SK Regular Meeting" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Meeting Date</label>
+                            <input type="date" id="meetingDate" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Upload Minutes File</label>
+                        <input type="file" id="minutesFile" accept=".pdf,.doc,.docx,.txt" required>
+                        <div class="upload-hint">Supported: PDF, DOC, DOCX, TXT</div>
+                    </div>
+                    <button type="submit" class="btn btn-primary">📤 Upload Minutes</button>
+                </form>
+
+                <div style="margin-top: 30px;">
+                    <div class="section-header" style="margin-bottom: 12px;">
+                        <h3>Meeting Records</h3>
+                        <span class="pill">Files</span>
+                    </div>
+                    <div style="display: grid; grid-template-columns: 1fr 160px 160px; gap: 10px; margin-bottom: 12px;">
+                        <input type="text" id="minutesSearch" placeholder="Search title" style="padding: 8px; border: 1px solid #ddd; border-radius: 8px;">
+                        <input type="date" id="minutesFrom" style="padding: 8px; border: 1px solid #ddd; border-radius: 8px;">
+                        <input type="date" id="minutesTo" style="padding: 8px; border: 1px solid #ddd; border-radius: 8px;">
+                    </div>
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Title</th>
+                                <th>Date</th>
+                                <th>File</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="minutesList">
+                            <tr><td colspan="4" style="text-align: center; color: #999;">No minutes uploaded</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Resolutions Tab -->
+        <div id="resolutions" class="tab-content">
+            <div class="card">
+                <h2>📄 Resolutions</h2>
+                <div id="resolutionsMessage" class="message"></div>
+                <form id="resolutionsForm">
+                    <div class="grid-2">
+                        <div class="form-group">
+                            <label>Resolution Number</label>
+                            <input type="text" id="resolutionNumber" placeholder="e.g., No. 001 2026" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Title</label>
+                            <input type="text" id="resolutionTitle" placeholder="Resolution title" required>
+                        </div>
+                    </div>
+                    <div class="grid-2">
+                        <div class="form-group">
+                            <label>Date Passed</label>
+                            <input type="date" id="resolutionDate" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Upload Resolution File</label>
+                            <input type="file" id="resolutionFile" accept=".pdf,.doc,.docx,.txt" required>
+                            <div class="upload-hint">Supported: PDF, DOC, DOCX, TXT</div>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary">📤 Upload Resolution</button>
+                </form>
+
+                <div style="margin-top: 30px;">
+                    <div class="section-header" style="margin-bottom: 12px;">
+                        <h3>Resolutions</h3>
+                        <span class="pill">Files</span>
+                    </div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr 160px 160px; gap: 10px; margin-bottom: 12px;">
+                        <input type="text" id="resolutionSearch" placeholder="Search title" style="padding: 8px; border: 1px solid #ddd; border-radius: 8px;">
+                        <input type="text" id="resolutionNumberFilter" placeholder="Resolution number" style="padding: 8px; border: 1px solid #ddd; border-radius: 8px;">
+                        <input type="date" id="resolutionFrom" style="padding: 8px; border: 1px solid #ddd; border-radius: 8px;">
+                        <input type="date" id="resolutionTo" style="padding: 8px; border: 1px solid #ddd; border-radius: 8px;">
+                    </div>
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Number</th>
+                                <th>Title</th>
+                                <th>Date</th>
+                                <th>File</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="resolutionsList">
+                            <tr><td colspan="5" style="text-align: center; color: #999;">No resolutions uploaded</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Settings Tab -->
+        <div id="settings" class="tab-content">
+            <div class="card">
+                <h2>⚙️ Settings</h2>
+                <div class="profile-card">
+                    <div class="profile-preview" id="settingsProfilePreview">
+                        <span style="font-size: 28px;">👤</span>
+                    </div>
+                    <div>
+                        <div class="section-header">
+                            <h3 style="margin: 0;">Profile Picture</h3>
+                            <span class="pill">New</span>
+                        </div>
+                        <p class="upload-hint">Upload a new profile photo to update your avatar across the dashboard.</p>
+                        <input type="file" id="settingsProfilePicture" accept="image/*" style="margin-top: 10px;">
+                        <div class="upload-hint">Supported: JPG, PNG, WEBP</div>
+                    </div>
+                </div>
+                <h3 style="margin-top: 10px; margin-bottom: 15px;">Edit Profile Information</h3>
+                <form id="settingsForm">
+                    <div class="grid-2">
+                        <div class="form-group">
+                            <label>Full Name</label>
+                            <input type="text" id="settingsName" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Position</label>
+                            <input type="text" id="settingsPosition" required>
+                        </div>
+                    </div>
+                    <div class="grid-2">
+                        <div class="form-group">
+                            <label>Barangay</label>
+                            <input type="text" id="settingsBarangay" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Municipality</label>
+                            <input type="text" id="settingsMunicipality" required>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary">💾 Save Changes</button>
+                </form>
+
+                <div style="margin-top: 30px; border-top: 2px solid #eee; padding-top: 20px;">
+                    <h3 style="margin-bottom: 12px;">🔒 Change Password</h3>
+                    <form id="passwordChangeForm">
+                        <div class="grid-2">
+                            <div class="form-group">
+                                <label>Current Password</label>
+                                <div class="input-with-icon">
+                                    <input type="password" id="currentPassword" required>
+                                    <button type="button" class="toggle-visibility" onclick="togglePasswordVisibility('currentPassword', this)">👁️</button>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>New Password</label>
+                                <div class="input-with-icon">
+                                    <input type="password" id="newPassword" required>
+                                    <button type="button" class="toggle-visibility" onclick="togglePasswordVisibility('newPassword', this)">👁️</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Confirm New Password</label>
+                            <div class="input-with-icon">
+                                <input type="password" id="confirmPassword" required>
+                                <button type="button" class="toggle-visibility" onclick="togglePasswordVisibility('confirmPassword', this)">👁️</button>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-primary">📝 Submit Password Change</button>
+                        <div id="passwordChangeMessage" class="message" style="display: none;"></div>
+                        <div class="password-status" id="passwordChangeStatus">Status: <strong>No pending request</strong></div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Load user profile
+        async function loadUserProfile() {
+            try {
+                const response = await fetch('/get-profile');
+                const data = await response.json();
+
+                if (data.success && data.user) {
+                    document.getElementById('userName').textContent = data.user.full_name || 'User';
+                    document.getElementById('userPosition').textContent = data.user.position || 'Position';
+
+                    // Display profile picture in avatar
+                    const userAvatar = document.getElementById('userAvatar');
+                    if (data.user.profile_picture) {
+                        const img = document.createElement('img');
+                        img.src = `/uploads/${data.user.profile_picture}`;
+                        img.alt = 'Profile Picture';
+                        userAvatar.innerHTML = '';
+                        userAvatar.appendChild(img);
+                    }
+
+                    const settingsPreview = document.getElementById('settingsProfilePreview');
+                    if (settingsPreview) {
+                        if (data.user.profile_picture) {
+                            settingsPreview.innerHTML = `<img src="/uploads/${data.user.profile_picture}" alt="Profile Picture">`;
+                        } else {
+                            settingsPreview.innerHTML = '<span style="font-size: 28px;">👤</span>';
+                        }
+                    }
+
+                    // Fill settings form
+                    document.getElementById('settingsName').value = data.user.full_name || '';
+                    document.getElementById('settingsPosition').value = data.user.position || '';
+                    document.getElementById('settingsBarangay').value = data.user.barangay || '';
+                    document.getElementById('settingsMunicipality').value = data.user.municipality || '';
+                }
+            } catch (error) {
+                console.error('Error loading profile:', error);
+            }
+        }
+
+        let membersCache = [];
+
+        function getStatusClass(status) {
+            const normalized = (status || '').toLowerCase();
+            if (normalized.includes('active')) return 'status-active';
+            if (normalized.includes('completed')) return 'status-completed';
+            if (normalized.includes('review')) return 'status-review';
+            if (normalized.includes('no budget')) return 'status-empty';
+            return 'status-empty';
+        }
+
+        function renderMembers(list) {
+            const container = document.getElementById('membersList');
+            if (!container) return;
+
+            if (!list.length) {
+                container.innerHTML = '<div style="text-align: center; color: #999; padding: 20px;">No members found</div>';
+                return;
+            }
+
+            container.innerHTML = list.map(member => {
+                const initials = (member.full_name || 'User').split(' ').map(part => part[0]).join('').slice(0, 2).toUpperCase();
+                const avatar = member.profile_picture
+                    ? `<img src="/uploads/${member.profile_picture}" alt="${member.full_name}">`
+                    : `<span>${initials}</span>`;
+                const statusClass = getStatusClass(member.barangay_budget_status);
+                return `
+                    <div class="member-card">
+                        <div class="member-header">
+                            <div class="member-avatar">${avatar}</div>
+                            <div>
+                                <div class="member-name">${member.full_name || 'Unnamed Member'}</div>
+                                <div class="member-role">${member.position || 'Position not set'}</div>
+                            </div>
+                        </div>
+                        <div class="member-meta">
+                            <span>🏘 Barangay: ${member.barangay || 'N/A'}</span>
+                            <span>🏛 Municipality: ${member.municipality || 'N/A'}</span>
+                        </div>
+                        <span class="status-pill ${statusClass}">${member.barangay_budget_status || 'No Budget Data'}</span>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function populateMunicipalityFilter(list) {
+            const select = document.getElementById('memberMunicipalityFilter');
+            if (!select) return;
+            const municipalities = Array.from(new Set(list.map(member => member.municipality).filter(Boolean)))
+                .sort((a, b) => a.localeCompare(b));
+            select.innerHTML = '<option value="">All Municipalities</option>' +
+                municipalities.map(municipality => `<option value="${municipality}">${municipality}</option>`).join('');
+        }
+
+        function applyMemberFilters() {
+            const municipality = document.getElementById('memberMunicipalityFilter')?.value || '';
+            const search = document.getElementById('memberSearch')?.value.toLowerCase().trim() || '';
+
+            const filtered = membersCache.filter(member => {
+                if (municipality && member.municipality !== municipality) return false;
+                if (!search) return true;
+                const haystack = `${member.full_name || ''} ${member.position || ''} ${member.barangay || ''} ${member.municipality || ''}`.toLowerCase();
+                return haystack.includes(search);
+            });
+
+            renderMembers(filtered);
+        }
+
+        async function loadMembers() {
+            try {
+                const response = await fetch('/get-member-leaderboard');
+                const data = await response.json();
+                if (data.success) {
+                    membersCache = data.members || [];
+                    populateMunicipalityFilter(membersCache);
+                    applyMemberFilters();
+                } else {
+                    membersCache = [];
+                    renderMembers([]);
+                }
+            } catch (error) {
+                console.error('Error loading members:', error);
+                renderMembers([]);
+            }
+        }
+
+        // Switch tabs
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.menu-link').forEach(link => link.classList.remove('active'));
+
+            document.getElementById(tabName).classList.add('active');
+            event.target.classList.add('active');
+        }
+
+        // Logout
+        function logout() {
+            fetch('/logout', { method: 'POST' })
+                .then(() => {
+                    window.location.href = '/';
+                });
+        }
+
+        function openAnnouncementsPage() {
+            window.location.href = '/user-announcements';
+        }
+
+        // Form handlers
+        // Budget for F.Y handlers
+        let budgetFyTemplatesCache = [];
+        let activeBudgetFyTemplateId = null;
+        let budgetFyRows = [];
+
+        function showBudgetFyMessage(type, text) {
+            const message = document.getElementById('budgetFyMessage');
+            if (!message) return;
+            message.className = `message ${type}`;
+            message.textContent = text;
+            message.style.display = 'block';
+        }
+
+        function escapeHtml(value) {
+            return String(value ?? '')
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#039;');
+        }
+
+        function setBudgetFyEditorVisible(isVisible) {
+            const editor = document.getElementById('budgetFyEditor');
+            if (editor) {
+                editor.style.display = isVisible ? 'block' : 'none';
+            }
+        }
+
+        function renderBudgetFyTemplates(list) {
+            const container = document.getElementById('budgetFyTemplates');
+            if (!container) return;
+
+            if (!list || list.length === 0) {
+                container.innerHTML = '<div style="padding: 16px; border: 1px dashed #cbd5f5; border-radius: 12px; text-align: center; color: #94a3b8;">No templates yet. Create one to get started.</div>';
+                return;
+            }
+
+            // Sort by ID descending to show latest first
+            const sortedList = [...list].sort((a, b) => b.id - a.id);
+
+            container.innerHTML = sortedList.map((template, index) => {
+                const isActive = template.id === activeBudgetFyTemplateId;
+                const isLatest = index === 0;
+                const borderColor = isActive ? '#6366f1' : (isLatest ? '#10b981' : '#e2e8f0');
+                const bgColor = isActive ? '#eef2ff' : (isLatest ? '#ecfdf5' : '#ffffff');
+                const borderWidth = isLatest ? '2px' : '1px';
+                
+                return `
+                    <div style="padding: 14px; border: ${borderWidth} solid ${borderColor}; border-radius: 14px; background: ${bgColor}; ${isLatest ? 'box-shadow: 0 4px 12px rgba(16, 185, 129, 0.15);' : ''}">
+                        <div style="font-weight: 700; display: flex; align-items: center; justify-content: space-between;">
+                            ${escapeHtml(template.title)}
+                            ${isLatest ? '<span style="font-size: 10px; background: #10b981; color: white; padding: 2px 8px; border-radius: 4px; font-weight: 600;">LATEST</span>' : ''}
+                        </div>
+                        <div style="font-size: 12px; color: #64748b;">F.Y ${escapeHtml(template.fiscal_year || '—')}</div>
+                        ${template.address ? `<div style="font-size: 11px; color: #64748b; margin-top: 4px;">📍 ${escapeHtml(template.address)}</div>` : ''}
+                        <button class="btn btn-primary" style="margin-top: 10px; padding: 8px 14px; font-size: 12px; background: ${isLatest ? '#10b981' : '#6366f1'}; width: 100%; cursor: pointer; border: none; border-radius: 6px; color: white; font-weight: 600;" onclick="openBudgetFyTemplate(${template.id})">Open</button>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        async function loadBudgetFyTemplates() {
+            try {
+                const response = await fetch('/get-budget-fy-templates');
+                const data = await response.json();
+                if (data.success) {
+                    budgetFyTemplatesCache = data.templates || [];
+                    renderBudgetFyTemplates(budgetFyTemplatesCache);
+                } else {
+                    budgetFyTemplatesCache = [];
+                    renderBudgetFyTemplates([]);
+                }
+            } catch (error) {
+                console.error('Error loading Budget for F.Y templates:', error);
+            }
+        }
+
+        async function openBudgetFyTemplate(templateId) {
+            try {
+                const response = await fetch(`/get-budget-fy-template/${templateId}`);
+                const data = await response.json();
+                if (!data.success || !data.template) {
+                    showBudgetFyMessage('error', '✗ Unable to load template');
+                    return;
+                }
+
+                const template = data.template;
+                activeBudgetFyTemplateId = template.id;
+                budgetFyRows = template.rows || [];
+                if (budgetFyRows.length === 0) {
+                    budgetFyRows = [{}];
+                }
+
+                const titleInput = document.getElementById('budgetFyTitle');
+                const yearInput = document.getElementById('budgetFyYear');
+                const addressInput = document.getElementById('budgetFyAddress');
+                if (titleInput) titleInput.value = template.title || '';
+                if (yearInput) yearInput.value = template.fiscal_year || '';
+                if (addressInput) addressInput.value = template.address || '';
+
+                const activeTitle = document.getElementById('budgetFyActiveTitle');
+                if (activeTitle) activeTitle.textContent = template.title || 'Untitled';
+
+                setBudgetFyEditorVisible(true);
+                renderBudgetFyRows(budgetFyRows);
+                renderBudgetFyTemplates(budgetFyTemplatesCache);
+            } catch (error) {
+                console.error('Error opening Budget for F.Y template:', error);
+            }
+        }
+
+        function renderBudgetFyRows(rows) {
+            const body = document.getElementById('budgetFyBody');
+            if (!body) return;
+
+            body.innerHTML = rows.map((row, index) => `
+                <tr data-index="${index}" data-id="${row.id || ''}">
+                    <td><input class="fy-input" data-field="program" value="${escapeHtml(row.program || '')}"></td>
+                    <td><input class="fy-input" data-field="project_activities" value="${escapeHtml(row.project_activities || '')}"></td>
+                    <td><input class="fy-input" data-field="account_code" value="${escapeHtml(row.account_code || '')}"></td>
+                    <td><input class="fy-input" data-field="duration" value="${escapeHtml(row.duration || '')}"></td>
+                    <td><input class="fy-input" data-field="mooe" type="number" step="0.01" value="${escapeHtml(row.mooe ?? '')}"></td>
+                    <td><input class="fy-input" data-field="co" type="number" step="0.01" value="${escapeHtml(row.co ?? '')}"></td>
+                    <td><input class="fy-input" data-field="amount" type="number" step="0.01" value="${escapeHtml(row.amount ?? '')}"></td>
+                    <td><button class="fy-delete" onclick="removeBudgetFyRow(${index})">Remove</button></td>
+                </tr>
+            `).join('');
+
+            body.querySelectorAll('input[data-field="amount"]').forEach(input => {
+                input.addEventListener('input', updateBudgetFyTotal);
+            });
+            updateBudgetFyTotal();
+        }
+
+        function addBudgetFyRow(row = {}) {
+            const body = document.getElementById('budgetFyBody');
+            if (!body) return;
+            
+            // Create new data row
+            const newRow = document.createElement('tr');
+            newRow.style.borderBottom = '1px solid #ddd';
+            newRow.innerHTML = `
+                <td style="padding: 8px; border: 1px solid #ddd;"><input class="fy-input" data-field="program" value="${escapeHtml(row.program || '')}" style="width: 100%; padding: 4px; border: none;"></td>
+                <td style="padding: 8px; border: 1px solid #ddd;"><input class="fy-input" data-field="project_activities" value="${escapeHtml(row.project_activities || '')}" style="width: 100%; padding: 4px; border: none;"></td>
+                <td style="padding: 8px; border: 1px solid #ddd;"><input class="fy-input" data-field="account_code" value="${escapeHtml(row.account_code || '')}" style="width: 100%; padding: 4px; border: none;"></td>
+                <td style="padding: 8px; border: 1px solid #ddd;"><input class="fy-input" data-field="duration" value="${escapeHtml(row.duration || '')}" style="width: 100%; padding: 4px; border: none;"></td>
+                <td style="padding: 8px; border: 1px solid #ddd;"><input class="fy-input" data-field="mooe" type="number" step="0.01" value="${escapeHtml(row.mooe ?? '')}" style="width: 100%; padding: 4px; border: none;"></td>
+                <td style="padding: 8px; border: 1px solid #ddd;"><input class="fy-input" data-field="co" type="number" step="0.01" value="${escapeHtml(row.co ?? '')}" style="width: 100%; padding: 4px; border: none;"></td>
+                <td style="padding: 8px; border: 1px solid #ddd;"><input class="fy-input" data-field="amount" type="number" step="0.01" value="${escapeHtml(row.amount ?? '')}" style="width: 100%; padding: 4px; border: none;"></td>
+                <td style="padding: 8px; border: 1px solid #ddd;"><button class="fy-delete" onclick="removeBudgetFyDataRow(this)" style="padding: 6px 10px; background: #ef4444; color: white; border: none; border-radius: 4px; cursor: pointer;">Remove</button></td>
+            `;
+            
+            // Add event listener to the amount input
+            const amountInput = newRow.querySelector('input[data-field="amount"]');
+            if (amountInput) {
+                amountInput.addEventListener('change', updateBudgetFyTotal);
+                amountInput.addEventListener('input', updateBudgetFyTotal);
+            }
+            
+            // Find LAST LABEL row and insert after it, or before LAST TOTAL/GRAND TOTAL
+            const rows = body.querySelectorAll('tr');
+            let insertBefore = null;
+            
+            // First, look for the last LABEL
+            let lastLabelIndex = -1;
+            for (let i = rows.length - 1; i >= 0; i--) {
+                if (rows[i].getAttribute('data-type') === 'label') {
+                    lastLabelIndex = i;
+                    break;
+                }
+            }
+            
+            // If a label exists, insert after it
+            if (lastLabelIndex !== -1) {
+                insertBefore = rows[lastLabelIndex].nextElementSibling;
+            } else {
+                // Otherwise, find the last TOTAL or GRAND TOTAL
+                for (let i = rows.length - 1; i >= 0; i--) {
+                    const rowType = rows[i].getAttribute('data-type');
+                    if (rowType === 'total' || rowType === 'grand-total') {
+                        insertBefore = rows[i];
+                        break;
+                    }
+                }
+            }
+            
+            if (insertBefore) {
+                body.insertBefore(newRow, insertBefore);
+            } else {
+                body.appendChild(newRow);
+            }
+            
+            budgetFyRows.push(row);
+            updateBudgetFyTotal();
+        }
+
+        function removeBudgetFyDataRow(btn) {
+            btn.closest('tr').remove();
+            updateBudgetFyTotal();
+        }
+
+        function removeBudgetFyRow(index) {
+            const body = document.getElementById('budgetFyBody');
+            if (body) {
+                const rows = body.querySelectorAll('tr');
+                if (index < rows.length) {
+                    rows[index].remove();
+                }
+            }
+        }
+
+        function addBudgetFyLabelRow() {
+            const labelText = prompt('Enter section label:');
+            if (!labelText) return;
+            
+            const body = document.getElementById('budgetFyBody');
+            if (!body) return;
+            
+            const newRow = document.createElement('tr');
+            newRow.innerHTML = `
+                <td colspan="7" style="background: #f0ad4e; color: white; padding: 12px; font-weight: bold; border: 2px solid #ec971f; text-align: left; font-size: 16px;">
+                    ${labelText}
+                </td>
+                <td style="background: #f0ad4e; padding: 12px; border: 2px solid #ec971f;"><button type="button" onclick="removeBudgetFyLabelRow(this)" style="padding: 6px 10px; background: #ef4444; color: white; border: none; border-radius: 4px; cursor: pointer;">Remove</button></td>
+            `;
+            newRow.style.background = '#fff3cd';
+            newRow.setAttribute('data-type', 'label');
+            
+            // Insert AFTER the last TOTAL (before GRAND TOTAL if exists)
+            const rows = body.querySelectorAll('tr');
+            let insertBefore = null;
+            
+            // Find GRAND TOTAL first
+            for (let row of rows) {
+                if (row.getAttribute('data-type') === 'grand-total') {
+                    insertBefore = row;
+                    break;
+                }
+            }
+            
+            if (insertBefore) {
+                body.insertBefore(newRow, insertBefore);
+            } else {
+                body.appendChild(newRow);
+            }
+        }
+
+        function addBudgetFyTotalRow() {
+            const body = document.getElementById('budgetFyBody');
+            if (!body) return;
+            
+            const newRow = document.createElement('tr');
+            newRow.innerHTML = `
+                <td colspan="6" style="background: #ddd; color: #333; padding: 12px; font-weight: bold; text-align: right; font-size: 14px; border: 2px solid #999;">
+                    TOTAL
+                </td>
+                <td style="background: #ddd; color: #333; padding: 12px; font-weight: bold; text-align: right; font-size: 14px; border: 2px solid #999;">
+                    <span class="section-total">₱0.00</span>
+                </td>
+                <td><button type="button" onclick="removeBudgetFyTotalRow(this)" style="padding: 6px 10px; background: #ef4444; color: white; border: none; border-radius: 4px; cursor: pointer;">Remove</button></td>
+            `;
+            newRow.setAttribute('data-type', 'total');
+            
+            // Insert BEFORE GRAND TOTAL only, or append if none exists
+            const rows = body.querySelectorAll('tr');
+            let grandTotalRow = null;
+            for (let row of rows) {
+                if (row.getAttribute('data-type') === 'grand-total') {
+                    grandTotalRow = row;
+                    break;
+                }
+            }
+            
+            if (grandTotalRow) {
+                body.insertBefore(newRow, grandTotalRow);
+            } else {
+                body.appendChild(newRow);
+            }
+            
+            updateBudgetFyTotal();
+        }
+
+        function removeBudgetFyTotalRow(btn) {
+            btn.closest('tr').remove();
+            updateBudgetFyTotal();
+        }
+
+        function removeBudgetFyLabelRow(btn) {
+            btn.closest('tr').remove();
+        }
+
+        function addBudgetFyGrandTotalRow() {
+            const body = document.getElementById('budgetFyBody');
+            if (!body) return;
+            
+            const newRow = document.createElement('tr');
+            newRow.innerHTML = `
+                <td colspan="6" style="background: #0284c7; color: white; padding: 12px; font-weight: bold; text-align: right; font-size: 16px; border: 2px solid #0ea5e9;">
+                    GRAND TOTAL
+                </td>
+                <td style="background: #0284c7; color: white; padding: 12px; font-weight: bold; text-align: right; font-size: 16px; border: 2px solid #0ea5e9;">
+                    <span class="grand-total-amount">₱0.00</span>
+                </td>
+                <td><button type="button" onclick="removeBudgetFyTotalRow(this)" style="padding: 6px 10px; background: #ef4444; color: white; border: none; border-radius: 4px; cursor: pointer;">Remove</button></td>
+            `;
+            newRow.setAttribute('data-type', 'grand-total');
+            body.appendChild(newRow);
+            updateBudgetFyTotal();
+        }
+
+        function calculateSectionTotal(totalRow) {
+            let total = 0;
+            let currentRow = totalRow.previousElementSibling;
+            
+            while (currentRow) {
+                const rowType = currentRow.getAttribute('data-type');
+                if (rowType === 'total' || rowType === 'grand-total') break;
+                if (rowType !== 'label') {
+                    const amountInput = currentRow.querySelector('[data-field="amount"]');
+                    if (amountInput) {
+                        total += parseFloat(amountInput.value) || 0;
+                    }
+                }
+                currentRow = currentRow.previousElementSibling;
+            }
+            
+            return total;
+        }
+
+        function collectBudgetFyRowsFromDOM() {
+            const rows = [];
+            document.querySelectorAll('#budgetFyBody tr').forEach((tr, index) => {
+                const getVal = (field) => tr.querySelector(`[data-field="${field}"]`)?.value || '';
+                const idValue = tr.getAttribute('data-id');
+                const dataType = (tr.getAttribute('data-type') || 'data').toLowerCase();
+                let rowType = 'DATA';
+                if (dataType === 'total' || dataType === 'grand-total') {
+                    rowType = 'TOTAL';
+                } else if (dataType === 'label') {
+                    rowType = 'LABEL';
+                }
+                rows.push({
+                    id: idValue ? parseInt(idValue, 10) : null,
+                    section: '',
+                    program: getVal('program'),
+                    project_activities: getVal('project_activities'),
+                    account_code: getVal('account_code'),
+                    duration: getVal('duration'),
+                    mooe: parseFloat(getVal('mooe') || 0),
+                    co: parseFloat(getVal('co') || 0),
+                    amount: parseFloat(getVal('amount') || 0),
+                    row_type: rowType,
+                    sort_order: index
+                });
+            });
+            return rows;
+        }
+
+        function updateBudgetFyTotal() {
+            const body = document.getElementById('budgetFyBody');
+            if (!body) return;
+
+            // Update section totals
+            const totalRows = body.querySelectorAll('tr[data-type="total"]');
+            totalRows.forEach(totalRow => {
+                const total = calculateSectionTotal(totalRow);
+                const totalSpan = totalRow.querySelector('.section-total');
+                if (totalSpan) {
+                    totalSpan.textContent = `₱${total.toLocaleString('en-US', { minimumFractionDigits: 2 })}`;
+                }
+            });
+
+            // Update grand total
+            const grandTotalRows = body.querySelectorAll('tr[data-type="grand-total"]');
+            grandTotalRows.forEach(grandTotalRow => {
+                let grandTotal = 0;
+                body.querySelectorAll('tr[data-type="total"]').forEach(totalRow => {
+                    const totalText = totalRow.querySelector('.section-total')?.textContent || '₱0.00';
+                    const amount = parseFloat(totalText.replace('₱', '').replace(/,/g, '')) || 0;
+                    grandTotal += amount;
+                });
+                const grandTotalSpan = grandTotalRow.querySelector('.grand-total-amount');
+                if (grandTotalSpan) {
+                    grandTotalSpan.textContent = `₱${grandTotal.toLocaleString('en-US', { minimumFractionDigits: 2 })}`;
+                }
+            });
+
+            // Update main total display
+            const total = Array.from(document.querySelectorAll('#budgetFyBody input[data-field="amount"]'))
+                .reduce((sum, input) => sum + (parseFloat(input.value) || 0), 0);
+            const totalEl = document.getElementById('budgetFyTotal');
+            if (totalEl) {
+                totalEl.textContent = `₱${total.toLocaleString('en-US', { minimumFractionDigits: 2 })}`;
+            }
+        }
+
+        async function createBudgetFyTemplate() {
+            const titleInput = document.getElementById('budgetFyTitle');
+            const yearInput = document.getElementById('budgetFyYear');
+            const addressInput = document.getElementById('budgetFyAddress');
+            const title = titleInput?.value.trim() || '';
+            const fiscalYear = yearInput?.value.trim() || '';
+            const address = addressInput?.value.trim() || '';
+
+            if (!title) {
+                showBudgetFyMessage('error', '✗ Please enter a template title');
+                return;
+            }
+
+            try {
+                const response = await fetch('/create-budget-fy-template', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ title, fiscal_year: fiscalYear, address })
+                });
+                const data = await response.json();
+
+                if (data.success) {
+                    activeBudgetFyTemplateId = data.template_id;
+                    budgetFyRows = [{}];
+                    const activeTitle = document.getElementById('budgetFyActiveTitle');
+                    if (activeTitle) activeTitle.textContent = title;
+                    setBudgetFyEditorVisible(true);
+                    renderBudgetFyRows(budgetFyRows);
+                    showBudgetFyMessage('success', '✓ Template created');
+                    loadBudgetFyTemplates();
+                } else {
+                    showBudgetFyMessage('error', `✗ ${data.message || 'Failed to create template'}`);
+                }
+            } catch (error) {
+                console.error('Error creating template:', error);
+                showBudgetFyMessage('error', '✗ Error creating template');
+            }
+        }
+
+        async function saveBudgetFyTemplate() {
+            if (!activeBudgetFyTemplateId) {
+                showBudgetFyMessage('error', '✗ Create or open a template first');
+                return;
+            }
+
+            const title = document.getElementById('budgetFyTitle')?.value.trim() || '';
+            const fiscalYear = document.getElementById('budgetFyYear')?.value.trim() || '';
+            const address = document.getElementById('budgetFyAddress')?.value.trim() || '';
+            const rows = collectBudgetFyRowsFromDOM();
+
+            try {
+                const response = await fetch('/save-budget-fy-template', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        template_id: activeBudgetFyTemplateId,
+                        title,
+                        fiscal_year: fiscalYear,
+                        address,
+                        rows
+                    })
+                });
+                const data = await response.json();
+                if (data.success) {
+                    showBudgetFyMessage('success', '✓ Template saved');
+                    await openBudgetFyTemplate(activeBudgetFyTemplateId);
+                    loadBudgetFyTemplates();
+                    await fetch('/api/sync-budget-projects', { method: 'POST' });
+                    loadBudgetAnalytics();
+                } else {
+                    showBudgetFyMessage('error', `✗ ${data.message || 'Failed to save template'}`);
+                }
+            } catch (error) {
+                console.error('Error saving template:', error);
+                showBudgetFyMessage('error', '✗ Error saving template');
+            }
+        }
+
+        function displayBudgetFyOnDashboard() {
+            loadBudgetAnalytics();
+            switchTab('dashboard');
+        }
+
+        async function deleteBudgetFyTemplate() {
+            if (!activeBudgetFyTemplateId) {
+                showBudgetFyMessage('error', '✗ No active template selected');
+                return;
+            }
+            if (!confirm('Delete this template?')) return;
+
+            try {
+                const response = await fetch(`/delete-budget-fy-template/${activeBudgetFyTemplateId}`, {
+                    method: 'DELETE'
+                });
+                const data = await response.json();
+                if (data.success) {
+                    activeBudgetFyTemplateId = null;
+                    budgetFyRows = [];
+                    setBudgetFyEditorVisible(false);
+                    const activeTitle = document.getElementById('budgetFyActiveTitle');
+                    if (activeTitle) activeTitle.textContent = 'None';
+                    const titleInput = document.getElementById('budgetFyTitle');
+                    const yearInput = document.getElementById('budgetFyYear');
+                    const addressInput = document.getElementById('budgetFyAddress');
+                    if (titleInput) titleInput.value = '';
+                    if (yearInput) yearInput.value = '';
+                    if (addressInput) addressInput.value = '';
+                    const totalEl = document.getElementById('budgetFyTotal');
+                    if (totalEl) totalEl.textContent = '₱0.00';
+                    showBudgetFyMessage('success', '✓ Template deleted');
+                    loadBudgetFyTemplates();
+                } else {
+                    showBudgetFyMessage('error', `✗ ${data.message || 'Failed to delete template'}`);
+                }
+            } catch (error) {
+                console.error('Error deleting template:', error);
+                showBudgetFyMessage('error', '✗ Error deleting template');
+            }
+        }
+
+        function printBudgetFyTemplate() {
+            const printWindow = window.open('', '', 'width=800,height=600');
+            const title = document.getElementById('budgetFyActiveTitle')?.textContent || 'Budget Template';
+            
+            // Clone the table and remove Action column
+            const originalTable = document.querySelector('.fy-table');
+            const tableClone = originalTable.cloneNode(true);
+            
+            // Remove Action column (last column)
+            tableClone.querySelectorAll('th:last-child').forEach(th => th.remove());
+            tableClone.querySelectorAll('td:last-child').forEach(td => td.remove());
+            
+            const tableHTML = tableClone.outerHTML;
+            
+            printWindow.document.write(`
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <title>${title}</title>
+                    <style>
+                        @page {
+                            size: A4 portrait;
+                            margin: 10mm;
+                        }
+                        body {
+                            font-family: Arial, sans-serif;
+                            margin: 0;
+                            padding: 0;
+                        }
+                        table {
+                            width: 100%;
+                            border-collapse: collapse;
+                            font-size: 11px;
+                        }
+                        th, td {
+                            border: 1px solid #000;
+                            padding: 6px;
+                            text-align: left;
+                        }
+                        th {
+                            background-color: #f1f5f9;
+                            font-weight: bold;
+                        }
+                        h2 {
+                            text-align: center;
+                            margin-bottom: 20px;
+                        }
+                        input {
+                            border: none;
+                            background: transparent;
+                            width: 100%;
+                            font-size: 11px;
+                        }
+                    </style>
+                </head>
+                <body>
+                    <h2>${title}</h2>
+                    ${tableHTML}
+                </body>
+                </html>
+            `);
+            printWindow.document.close();
+            setTimeout(() => {
+                printWindow.print();
+                printWindow.close();
+            }, 250);
+        }
+
+        // Liquidation report handlers
+        let liquidationReportsCache = [];
+        let activeLiquidationReportId = null;
+        let liquidationItems = [];
+
+        function showLiquidationMessage(type, text) {
+            const message = document.getElementById('liquidationMessage');
+            if (!message) return;
+            message.className = `message ${type}`;
+            message.textContent = text;
+            message.style.display = 'block';
+        }
+
+        function formatCurrency(value) {
+            const numeric = Number(value || 0);
+            return `₱${numeric.toLocaleString('en-US', { minimumFractionDigits: 2 })}`;
+        }
+
+        function renderLiquidationItems() {
+            const body = document.getElementById('liquidationItemsBody');
+            if (!body) return;
+
+            if (!liquidationItems.length) {
+                liquidationItems = [{}];
+            }
+
+            body.innerHTML = liquidationItems.map((item, index) => `
+                <tr data-index="${index}">
+                    <td><input type="text" data-field="particulars" data-row="${index}" value="${escapeHtml(item.particulars || '')}" style="width: 100%; padding: 6px;" onkeydown="handleLiquidationKeydown(event)"></td>
+                    <td><input type="number" data-field="amount" data-row="${index}" value="${escapeHtml(item.amount ?? '')}" step="0.01" style="width: 120px; padding: 6px;" onkeydown="handleLiquidationKeydown(event)"></td>
+                    <td><button onclick="removeLiquidationItemRow(${index})" style="padding: 6px 10px; background: #ef4444; color: white; border: none; border-radius: 6px; cursor: pointer;">Remove</button></td>
+                </tr>
+            `).join('');
+
+            body.querySelectorAll('input[data-field="amount"]').forEach(input => {
+                input.addEventListener('input', updateLiquidationTotal);
+            });
+            updateLiquidationTotal();
+        }
+
+        function handleLiquidationKeydown(event) {
+            if (event.key !== 'Enter') return;
+            event.preventDefault();
+            const input = event.target;
+            const row = input.getAttribute('data-row');
+            const currentIndex = parseInt(row, 10);
+            const nextIndex = currentIndex + 1;
+            const nextInput = document.querySelector(`#liquidationItemsBody input[data-row="${nextIndex}"]`);
+            if (nextInput) {
+                nextInput.focus();
+            } else {
+                addLiquidationItemRow();
+                setTimeout(() => {
+                    const newInput = document.querySelector(`#liquidationItemsBody input[data-row="${nextIndex}"]`);
+                    if (newInput) newInput.focus();
+                }, 50);
+            }
+        }
+
+        function addLiquidationItemRow(item = {}) {
+            liquidationItems = collectLiquidationItemsFromDOM();
+            liquidationItems.push(item);
+            renderLiquidationItems();
+        }
+
+        function removeLiquidationItemRow(index) {
+            liquidationItems = collectLiquidationItemsFromDOM();
+            liquidationItems.splice(index, 1);
+            renderLiquidationItems();
+        }
+
+        function collectLiquidationItemsFromDOM() {
+            const items = [];
+            document.querySelectorAll('#liquidationItemsBody tr').forEach((tr, index) => {
+                const particulars = tr.querySelector('[data-field="particulars"]')?.value || '';
+                const amount = parseFloat(tr.querySelector('[data-field="amount"]')?.value || 0);
+                items.push({ particulars, amount, sort_order: index });
+            });
+            return items;
+        }
+
+        function updateLiquidationTotal() {
+            const total = Array.from(document.querySelectorAll('#liquidationItemsBody input[data-field="amount"]'))
+                .reduce((sum, input) => sum + (parseFloat(input.value) || 0), 0);
+            const totalEl = document.getElementById('liquidationTotalSpent');
+            if (totalEl) totalEl.textContent = formatCurrency(total);
+        }
+
+        function resetLiquidationForm() {
+            activeLiquidationReportId = null;
+            document.getElementById('liquidationLrNo').value = '';
+            document.getElementById('liquidationReportDate').value = '';
+            document.getElementById('liquidationBarangay').value = '';
+            document.getElementById('liquidationMunicipality').value = '';
+            document.getElementById('liquidationProvince').value = '';
+            document.getElementById('liquidationCashAdvanceAmount').value = '';
+            document.getElementById('liquidationCashAdvanceDvNo').value = '';
+            document.getElementById('liquidationCashAdvanceDate').value = '';
+            document.getElementById('liquidationRefundedAmount').value = '';
+            document.getElementById('liquidationRefundedOrNo').value = '';
+            document.getElementById('liquidationRefundedDate').value = '';
+            document.getElementById('liquidationReimbursedAmount').value = '';
+            document.getElementById('liquidationCertifiedA').value = '';
+            document.getElementById('liquidationCertifiedB').value = '';
+            document.getElementById('liquidationCertifiedC').value = '';
+            liquidationItems = [{}];
+            renderLiquidationItems();
+        }
+
+        async function loadLiquidationReports() {
+            try {
+                const response = await fetch('/get-liquidation-reports');
+                const data = await response.json();
+                if (data.success) {
+                    liquidationReportsCache = data.reports || [];
+                    applyLiquidationFilters();
+                }
+            } catch (error) {
+                console.error('Error loading liquidation reports:', error);
+            }
+        }
+
+        function renderLiquidationRecords(list) {
+            const tableBody = document.getElementById('liquidationRecords');
+            if (!tableBody) return;
+            if (!list.length) {
+                tableBody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: #999;">No liquidation reports yet</td></tr>';
+                return;
+            }
+            tableBody.innerHTML = list.map(r => `
+                <tr data-id="${r.id}">
+                    <td>${escapeHtml(r.lr_no || '')}</td>
+                    <td>${formatDateInput(r.report_date)}</td>
+                    <td>${escapeHtml(r.barangay || '')}</td>
+                    <td>${escapeHtml(r.municipality || '')}</td>
+                    <td>${formatCurrency(r.total_amount || 0)}</td>
+                    <td>
+                        <button onclick="openLiquidationReport(${r.id})" style="padding: 6px 10px; background: #1d4ed8; color: white; border: none; border-radius: 6px; cursor: pointer;">Edit</button>
+                        <button onclick="printLiquidationReport(${r.id})" style="padding: 6px 10px; background: #0f766e; color: white; border: none; border-radius: 6px; cursor: pointer; margin-left: 6px;">Print</button>
+                        <button onclick="deleteLiquidationReport(${r.id})" style="padding: 6px 10px; background: #ef4444; color: white; border: none; border-radius: 6px; cursor: pointer; margin-left: 6px;">Delete</button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function applyLiquidationFilters() {
+            const search = (document.getElementById('liquidationSearch')?.value || '').toLowerCase().trim();
+            const sort = document.getElementById('liquidationSort')?.value || 'date_desc';
+
+            let filtered = liquidationReportsCache.filter(r => {
+                if (!search) return true;
+                const haystack = `${r.lr_no || ''} ${r.barangay || ''} ${r.municipality || ''}`.toLowerCase();
+                return haystack.includes(search);
+            });
+
+            filtered = filtered.slice().sort((a, b) => {
+                if (sort === 'date_asc') return new Date(a.report_date || 0) - new Date(b.report_date || 0);
+                if (sort === 'date_desc') return new Date(b.report_date || 0) - new Date(a.report_date || 0);
+                if (sort === 'amount_asc') return (a.total_amount || 0) - (b.total_amount || 0);
+                if (sort === 'amount_desc') return (b.total_amount || 0) - (a.total_amount || 0);
+                if (sort === 'lr_desc') return (b.lr_no || '').localeCompare(a.lr_no || '');
+                return (a.lr_no || '').localeCompare(b.lr_no || '');
+            });
+
+            renderLiquidationRecords(filtered);
+        }
+
+        async function openLiquidationReport(id) {
+            try {
+                const response = await fetch(`/get-liquidation-report/${id}`);
+                const data = await response.json();
+                if (!data.success || !data.report) return;
+                const report = data.report;
+                activeLiquidationReportId = report.id;
+
+                document.getElementById('liquidationLrNo').value = report.lr_no || '';
+                document.getElementById('liquidationReportDate').value = formatDateInput(report.report_date);
+                document.getElementById('liquidationBarangay').value = report.barangay || '';
+                document.getElementById('liquidationMunicipality').value = report.municipality || '';
+                document.getElementById('liquidationProvince').value = report.province || '';
+                document.getElementById('liquidationCashAdvanceAmount').value = report.cash_advance_amount ?? '';
+                document.getElementById('liquidationCashAdvanceDvNo').value = report.cash_advance_dv_no || '';
+                document.getElementById('liquidationCashAdvanceDate').value = formatDateInput(report.cash_advance_date);
+                document.getElementById('liquidationRefundedAmount').value = report.refunded_amount ?? '';
+                document.getElementById('liquidationRefundedOrNo').value = report.refunded_or_no || '';
+                document.getElementById('liquidationRefundedDate').value = formatDateInput(report.refunded_date);
+                document.getElementById('liquidationReimbursedAmount').value = report.amount_reimbursed ?? '';
+                document.getElementById('liquidationCertifiedA').value = report.certified_a_name || '';
+                document.getElementById('liquidationCertifiedB').value = report.certified_b_name || '';
+                document.getElementById('liquidationCertifiedC').value = report.certified_c_name || '';
+
+                liquidationItems = report.items || [];
+                renderLiquidationItems();
+            } catch (error) {
+                console.error('Error loading liquidation report:', error);
+            }
+        }
+
+        async function saveLiquidationReport() {
+            const payload = {
+                id: activeLiquidationReportId,
+                lr_no: document.getElementById('liquidationLrNo').value.trim(),
+                report_date: document.getElementById('liquidationReportDate').value,
+                barangay: document.getElementById('liquidationBarangay').value.trim(),
+                municipality: document.getElementById('liquidationMunicipality').value.trim(),
+                province: document.getElementById('liquidationProvince').value.trim(),
+                cash_advance_amount: parseFloat(document.getElementById('liquidationCashAdvanceAmount').value || 0),
+                cash_advance_dv_no: document.getElementById('liquidationCashAdvanceDvNo').value.trim(),
+                cash_advance_date: document.getElementById('liquidationCashAdvanceDate').value,
+                refunded_amount: parseFloat(document.getElementById('liquidationRefundedAmount').value || 0),
+                refunded_or_no: document.getElementById('liquidationRefundedOrNo').value.trim(),
+                refunded_date: document.getElementById('liquidationRefundedDate').value,
+                amount_reimbursed: parseFloat(document.getElementById('liquidationReimbursedAmount').value || 0),
+                certified_a_name: document.getElementById('liquidationCertifiedA').value.trim(),
+                certified_b_name: document.getElementById('liquidationCertifiedB').value.trim(),
+                certified_c_name: document.getElementById('liquidationCertifiedC').value.trim(),
+                items: collectLiquidationItemsFromDOM()
+            };
+
+            try {
+                const response = await fetch('/save-liquidation-report', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                const data = await response.json();
+                if (data.success) {
+                    activeLiquidationReportId = data.report_id;
+                    showLiquidationMessage('success', '✓ Liquidation report saved');
+                    loadLiquidationReports();
+                } else {
+                    showLiquidationMessage('error', `✗ ${data.message || 'Failed to save report'}`);
+                }
+            } catch (error) {
+                console.error('Error saving liquidation report:', error);
+                showLiquidationMessage('error', '✗ Error saving report');
+            }
+        }
+
+        async function deleteLiquidationReport(reportId = null) {
+            const id = reportId || activeLiquidationReportId;
+            if (!id) {
+                showLiquidationMessage('error', '✗ No report selected');
+                return;
+            }
+            if (!confirm('Delete this liquidation report?')) return;
+            try {
+                const response = await fetch(`/delete-liquidation-report/${id}`, { method: 'DELETE' });
+                const data = await response.json();
+                if (data.success) {
+                    showLiquidationMessage('success', '✓ Report deleted');
+                    if (id === activeLiquidationReportId) {
+                        resetLiquidationForm();
+                    }
+                    loadLiquidationReports();
+                } else {
+                    showLiquidationMessage('error', `✗ ${data.message || 'Failed to delete report'}`);
+                }
+            } catch (error) {
+                console.error('Error deleting liquidation report:', error);
+            }
+        }
+
+        function printLiquidationReport(reportId = null) {
+            const id = reportId || activeLiquidationReportId;
+            if (!id) {
+                showLiquidationMessage('error', '✗ Save the report before printing');
+                return;
+            }
+            window.open(`/print-liquidation-report/${id}`, '_blank');
+        }
+
+        let minutesCache = [];
+        let resolutionsCache = [];
+
+        // Modern file viewer modal
+        function viewFile(filePath, fileName, fileExt) {
+            try {
+                const modal = document.createElement('div');
+                modal.style.cssText = `
+                    position: fixed;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
+                    background: rgba(0, 0, 0, 0.7);
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    z-index: 10000;
+                    backdrop-filter: blur(4px);
+                `;
+                
+                const container = document.createElement('div');
+                container.style.cssText = `
+                    background: white;
+                    border-radius: 16px;
+                    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+                    width: 90%;
+                    max-width: 900px;
+                    max-height: 85vh;
+                    display: flex;
+                    flex-direction: column;
+                    overflow: hidden;
+                    animation: slideUp 0.3s ease;
+                `;
+
+                const header = document.createElement('div');
+                header.style.cssText = `
+                    padding: 20px 24px;
+                    border-bottom: 1px solid #e5e7eb;
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                    background: #0ea5e9;
+                    color: white;
+                `;
+                
+                const title = document.createElement('h2');
+                title.style.cssText = 'margin: 0; font-size: 18px; font-weight: 600;';
+                title.textContent = fileName;
+                
+                const closeBtn = document.createElement('button');
+                closeBtn.innerHTML = '✕';
+                closeBtn.style.cssText = `
+                    background: rgba(255,255,255,0.2);
+                    border: none;
+                    color: white;
+                    font-size: 24px;
+                    cursor: pointer;
+                    border-radius: 8px;
+                    padding: 0 8px;
+                    transition: all 0.2s;
+                `;
+                closeBtn.onmouseover = () => closeBtn.style.background = 'rgba(255,255,255,0.3)';
+                closeBtn.onmouseout = () => closeBtn.style.background = 'rgba(255,255,255,0.2)';
+                closeBtn.onclick = () => modal.remove();
+                
+                header.appendChild(title);
+                header.appendChild(closeBtn);
+
+                const content = document.createElement('div');
+                content.style.cssText = `
+                    flex: 1;
+                    overflow: auto;
+                    padding: 40px 20px;
+                    background: #f9fafb;
+                    display: flex;
+                    flex-direction: column;
+                    justify-content: center;
+                    align-items: center;
+                    gap: 20px;
+                `;
+
+                const ext = (fileExt || '').toLowerCase();
+                
+                if (ext === 'pdf') {
+                    const message = document.createElement('p');
+                    message.style.cssText = 'color: #666; text-align: center; font-size: 14px;';
+                    message.textContent = 'PDF file - Click below to download and view';
+                    
+                    const downloadBtn = document.createElement('button');
+                    downloadBtn.style.cssText = `
+                        padding: 12px 32px;
+                        background: #0ea5e9;
+                        color: white;
+                        border: none;
+                        border-radius: 8px;
+                        cursor: pointer;
+                        font-weight: 600;
+                        font-size: 14px;
+                        box-shadow: 0 2px 8px rgba(14, 165, 233, 0.3);
+                        transition: all 0.3s;
+                    `;
+                    downloadBtn.textContent = 'Download PDF';
+                    downloadBtn.onmouseover = () => downloadBtn.style.background = '#0284c7';
+                    downloadBtn.onmouseout = () => downloadBtn.style.background = '#0ea5e9';
+                    downloadBtn.onclick = () => {
+                        const link = document.createElement('a');
+                        link.href = filePath;
+                        link.download = fileName || 'document.pdf';
+                        document.body.appendChild(link);
+                        link.click();
+                        document.body.removeChild(link);
+                    };
+                    
+                    content.appendChild(message);
+                    content.appendChild(downloadBtn);
+                } else if (['jpg', 'jpeg', 'png', 'gif', 'webp'].includes(ext)) {
+                    const img = document.createElement('img');
+                    img.src = filePath;
+                    img.style.cssText = 'max-width: 100%; max-height: 100%; border-radius: 8px; object-fit: contain;';
+                    img.onerror = () => {
+                        img.style.display = 'none';
+                        content.innerHTML = '<p style="color: #ef4444; text-align: center;">Unable to load image</p>';
+                    };
+                    content.appendChild(img);
+                } else if (['doc', 'docx', 'txt'].includes(ext)) {
+                    const message = document.createElement('p');
+                    message.style.cssText = 'color: #666; text-align: center; font-size: 14px;';
+                    message.textContent = 'Document file - Click below to download';
+                    
+                    const downloadBtn = document.createElement('button');
+                    downloadBtn.style.cssText = `
+                        padding: 12px 32px;
+                        background: #0ea5e9;
+                        color: white;
+                        border: none;
+                        border-radius: 8px;
+                        cursor: pointer;
+                        font-weight: 600;
+                        font-size: 14px;
+                        box-shadow: 0 2px 8px rgba(14, 165, 233, 0.3);
+                        transition: all 0.3s;
+                    `;
+                    downloadBtn.textContent = 'Download File';
+                    downloadBtn.onmouseover = () => downloadBtn.style.background = '#0284c7';
+                    downloadBtn.onmouseout = () => downloadBtn.style.background = '#0ea5e9';
+                    downloadBtn.onclick = () => {
+                        const link = document.createElement('a');
+                        link.href = filePath;
+                        link.download = fileName || 'document';
+                        document.body.appendChild(link);
+                        link.click();
+                        document.body.removeChild(link);
+                    };
+                    
+                    content.appendChild(message);
+                    content.appendChild(downloadBtn);
+                } else {
+                    const message = document.createElement('p');
+                    message.style.cssText = 'color: #666; text-align: center; font-size: 14px;';
+                    message.textContent = 'File - Click below to download';
+                    
+                    const downloadBtn = document.createElement('button');
+                    downloadBtn.style.cssText = `
+                        padding: 12px 32px;
+                        background: #0ea5e9;
+                        color: white;
+                        border: none;
+                        border-radius: 8px;
+                        cursor: pointer;
+                        font-weight: 600;
+                        font-size: 14px;
+                        box-shadow: 0 2px 8px rgba(14, 165, 233, 0.3);
+                        transition: all 0.3s;
+                    `;
+                    downloadBtn.textContent = 'Download File';
+                    downloadBtn.onmouseover = () => downloadBtn.style.background = '#0284c7';
+                    downloadBtn.onmouseout = () => downloadBtn.style.background = '#0ea5e9';
+                    downloadBtn.onclick = () => {
+                        const link = document.createElement('a');
+                        link.href = filePath;
+                        link.download = fileName || 'file';
+                        document.body.appendChild(link);
+                        link.click();
+                        document.body.removeChild(link);
+                    };
+                    
+                    content.appendChild(message);
+                    content.appendChild(downloadBtn);
+                }
+
+                container.appendChild(header);
+                container.appendChild(content);
+                modal.appendChild(container);
+                document.body.appendChild(modal);
+
+                // Add animation style if not present
+                if (!document.querySelector('style[data-modal-animation]')) {
+                    const style = document.createElement('style');
+                    style.setAttribute('data-modal-animation', 'true');
+                    style.textContent = `
+                        @keyframes slideUp {
+                            from {
+                                transform: translateY(30px);
+                                opacity: 0;
+                            }
+                            to {
+                                transform: translateY(0);
+                                opacity: 1;
+                            }
+                        }
+                    `;
+                    document.head.appendChild(style);
+                }
+
+                // Close on background click
+                modal.onclick = (e) => {
+                    if (e.target === modal) modal.remove();
+                };
+
+                // Close on Escape key
+                const handleEscape = (e) => {
+                    if (e.key === 'Escape') {
+                        modal.remove();
+                        document.removeEventListener('keydown', handleEscape);
+                    }
+                };
+                document.addEventListener('keydown', handleEscape);
+            } catch (error) {
+                console.error('Error viewing file:', error);
+                alert('Error opening file. Please try downloading instead.');
+            }
+        }
+
+        function formatDateInput(value) {
+            if (!value) return '';
+            const date = new Date(value);
+            if (isNaN(date)) return '';
+            return date.toISOString().slice(0, 10);
+        }
+
+        async function loadMinutes() {
+            try {
+                const response = await fetch('/get-minutes');
+                const data = await response.json();
+                if (data.success) {
+                    minutesCache = data.minutes || [];
+                    applyMinutesFilters();
+                }
+            } catch (error) {
+                console.error('Error loading minutes:', error);
+            }
+        }
+
+        function renderMinutes(list) {
+            const tableBody = document.getElementById('minutesList');
+            if (!tableBody) return;
+            if (list.length === 0) {
+                tableBody.innerHTML = '<tr><td colspan="4" style="text-align: center; color: #999;">No minutes uploaded</td></tr>';
+                return;
+            }
+            tableBody.innerHTML = list.map(m => `
+                <tr data-id="${m.id}">
+                    <td><input type="text" data-field="title" value="${m.title || ''}" style="width: 100%; padding: 6px;"></td>
+                    <td><input type="date" data-field="meeting_date" value="${formatDateInput(m.meeting_date)}" style="padding: 6px; width: 100%;"></td>
+                    <td>
+                        ${m.file_path ? `<button onclick="viewFile('/uploads/${m.file_path}', '${(m.title || 'Minutes').replace(/'/g, "\\'")}', '${m.file_path.split('.').pop().toLowerCase()}')" style="padding: 8px 16px; background: #0ea5e9; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 500; box-shadow: 0 2px 8px rgba(14, 165, 233, 0.3); transition: all 0.3s ease; hover: background #0284c7;" onmouseover="this.style.background='#0284c7'" onmouseout="this.style.background='#0ea5e9'">View</button>` : '<span style="color:#999;">No file</span>'}
+                        <div style="margin-top: 6px;"><input type="file" data-field="file" accept=".pdf,.doc,.docx,.txt"></div>
+                    </td>
+                    <td>
+                        <button onclick="updateMinute(${m.id})" style="padding: 6px 10px; background: #1d4ed8; color: white; border: none; border-radius: 6px; cursor: pointer;">Save</button>
+                        <button onclick="deleteMinute(${m.id})" style="padding: 6px 10px; background: #ef4444; color: white; border: none; border-radius: 6px; cursor: pointer; margin-left: 6px;">Delete</button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function applyMinutesFilters() {
+            const search = (document.getElementById('minutesSearch')?.value || '').toLowerCase().trim();
+            const fromVal = document.getElementById('minutesFrom')?.value || '';
+            const toVal = document.getElementById('minutesTo')?.value || '';
+            const fromDate = fromVal ? new Date(`${fromVal}T00:00:00`) : null;
+            const toDate = toVal ? new Date(`${toVal}T23:59:59`) : null;
+
+            const filtered = minutesCache.filter(m => {
+                const title = (m.title || '').toLowerCase();
+                if (search && !title.includes(search)) return false;
+                const date = m.meeting_date ? new Date(m.meeting_date) : null;
+                if (fromDate && date && date < fromDate) return false;
+                if (toDate && date && date > toDate) return false;
+                return true;
+            });
+            renderMinutes(filtered);
+        }
+
+        async function updateMinute(id) {
+            const row = document.querySelector(`#minutesList tr[data-id="${id}"]`);
+            if (!row) return;
+            const formData = new FormData();
+            formData.append('id', id);
+            formData.append('title', row.querySelector('[data-field="title"]').value);
+            formData.append('meeting_date', row.querySelector('[data-field="meeting_date"]').value);
+            const fileInput = row.querySelector('[data-field="file"]');
+            if (fileInput && fileInput.files[0]) {
+                formData.append('file', fileInput.files[0]);
+            }
+
+            try {
+                const response = await fetch('/update-minute', {
+                    method: 'POST',
+                    body: formData
+                });
+                const data = await response.json();
+                if (data.success) {
+                    loadMinutes();
+                } else {
+                    alert(`✗ ${data.message || 'Error updating minutes'}`);
+                }
+            } catch (error) {
+                console.error('Error updating minutes:', error);
+            }
+        }
+
+        async function deleteMinute(id) {
+            if (!confirm('Delete this minutes file?')) return;
+            try {
+                const response = await fetch(`/delete-minute/${id}`, { method: 'DELETE' });
+                const data = await response.json();
+                if (data.success) {
+                    loadMinutes();
+                } else {
+                    alert(`✗ ${data.message || 'Error deleting minutes'}`);
+                }
+            } catch (error) {
+                console.error('Error deleting minutes:', error);
+            }
+        }
+
+        document.getElementById('minutesForm')?.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const formData = new FormData();
+            formData.append('title', document.getElementById('meetingTitle').value);
+            formData.append('meeting_date', document.getElementById('meetingDate').value);
+            const file = document.getElementById('minutesFile').files[0];
+            if (file) formData.append('file', file);
+
+            try {
+                const response = await fetch('/upload-minute', {
+                    method: 'POST',
+                    body: formData
+                });
+                const data = await response.json();
+                const msg = document.getElementById('minutesMessage');
+                if (data.success) {
+                    msg.className = 'message success';
+                    msg.textContent = '✓ Minutes uploaded!';
+                    document.getElementById('minutesForm').reset();
+                    loadMinutes();
+                } else {
+                    msg.className = 'message error';
+                    msg.textContent = `✗ ${data.message || 'Error uploading minutes'}`;
+                }
+                msg.style.display = 'block';
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        });
+
+        async function loadResolutions() {
+            try {
+                const response = await fetch('/get-resolutions');
+                const data = await response.json();
+                if (data.success) {
+                    resolutionsCache = data.resolutions || [];
+                    applyResolutionsFilters();
+                }
+            } catch (error) {
+                console.error('Error loading resolutions:', error);
+            }
+        }
+
+        function renderResolutions(list) {
+            const tableBody = document.getElementById('resolutionsList');
+            if (!tableBody) return;
+            if (list.length === 0) {
+                tableBody.innerHTML = '<tr><td colspan="5" style="text-align: center; color: #999;">No resolutions uploaded</td></tr>';
+                return;
+            }
+            tableBody.innerHTML = list.map(r => `
+                <tr data-id="${r.id}">
+                    <td><input type="text" data-field="resolution_number" value="${r.resolution_number || ''}" style="width: 100%; padding: 6px;"></td>
+                    <td><input type="text" data-field="title" value="${r.title || ''}" style="width: 100%; padding: 6px;"></td>
+                    <td><input type="date" data-field="date_passed" value="${formatDateInput(r.date_passed)}" style="padding: 6px; width: 100%;"></td>
+                    <td>
+                        ${r.file_path ? `<button onclick="viewFile('/uploads/${r.file_path}', '${(r.title || 'Resolution').replace(/'/g, "\\'")}', '${r.file_path.split('.').pop().toLowerCase()}')" style="padding: 8px 16px; background: #0ea5e9; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 500; box-shadow: 0 2px 8px rgba(14, 165, 233, 0.3); transition: all 0.3s ease;" onmouseover="this.style.background='#0284c7'" onmouseout="this.style.background='#0ea5e9'">View</button>` : '<span style="color:#999;">No file</span>'}
+                        <div style="margin-top: 6px;"><input type="file" data-field="file" accept=".pdf,.doc,.docx,.txt"></div>
+                    </td>
+                    <td>
+                        <button onclick="updateResolution(${r.id})" style="padding: 6px 10px; background: #1d4ed8; color: white; border: none; border-radius: 6px; cursor: pointer;">Save</button>
+                        <button onclick="deleteResolution(${r.id})" style="padding: 6px 10px; background: #ef4444; color: white; border: none; border-radius: 6px; cursor: pointer; margin-left: 6px;">Delete</button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function applyResolutionsFilters() {
+            const search = (document.getElementById('resolutionSearch')?.value || '').toLowerCase().trim();
+            const numberFilter = (document.getElementById('resolutionNumberFilter')?.value || '').toLowerCase().trim();
+            const fromVal = document.getElementById('resolutionFrom')?.value || '';
+            const toVal = document.getElementById('resolutionTo')?.value || '';
+            const fromDate = fromVal ? new Date(`${fromVal}T00:00:00`) : null;
+            const toDate = toVal ? new Date(`${toVal}T23:59:59`) : null;
+
+            const filtered = resolutionsCache.filter(r => {
+                const title = (r.title || '').toLowerCase();
+                const num = (r.resolution_number || '').toLowerCase();
+                if (search && !title.includes(search)) return false;
+                if (numberFilter && !num.includes(numberFilter)) return false;
+                const date = r.date_passed ? new Date(r.date_passed) : null;
+                if (fromDate && date && date < fromDate) return false;
+                if (toDate && date && date > toDate) return false;
+                return true;
+            });
+            renderResolutions(filtered);
+        }
+
+        async function updateResolution(id) {
+            const row = document.querySelector(`#resolutionsList tr[data-id="${id}"]`);
+            if (!row) return;
+            const formData = new FormData();
+            formData.append('id', id);
+            formData.append('resolution_number', row.querySelector('[data-field="resolution_number"]').value);
+            formData.append('title', row.querySelector('[data-field="title"]').value);
+            formData.append('date_passed', row.querySelector('[data-field="date_passed"]').value);
+            const fileInput = row.querySelector('[data-field="file"]');
+            if (fileInput && fileInput.files[0]) {
+                formData.append('file', fileInput.files[0]);
+            }
+
+            try {
+                const response = await fetch('/update-resolution', {
+                    method: 'POST',
+                    body: formData
+                });
+                const data = await response.json();
+                if (data.success) {
+                    loadResolutions();
+                } else {
+                    alert(`✗ ${data.message || 'Error updating resolution'}`);
+                }
+            } catch (error) {
+                console.error('Error updating resolution:', error);
+            }
+        }
+
+        async function deleteResolution(id) {
+            if (!confirm('Delete this resolution file?')) return;
+            try {
+                const response = await fetch(`/delete-resolution/${id}`, { method: 'DELETE' });
+                const data = await response.json();
+                if (data.success) {
+                    loadResolutions();
+                } else {
+                    alert(`✗ ${data.message || 'Error deleting resolution'}`);
+                }
+            } catch (error) {
+                console.error('Error deleting resolution:', error);
+            }
+        }
+
+        document.getElementById('resolutionsForm')?.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const formData = new FormData();
+            formData.append('resolution_number', document.getElementById('resolutionNumber').value);
+            formData.append('title', document.getElementById('resolutionTitle').value);
+            formData.append('date_passed', document.getElementById('resolutionDate').value);
+            const file = document.getElementById('resolutionFile').files[0];
+            if (file) formData.append('file', file);
+
+            try {
+                const response = await fetch('/upload-resolution', {
+                    method: 'POST',
+                    body: formData
+                });
+                const data = await response.json();
+                const msg = document.getElementById('resolutionsMessage');
+                if (data.success) {
+                    msg.className = 'message success';
+                    msg.textContent = '✓ Resolution uploaded!';
+                    document.getElementById('resolutionsForm').reset();
+                    loadResolutions();
+                } else {
+                    msg.className = 'message error';
+                    msg.textContent = `✗ ${data.message || 'Error uploading resolution'}`;
+                }
+                msg.style.display = 'block';
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        });
+
+        const settingsPictureInput = document.getElementById('settingsProfilePicture');
+        if (settingsPictureInput) {
+            settingsPictureInput.addEventListener('change', (e) => {
+                const file = e.target.files && e.target.files[0];
+                const preview = document.getElementById('settingsProfilePreview');
+                if (!preview) return;
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = (evt) => {
+                        preview.innerHTML = `<img src="${evt.target.result}" alt="Profile Preview">`;
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+        }
+
+        document.getElementById('settingsForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const formData = new FormData();
+            formData.append('full_name', document.getElementById('settingsName').value);
+            formData.append('position', document.getElementById('settingsPosition').value);
+            formData.append('barangay', document.getElementById('settingsBarangay').value);
+            formData.append('municipality', document.getElementById('settingsMunicipality').value);
+
+            if (settingsPictureInput && settingsPictureInput.files && settingsPictureInput.files[0]) {
+                formData.append('profile_picture', settingsPictureInput.files[0]);
+            }
+
+            try {
+                const response = await fetch('/update-profile', {
+                    method: 'POST',
+                    body: formData
+                });
+                const data = await response.json();
+
+                alert(data.success ? '✓ Profile updated!' : '✗ Error updating profile');
+                if (data.success) {
+                    loadUserProfile();
+                }
+            } catch (error) {
+                alert('Error: ' + error.message);
+            }
+        });
+
+        async function loadPasswordChangeStatus() {
+            const statusEl = document.getElementById('passwordChangeStatus');
+            if (!statusEl) return;
+            try {
+                const response = await fetch('/get-password-change-status');
+                const data = await response.json();
+                if (data.success && data.request) {
+                    const status = data.request.status || 'pending';
+                    if (status === 'pending') {
+                        statusEl.innerHTML = 'Status: <strong>Pending admin approval</strong>';
+                    } else if (status === 'approved') {
+                        statusEl.innerHTML = 'Status: <strong>Approved</strong>';
+                    } else if (status === 'rejected') {
+                        statusEl.innerHTML = `Status: <strong>Rejected</strong>${data.request.notes ? ` - ${data.request.notes}` : ''}`;
+                    } else {
+                        statusEl.innerHTML = 'Status: <strong>No pending request</strong>';
+                    }
+                } else {
+                    statusEl.innerHTML = 'Status: <strong>No pending request</strong>';
+                }
+            } catch (error) {
+                console.error('Error loading password status:', error);
+            }
+        }
+
+        function togglePasswordVisibility(inputId, button) {
+            const input = document.getElementById(inputId);
+            if (!input) return;
+            const isHidden = input.type === 'password';
+            input.type = isHidden ? 'text' : 'password';
+            if (button) {
+                button.textContent = isHidden ? '🙈' : '👁️';
+            }
+        }
+
+        document.getElementById('passwordChangeForm')?.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const messageDiv = document.getElementById('passwordChangeMessage');
+            const payload = {
+                current_password: document.getElementById('currentPassword').value,
+                new_password: document.getElementById('newPassword').value,
+                confirm_password: document.getElementById('confirmPassword').value
+            };
+
+            try {
+                const response = await fetch('/request-password-change', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                const data = await response.json();
+
+                if (data.success) {
+                    messageDiv.className = 'message success';
+                    messageDiv.textContent = `✓ ${data.message}`;
+                    document.getElementById('passwordChangeForm').reset();
+                    loadPasswordChangeStatus();
+                } else {
+                    messageDiv.className = 'message error';
+                    messageDiv.textContent = `✗ ${data.message || 'Request failed'}`;
+                }
+                messageDiv.style.display = 'block';
+            } catch (error) {
+                messageDiv.className = 'message error';
+                messageDiv.textContent = '✗ Error submitting request';
+                messageDiv.style.display = 'block';
+            }
+        });
+
+        // Load notification count
+        async function loadNotificationCount() {
+            try {
+                const response = await fetch('/get-unread-notifications-count');
+                const data = await response.json();
+
+                const badge = document.getElementById('announcementBadge');
+                if (data.success && data.count > 0) {
+                    badge.textContent = data.count;
+                    badge.style.display = 'flex';
+                } else {
+                    badge.style.display = 'none';
+                }
+            } catch (error) {
+                console.error('Error loading notifications:', error);
+            }
+        }
+
+        // ===== APP (Annual Procurement Plan) Functions =====
+        let appCache = [];
+        let appCurrentEditId = null;
+
+        function calculateAppTotal(row) {
+            const unitCost = parseFloat(row.querySelector('[data-field="unit_cost"]').value) || 0;
+            const quantity = parseFloat(row.querySelector('[data-field="quantity"]').value) || 0;
+            const totalField = row.querySelector('[data-field="total_cost"]');
+            totalField.value = (unitCost * quantity).toFixed(2);
+        }
+
+        function renderAppItems(items = []) {
+            const tbody = document.getElementById('appItemsBody');
+            if (!tbody) return;
+            if (items.length === 0) {
+                items = [{ 
+                    description: '', unit_cost: '', quantity: '', unit: '', total_cost: '', 
+                    q1_qty: '', q1_amt: '', q2_qty: '', q2_amt: '', q3_qty: '', q3_amt: '', q4_qty: '', q4_amt: '',
+                    row_type: 'DATA'
+                }];
+            }
+            tbody.innerHTML = items.map((item, idx) => {
+                const rowType = item.row_type || 'DATA';
+                let rowHtml = '';
+                
+                if (rowType === 'LABEL') {
+                    rowHtml = `
+                    <tr style="background: #fff3cd;" data-type="label">
+                        <td colspan="13" style="background: #f0ad4e; color: white; padding: 12px; font-weight: bold; border: 2px solid #ec971f; text-align: left; font-size: 16px;">
+                            ${item.description || ''}
+                        </td>
+                        <td><button type="button" onclick="removeAppItemRow(${idx})" style="padding: 6px 10px; background: #ef4444; color: white; border: none; border-radius: 4px; cursor: pointer; white-space: nowrap;">Remove</button></td>
+                    </tr>`;
+                } else if (rowType === 'TOTAL') {
+                    rowHtml = `
+                    <tr style="background: #f5f5f5;" data-type="total">
+                        <td colspan="4" style="background: #ddd; color: #333; padding: 12px; font-weight: bold; text-align: right; font-size: 14px; border: 2px solid #999;">
+                            TOTAL
+                        </td>
+                        <td style="background: #ddd; color: #333; padding: 12px; font-weight: bold; text-align: right; font-size: 14px; border: 2px solid #999;">
+                            <span class="section-total">₱${parseFloat(item.total_cost || 0).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',')}</span>
+                        </td>
+                        <td colspan="8" style="background: #ddd; border: 2px solid #999;"></td>
+                        <td><button type="button" onclick="removeAppTotalRow(this)" style="padding: 6px 10px; background: #ef4444; color: white; border: none; border-radius: 4px; cursor: pointer;">Remove</button></td>
+                    </tr>`;
+                } else if (rowType === 'GRAND_TOTAL') {
+                    rowHtml = `
+                    <tr style="background: #e0e7ff;" data-type="grand-total">
+                        <td colspan="4" style="background: #0284c7; color: white; padding: 12px; font-weight: bold; text-align: right; font-size: 16px; border: 2px solid #0ea5e9;">
+                            GRAND TOTAL
+                        </td>
+                        <td style="background: #0284c7; color: white; padding: 12px; font-weight: bold; text-align: right; font-size: 16px; border: 2px solid #0ea5e9;">
+                            <span class="grand-total-amount">₱${parseFloat(item.total_cost || 0).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',')}</span>
+                        </td>
+                        <td colspan="8" style="background: #0284c7; border: 2px solid #0ea5e9;"></td>
+                        <td><button type="button" onclick="removeAppTotalRow(this)" style="padding: 6px 10px; background: #ef4444; color: white; border: none; border-radius: 4px; cursor: pointer;">Remove</button></td>
+                    </tr>`;
+                } else {
+                    // Regular DATA row
+                    rowHtml = `
+                    <tr data-type="data">
+                        <td><input type="text" class="appField" data-field="description" value="${item.description || ''}" placeholder="Description" style="width: 100%; padding: 6px; border: 1px solid #ddd; border-radius: 3px;"></td>
+                        <td><input type="number" class="appField" data-field="unit_cost" value="${item.unit_cost || ''}" placeholder="0.00" step="0.01" style="width: 100%; padding: 6px; border: 1px solid #ddd; border-radius: 3px;"></td>
+                        <td><input type="number" class="appField" data-field="quantity" value="${item.quantity || ''}" placeholder="0" step="1" style="width: 100%; padding: 6px; border: 1px solid #ddd; border-radius: 3px;"></td>
+                        <td><input type="text" class="appField" data-field="unit" value="${item.unit || ''}" placeholder="Unit" style="width: 100%; padding: 6px; border: 1px solid #ddd; border-radius: 3px;"></td>
+                        <td><input type="number" class="appField" data-field="total_cost" value="${item.total_cost || ''}" placeholder="0.00" step="0.01" readonly style="width: 100%; padding: 6px; border: 1px solid #ddd; border-radius: 3px; background: #f5f5f5;"></td>
+                        <td><input type="number" class="appField" data-field="q1_qty" value="${item.q1_qty || ''}" placeholder="0" step="1" style="width: 100%; padding: 6px; border: 1px solid #ddd; border-radius: 3px;"></td>
+                        <td><input type="number" class="appField" data-field="q1_amt" value="${item.q1_amt || ''}" placeholder="0.00" step="0.01" style="width: 100%; padding: 6px; border: 1px solid #ddd; border-radius: 3px;"></td>
+                        <td><input type="number" class="appField" data-field="q2_qty" value="${item.q2_qty || ''}" placeholder="0" step="1" style="width: 100%; padding: 6px; border: 1px solid #ddd; border-radius: 3px;"></td>
+                        <td><input type="number" class="appField" data-field="q2_amt" value="${item.q2_amt || ''}" placeholder="0.00" step="0.01" style="width: 100%; padding: 6px; border: 1px solid #ddd; border-radius: 3px;"></td>
+                        <td><input type="number" class="appField" data-field="q3_qty" value="${item.q3_qty || ''}" placeholder="0" step="1" style="width: 100%; padding: 6px; border: 1px solid #ddd; border-radius: 3px;"></td>
+                        <td><input type="number" class="appField" data-field="q3_amt" value="${item.q3_amt || ''}" placeholder="0.00" step="0.01" style="width: 100%; padding: 6px; border: 1px solid #ddd; border-radius: 3px;"></td>
+                        <td><input type="number" class="appField" data-field="q4_qty" value="${item.q4_qty || ''}" placeholder="0" step="1" style="width: 100%; padding: 6px; border: 1px solid #ddd; border-radius: 3px;"></td>
+                        <td><input type="number" class="appField" data-field="q4_amt" value="${item.q4_amt || ''}" placeholder="0.00" step="0.01" style="width: 100%; padding: 6px; border: 1px solid #ddd; border-radius: 3px;"></td>
+                        <td><button type="button" onclick="removeAppItemRow(${idx})" style="padding: 6px 10px; background: #ef4444; color: white; border: none; border-radius: 4px; cursor: pointer; white-space: nowrap;">Remove</button></td>
+                    </tr>`;
+                }
+                return rowHtml;
+            }).join('');
+            
+            // Add event listeners for auto-calculation
+            document.querySelectorAll('#appItemsBody tr[data-type="data"]').forEach((row) => {
+                const unitCostInput = row.querySelector('[data-field="unit_cost"]');
+                const quantityInput = row.querySelector('[data-field="quantity"]');
+                if (unitCostInput) unitCostInput.addEventListener('change', () => calculateAppTotal(row));
+                if (quantityInput) quantityInput.addEventListener('change', () => calculateAppTotal(row));
+            });
+            
+            // Add Enter key navigation
+            document.querySelectorAll('.appField').forEach((input, idx) => {
+                input.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') {
+                        const nextInput = document.querySelectorAll('.appField')[idx + 1];
+                        if (nextInput) nextInput.focus();
+                    }
+                });
+            });
+            
+            // Update totals
+            updateAppTotal();
+        }
+
+        function addAppItemRow() {
+            const tbody = document.getElementById('appItemsBody');
+            if (!tbody) return;
+            const newRow = document.createElement('tr');
+            newRow.innerHTML = `
+                <td><input type="text" class="appField" data-field="description" placeholder="Description" style="width: 100%; padding: 6px; border: 1px solid #ddd; border-radius: 3px;"></td>
+                <td><input type="number" class="appField" data-field="unit_cost" placeholder="0.00" step="0.01" style="width: 100%; padding: 6px; border: 1px solid #ddd; border-radius: 3px;"></td>
+                <td><input type="number" class="appField" data-field="quantity" placeholder="0" step="1" style="width: 100%; padding: 6px; border: 1px solid #ddd; border-radius: 3px;"></td>
+                <td><input type="text" class="appField" data-field="unit" placeholder="Unit" style="width: 100%; padding: 6px; border: 1px solid #ddd; border-radius: 3px;"></td>
+                <td><input type="number" class="appField" data-field="total_cost" placeholder="0.00" step="0.01" readonly style="width: 100%; padding: 6px; border: 1px solid #ddd; border-radius: 3px; background: #f5f5f5;"></td>
+                <td><input type="number" class="appField" data-field="q1_qty" placeholder="0" step="1" style="width: 100%; padding: 6px; border: 1px solid #ddd; border-radius: 3px;"></td>
+                <td><input type="number" class="appField" data-field="q1_amt" placeholder="0.00" step="0.01" style="width: 100%; padding: 6px; border: 1px solid #ddd; border-radius: 3px;"></td>
+                <td><input type="number" class="appField" data-field="q2_qty" placeholder="0" step="1" style="width: 100%; padding: 6px; border: 1px solid #ddd; border-radius: 3px;"></td>
+                <td><input type="number" class="appField" data-field="q2_amt" placeholder="0.00" step="0.01" style="width: 100%; padding: 6px; border: 1px solid #ddd; border-radius: 3px;"></td>
+                <td><input type="number" class="appField" data-field="q3_qty" placeholder="0" step="1" style="width: 100%; padding: 6px; border: 1px solid #ddd; border-radius: 3px;"></td>
+                <td><input type="number" class="appField" data-field="q3_amt" placeholder="0.00" step="0.01" style="width: 100%; padding: 6px; border: 1px solid #ddd; border-radius: 3px;"></td>
+                <td><input type="number" class="appField" data-field="q4_qty" placeholder="0" step="1" style="width: 100%; padding: 6px; border: 1px solid #ddd; border-radius: 3px;"></td>
+                <td><input type="number" class="appField" data-field="q4_amt" placeholder="0.00" step="0.01" style="width: 100%; padding: 6px; border: 1px solid #ddd; border-radius: 3px;"></td>
+                <td><button type="button" onclick="removeAppItemRow(${tbody.children.length})" style="padding: 6px 10px; background: #ef4444; color: white; border: none; border-radius: 4px; cursor: pointer; white-space: nowrap;">Remove</button></td>
+            `;
+            tbody.appendChild(newRow);
+            // Add auto-calculation listeners
+            const unitCostInput = newRow.querySelector('[data-field="unit_cost"]');
+            const quantityInput = newRow.querySelector('[data-field="quantity"]');
+            if (unitCostInput) unitCostInput.addEventListener('change', () => calculateAppTotal(newRow));
+            if (quantityInput) quantityInput.addEventListener('change', () => calculateAppTotal(newRow));
+            // Add Enter key navigation
+            newRow.querySelectorAll('.appField').forEach((input, idx) => {
+                input.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') {
+                        const allInputs = document.querySelectorAll('.appField');
+                        const currentIdx = Array.from(allInputs).indexOf(input);
+                        if (currentIdx < allInputs.length - 1) allInputs[currentIdx + 1].focus();
+                    }
+                });
+            });
+        }
+
+        function removeAppItemRow(index) {
+            const tbody = document.getElementById('appItemsBody');
+            if (!tbody) return;
+            if (tbody.children.length > 1) {
+                tbody.children[index].remove();
+            }
+        }
+
+        function addAppLabelRow() {
+            const tbody = document.getElementById('appItemsBody');
+            if (!tbody) return;
+            const labelText = prompt('Enter label text:');
+            if (!labelText) return;
+            
+            const newRow = document.createElement('tr');
+            newRow.innerHTML = `
+                <td colspan="13" style="background: #f0ad4e; color: white; padding: 12px; font-weight: bold; border: 2px solid #ec971f; text-align: left; font-size: 16px;">
+                    ${labelText}
+                </td>
+                <td><button type="button" onclick="removeAppItemRow(${tbody.children.length})" style="padding: 6px 10px; background: #ef4444; color: white; border: none; border-radius: 4px; cursor: pointer; white-space: nowrap;">Remove</button></td>
+            `;
+            newRow.style.background = '#fff3cd';
+            newRow.setAttribute('data-type', 'label');
+            
+            // Insert BEFORE GRAND TOTAL only, or append if none exists
+            const rows = tbody.querySelectorAll('tr');
+            let grandTotalRow = null;
+            for (let row of rows) {
+                if (row.getAttribute('data-type') === 'grand-total') {
+                    grandTotalRow = row;
+                    break;
+                }
+            }
+            
+            if (grandTotalRow) {
+                tbody.insertBefore(newRow, grandTotalRow);
+            } else {
+                tbody.appendChild(newRow);
+            }
+        }
+
+        function addAppTotalRow() {
+            const tbody = document.getElementById('appItemsBody');
+            if (!tbody) return;
+            
+            const newRow = document.createElement('tr');
+            newRow.innerHTML = `
+                <td colspan="4" style="background: #ddd; color: #333; padding: 12px; font-weight: bold; text-align: right; font-size: 14px; border: 2px solid #999;">
+                    TOTAL
+                </td>
+                <td style="background: #ddd; color: #333; padding: 12px; font-weight: bold; text-align: right; font-size: 14px; border: 2px solid #999;">
+                    <span class="section-total">₱0.00</span>
+                </td>
+                <td colspan="8" style="background: #ddd; border: 2px solid #999;"></td>
+                <td><button type="button" onclick="removeAppTotalRow(this)" style="padding: 6px 10px; background: #ef4444; color: white; border: none; border-radius: 4px; cursor: pointer;">Remove</button></td>
+            `;
+            newRow.setAttribute('data-type', 'total');
+            
+            // Insert BEFORE GRAND TOTAL only, or append if none exists
+            const rows = tbody.querySelectorAll('tr');
+            let grandTotalRow = null;
+            for (let row of rows) {
+                if (row.getAttribute('data-type') === 'grand-total') {
+                    grandTotalRow = row;
+                    break;
+                }
+            }
+            
+            if (grandTotalRow) {
+                tbody.insertBefore(newRow, grandTotalRow);
+            } else {
+                tbody.appendChild(newRow);
+            }
+            
+            updateAppTotal();
+        }
+
+        function addAppGrandTotalRow() {
+            const tbody = document.getElementById('appItemsBody');
+            if (!tbody) return;
+            
+            const newRow = document.createElement('tr');
+            newRow.innerHTML = `
+                <td colspan="4" style="background: #0284c7; color: white; padding: 12px; font-weight: bold; text-align: right; font-size: 16px; border: 2px solid #0ea5e9;">
+                    GRAND TOTAL
+                </td>
+                <td style="background: #0284c7; color: white; padding: 12px; font-weight: bold; text-align: right; font-size: 16px; border: 2px solid #0ea5e9;">
+                    <span class="grand-total-amount">₱0.00</span>
+                </td>
+                <td colspan="8" style="background: #0284c7; border: 2px solid #0ea5e9;"></td>
+                <td><button type="button" onclick="removeAppTotalRow(this)" style="padding: 6px 10px; background: #ef4444; color: white; border: none; border-radius: 4px; cursor: pointer;">Remove</button></td>
+            `;
+            newRow.setAttribute('data-type', 'grand-total');
+            tbody.appendChild(newRow);
+            updateAppTotal();
+        }
+
+        function removeAppTotalRow(btn) {
+            btn.closest('tr').remove();
+            updateAppTotal();
+        }
+
+        function updateAppTotal() {
+            const tbody = document.getElementById('appItemsBody');
+            if (!tbody) return;
+
+            // Update section totals
+            const totalRows = tbody.querySelectorAll('tr[data-type="total"]');
+            totalRows.forEach(totalRow => {
+                const sectionTotal = calculateAppSectionTotal(totalRow);
+                const totalSpan = totalRow.querySelector('.section-total');
+                if (totalSpan) {
+                    totalSpan.textContent = '₱' + sectionTotal.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+                }
+            });
+
+            // Update grand total
+            const grandTotalRow = tbody.querySelector('tr[data-type="grand-total"]');
+            if (grandTotalRow) {
+                const grandTotal = calculateAppGrandTotal();
+                const grandTotalSpan = grandTotalRow.querySelector('.grand-total-amount');
+                if (grandTotalSpan) {
+                    grandTotalSpan.textContent = '₱' + grandTotal.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+                }
+            }
+        }
+
+        function calculateAppSectionTotal(totalRow) {
+            let total = 0;
+            let currentRow = totalRow.previousElementSibling;
+            
+            while (currentRow) {
+                const rowType = currentRow.getAttribute('data-type');
+                if (rowType === 'total' || rowType === 'grand-total') break;
+                if (rowType !== 'label') {
+                    const totalCostInput = currentRow.querySelector('[data-field="total_cost"]');
+                    if (totalCostInput) {
+                        total += parseFloat(totalCostInput.value) || 0;
+                    }
+                }
+                currentRow = currentRow.previousElementSibling;
+            }
+            
+            return total;
+        }
+
+        function calculateAppGrandTotal() {
+            const tbody = document.getElementById('appItemsBody');
+            if (!tbody) return 0;
+            
+            let grandTotal = 0;
+            const rows = tbody.querySelectorAll('tr');
+            rows.forEach(row => {
+                const rowType = row.getAttribute('data-type');
+                if (!rowType || rowType === 'data') {
+                    const totalCostInput = row.querySelector('[data-field="total_cost"]');
+                    if (totalCostInput) {
+                        grandTotal += parseFloat(totalCostInput.value) || 0;
+                    }
+                }
+            });
+            
+            return grandTotal;
+        }
+
+        function collectAppItemsFromDOM() {
+            const tbody = document.getElementById('appItemsBody');
+            if (!tbody) return [];
+            const items = [];
+            tbody.querySelectorAll('tr').forEach((row, idx) => {
+                const item = {};
+                const dataType = (row.getAttribute('data-type') || 'data').toLowerCase();
+                
+                // Determine row type
+                let rowType = 'DATA';
+                if (dataType === 'total') {
+                    rowType = 'TOTAL';
+                } else if (dataType === 'grand-total') {
+                    rowType = 'GRAND_TOTAL';
+                } else if (dataType === 'label') {
+                    rowType = 'LABEL';
+                    // For label rows, store the label text from the first td
+                    const labelTd = row.querySelector('td');
+                    item.description = labelTd ? labelTd.textContent : '';
+                }
+                
+                // Collect appField inputs
+                row.querySelectorAll('.appField').forEach(input => {
+                    const field = input.getAttribute('data-field');
+                    item[field] = input.value;
+                });
+                
+                item.row_type = rowType;
+                items.push(item);
+            });
+            return items;
+        }
+
+        async function loadAppPlans() {
+            try {
+                const response = await fetch('/get-app-plans');
+                const data = await response.json();
+                if (data.success) {
+                    appCache = data.plans || [];
+                    renderAppRecords(appCache);
+                }
+            } catch (error) {
+                console.error('Error loading APP plans:', error);
+            }
+        }
+
+        function renderAppRecords(list) {
+            const tbody = document.getElementById('appRecordsList');
+            if (!tbody) return;
+            if (list.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; color: #999;">No plans saved</td></tr>';
+                return;
+            }
+            tbody.innerHTML = list.map(plan => `
+                <tr>
+                    <td>${plan.app_no || '-'}</td>
+                    <td>${plan.office_name || '-'}</td>
+                    <td>${plan.barangay || '-'}</td>
+                    <td>${plan.calendar_year || '-'}</td>
+                    <td>
+                        <button onclick="openAppPlan(${plan.id})" style="padding: 6px 10px; background: #2563eb; color: white; border: none; border-radius: 4px; cursor: pointer; margin-right: 6px;">Edit</button>
+                        <button onclick="printAppPlan(${plan.id})" style="padding: 6px 10px; background: #7c3aed; color: white; border: none; border-radius: 4px; cursor: pointer; margin-right: 6px;">Print</button>
+                        <button onclick="deleteAppPlan(${plan.id})" style="padding: 6px 10px; background: #ef4444; color: white; border: none; border-radius: 4px; cursor: pointer;">Delete</button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        async function openAppPlan(id) {
+            try {
+                const response = await fetch(`/get-app-plan/${id}`);
+                const data = await response.json();
+                if (data.success) {
+                    const plan = data.plan;
+                    document.getElementById('appNo').value = plan.app_no || '';
+                    document.getElementById('appOfficeName').value = plan.office_name || '';
+                    document.getElementById('appCalendarYear').value = plan.calendar_year || '';
+                    document.getElementById('appBarangay').value = plan.barangay || '';
+                    document.getElementById('appMunicipality').value = plan.municipality || '';
+                    document.getElementById('appProvince').value = plan.province || '';
+                    renderAppItems(data.items || []);
+                    appCurrentEditId = id;
+                    switchTab('app');
+                    document.getElementById('appHeaderSection').style.display = 'block';
+                }
+            } catch (error) {
+                console.error('Error loading plan:', error);
+            }
+        }
+
+        async function saveAppPlan() {
+            const app_no = document.getElementById('appNo').value;
+            const office_name = document.getElementById('appOfficeName').value;
+            const calendar_year = document.getElementById('appCalendarYear').value;
+            const barangay = document.getElementById('appBarangay').value;
+            const municipality = document.getElementById('appMunicipality').value;
+            const province = document.getElementById('appProvince').value;
+            const items = collectAppItemsFromDOM();
+
+            if (!app_no || !office_name || !calendar_year) {
+                alert('Please fill in APP No., Office Name, and Calendar Year');
+                return;
+            }
+
+            try {
+                const response = await fetch('/save-app-plan', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        plan_id: appCurrentEditId,
+                        app_no, office_name, calendar_year, barangay, municipality, province, items
+                    })
+                });
+                const data = await response.json();
+                if (data.success) {
+                    alert('✓ Plan saved successfully!');
+                    appCurrentEditId = null;
+                    document.getElementById('appForm').reset();
+                    renderAppItems();
+                    document.getElementById('appHeaderSection').style.display = 'none';
+                    loadAppPlans();
+                } else {
+                    alert(`✗ ${data.message || 'Error saving plan'}`);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error saving plan');
+            }
+        }
+
+        async function deleteAppPlan(planId) {
+            if (!confirm('Delete this procurement plan?')) return;
+            try {
+                const response = await fetch(`/delete-app-plan/${planId}`, { method: 'DELETE' });
+                const data = await response.json();
+                if (data.success) {
+                    loadAppPlans();
+                } else {
+                    alert(`✗ ${data.message || 'Error deleting plan'}`);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        }
+
+        function printAppPlan(planId) {
+            window.location.href = `/print-app-plan/${planId}`;
+        }
+
+        function applyAppFilters() {
+            const search = (document.getElementById('appSearch')?.value || '').toLowerCase();
+            const sort = document.getElementById('appSort')?.value || 'date_desc';
+            let filtered = [...appCache];
+
+            // Search filter
+            if (search) {
+                filtered = filtered.filter(p =>
+                    (p.app_no || '').toLowerCase().includes(search) ||
+                    (p.office_name || '').toLowerCase().includes(search) ||
+                    (p.barangay || '').toLowerCase().includes(search)
+                );
+            }
+
+            // Sort
+            if (sort === 'date_asc') {
+                filtered.sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
+            } else if (sort === 'date_desc') {
+                filtered.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+            } else if (sort === 'year_asc') {
+                filtered.sort((a, b) => (a.calendar_year || 0) - (b.calendar_year || 0));
+            } else if (sort === 'year_desc') {
+                filtered.sort((a, b) => (b.calendar_year || 0) - (a.calendar_year || 0));
+            }
+
+            renderAppRecords(filtered);
+        }
+
+        // APP Form Handler
+        document.getElementById('appForm')?.addEventListener('submit', (e) => {
+            e.preventDefault();
+            saveAppPlan();
+        });
+
+        // APP Form Reset Handler
+        document.getElementById('appForm')?.addEventListener('reset', (e) => {
+            e.preventDefault();
+            // Clear all header fields
+            document.getElementById('appNo').value = '';
+            document.getElementById('appOfficeName').value = '';
+            document.getElementById('appCalendarYear').value = '';
+            document.getElementById('appBarangay').value = '';
+            document.getElementById('appMunicipality').value = '';
+            document.getElementById('appProvince').value = '';
+            
+            // Clear items table and reset to single empty row
+            renderAppItems([]);
+            
+            // Reset edit state
+            appCurrentEditId = null;
+            
+            // Hide header section
+            document.getElementById('appHeaderSection').style.display = 'none';
+            
+            // Clear message
+            document.getElementById('appMessage').textContent = '';
+            document.getElementById('appMessage').style.display = 'none';
+        });
+
+        // APP Event Listeners
+        document.getElementById('appSearch')?.addEventListener('input', applyAppFilters);
+        document.getElementById('appSort')?.addEventListener('change', applyAppFilters);
+
+        // Initialize
+        loadUserProfile();
+        loadNotificationCount();
+        loadMembers();
+        loadPasswordChangeStatus();
+        loadBudgetFyTemplates();
+        renderLiquidationItems();
+        loadLiquidationReports();
+        loadAppPlans();
+        loadMinutes();
+        loadResolutions();
+        loadBudgetAnalytics();
+
+        document.getElementById('minutesSearch')?.addEventListener('input', applyMinutesFilters);
+        document.getElementById('minutesFrom')?.addEventListener('change', applyMinutesFilters);
+        document.getElementById('minutesTo')?.addEventListener('change', applyMinutesFilters);
+
+        document.getElementById('resolutionSearch')?.addEventListener('input', applyResolutionsFilters);
+        document.getElementById('resolutionNumberFilter')?.addEventListener('input', applyResolutionsFilters);
+        document.getElementById('resolutionFrom')?.addEventListener('change', applyResolutionsFilters);
+        document.getElementById('resolutionTo')?.addEventListener('change', applyResolutionsFilters);
+
+        document.getElementById('memberMunicipalityFilter')?.addEventListener('change', applyMemberFilters);
+        document.getElementById('memberSearch')?.addEventListener('input', applyMemberFilters);
+
+        document.getElementById('liquidationSearch')?.addEventListener('input', applyLiquidationFilters);
+        document.getElementById('liquidationSort')?.addEventListener('change', applyLiquidationFilters);
+        
+        // Refresh notification count every 30 seconds
+        setInterval(loadNotificationCount, 30000);
+        // Refresh budget analytics every 10 seconds
+        setInterval(loadBudgetAnalytics, 10000);
+
+        // Analytics Charts
+        let usedBudgetChart = null;
+        let totalBudgetChart = null;
+
+        async function loadBudgetAnalytics() {
+            try {
+                const response = await fetch('/get-budget-analytics');
+                const data = await response.json();
+                
+                if (data) {
+                    const usedBudget = data.used_budget || 0;
+                    const totalBudget = data.total_budget || 0;
+                    const percentage = totalBudget > 0 ? Math.round((usedBudget / totalBudget) * 100) : 0;
+                    
+                    // Update values
+                    document.getElementById('usedBudgetValue').textContent = `₱${usedBudget.toLocaleString()}`;
+                    document.getElementById('totalBudgetValue').textContent = `₱${totalBudget.toLocaleString()}`;
+                    
+                    // Render charts
+                    renderBudgetCharts(usedBudget, totalBudget, percentage);
+                }
+            } catch (error) {
+                console.error('Error loading budget analytics:', error);
+            }
+        }
+
+        function renderBudgetCharts(usedBudget, totalBudget, percentage) {
+            const ctx1 = document.getElementById('usedBudgetChart');
+            const ctx2 = document.getElementById('totalBudgetChart');
+            
+            if (!ctx1 || !ctx2) return;
+
+            // Destroy existing charts if they exist
+            if (usedBudgetChart) usedBudgetChart.destroy();
+            if (totalBudgetChart) totalBudgetChart.destroy();
+
+            // Used Budget Donut Chart
+            usedBudgetChart = new Chart(ctx1, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Used', 'Remaining'],
+                    datasets: [{
+                        data: [percentage, 100 - percentage],
+                        backgroundColor: ['#0284c7', 'rgba(2, 132, 199, 0.1)'],
+                        borderColor: ['#0284c7', 'rgba(2, 132, 199, 0.15)'],
+                        borderWidth: 2,
+                        borderRadius: 8
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    cutout: '60%',
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            backgroundColor: 'rgba(30, 41, 59, 0.95)',
+                            titleColor: '#0284c7',
+                            bodyColor: '#f1f5f9',
+                            borderColor: 'rgba(2, 132, 199, 0.3)',
+                            borderWidth: 1,
+                            callbacks: {
+                                label: function(context) {
+                                    return context.label + ': ' + context.parsed + '%';
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Total Budget Bar Chart
+            const remainingBudget = totalBudget - usedBudget;
+            totalBudgetChart = new Chart(ctx2, {
+                type: 'bar',
+                data: {
+                    labels: ['Used', 'Available'],
+                    datasets: [{
+                        label: 'Budget Amount',
+                        data: [usedBudget, remainingBudget],
+                        backgroundColor: ['#0284c7', 'rgba(2, 132, 199, 0.2)'],
+                        borderColor: ['#0284c7', 'rgba(2, 132, 199, 0.3)'],
+                        borderWidth: 2,
+                        borderRadius: 8,
+                        barPercentage: 0.6
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    indexAxis: 'y',
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            backgroundColor: 'rgba(30, 41, 59, 0.95)',
+                            titleColor: '#0284c7',
+                            bodyColor: '#f1f5f9',
+                            borderColor: 'rgba(2, 132, 199, 0.3)',
+                            borderWidth: 1,
+                            callbacks: {
+                                label: function(context) {
+                                    return '₱' + context.parsed.x.toLocaleString();
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            beginAtZero: true,
+                            ticks: { color: 'rgba(30, 41, 59, 0.7)' },
+                            grid: { color: 'rgba(2, 132, 199, 0.08)' }
+                        },
+                        y: {
+                            ticks: { color: 'rgba(30, 41, 59, 0.8)' }
+                        }
+                    }
+                }
+            });
+        }
+
+        function openBudgetAnalytics() {
+            switchTab('budget-fy');
+        }
+
+        function openTransactionHistory() {
+            window.location.href = '/voucher-history';
+        }
+
+        // Load analytics on page load
+        loadBudgetAnalytics();
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.js"></script>
+</body>
+</html>

@@ -1,0 +1,831 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SKLGU - Announcements</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+            background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 50%, #cffafe 100%);
+            color: #1e293b;
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 15%;
+            right: -8%;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, #0ea5e9 0%, transparent 70%);
+            border-radius: 50%;
+            opacity: 0.12;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        body::after {
+            content: '';
+            position: fixed;
+            bottom: -5%;
+            left: -5%;
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, #06b6d4 0%, transparent 70%);
+            border-radius: 50%;
+            opacity: 0.1;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .top-header {
+            background: linear-gradient(135deg, #0284c7 0%, #0ea5e9 50%, #06b6d4 100%);
+            padding: 30px;
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 12px 40px rgba(2, 132, 199, 0.3);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .header-title {
+            font-size: 28px;
+            font-weight: 700;
+        }
+
+        .top-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn-small {
+            padding: 12px 24px;
+            border: 2px solid white;
+            background: transparent;
+            color: white;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            font-size: 13px;
+        }
+
+        .btn-small:hover {
+            background: white;
+            color: #0284c7;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(2, 132, 199, 0.3);
+        }
+
+        .notification-badge {
+            position: relative;
+            display: inline-block;
+        }
+
+        .badge {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background: #ef4444;
+            color: white;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .main-content {
+            max-width: 900px;
+            margin: 30px auto;
+            padding: 0 20px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .announcement {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 16px;
+            padding: 0;
+            margin-bottom: 25px;
+            box-shadow: 0 12px 40px rgba(2, 132, 199, 0.12);
+            border: 2px solid rgba(2, 132, 199, 0.15);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            backdrop-filter: blur(10px);
+            overflow: hidden;
+        }
+
+        .announcement:hover {
+            box-shadow: 0 20px 60px rgba(2, 132, 199, 0.2);
+            transform: translateY(-8px);
+            background: rgba(255, 255, 255, 0.98);
+            border-color: rgba(2, 132, 199, 0.25);
+        }
+
+        .post-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 20px 24px;
+            border-bottom: 1px solid rgba(2, 132, 199, 0.1);
+        }
+
+        .post-avatar {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #0284c7, #06b6d4);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 18px;
+            flex-shrink: 0;
+            border: 3px solid rgba(2, 132, 199, 0.2);
+        }
+
+        .post-avatar img {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .post-author-info {
+            flex: 1;
+        }
+
+        .post-author-name {
+            font-size: 17px;
+            font-weight: 700;
+            color: #1e293b;
+            margin-bottom: 2px;
+        }
+
+        .post-time {
+            font-size: 14px;
+            color: #64748b;
+            font-weight: 500;
+        }
+
+        .post-body {
+            padding: 0 24px 20px 24px;
+        }
+
+        .post-image {
+            width: 100%;
+            max-height: 500px;
+            object-fit: cover;
+            margin-top: 15px;
+            border-radius: 8px;
+        }
+
+        .post-actions {
+            display: flex;
+            gap: 8px;
+            padding: 12px 24px;
+            border-top: 1px solid rgba(2, 132, 199, 0.1);
+            border-bottom: 1px solid rgba(2, 132, 199, 0.1);
+        }
+
+        .action-btn {
+            flex: 1;
+            padding: 10px 16px;
+            border: none;
+            background: transparent;
+            color: #475569;
+            font-weight: 600;
+            font-size: 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        .action-btn:hover {
+            background: rgba(2, 132, 199, 0.1);
+        }
+
+        .action-btn.liked {
+            color: #0284c7;
+            font-weight: 700;
+        }
+
+        .post-stats {
+            padding: 12px 24px;
+            font-size: 15px;
+            color: #64748b;
+            font-weight: 500;
+        }
+
+        .announcement-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 15px;
+        }
+
+        .announcement-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: #1e293b;
+            margin-bottom: 12px;
+            letter-spacing: -0.3px;
+            line-height: 1.4;
+        }
+
+        .announcement-time {
+            color: rgba(30, 41, 59, 0.6);
+            font-size: 15px;
+            font-weight: 500;
+        }
+
+        .announcement-content {
+            color: #1c1e21;
+            line-height: 1.7;
+            margin-bottom: 20px;
+            padding: 20px;
+            background: linear-gradient(135deg, #f8fafc 0%, #f0f9ff 100%);
+            border-radius: 8px;
+            border: 1px solid rgba(2, 132, 199, 0.1);
+            font-size: 18px;
+            font-weight: 400;
+        }
+
+        .comments-section {
+            padding: 20px 24px;
+            background: rgba(248, 250, 252, 0.5);
+        }
+
+        .comments-title {
+            font-size: 17px;
+            font-weight: 700;
+            color: #0284c7;
+            margin-bottom: 15px;
+        }
+
+        .comment {
+            background: rgba(2, 132, 199, 0.08);
+            padding: 14px 16px;
+            border-radius: 10px;
+            margin-bottom: 12px;
+            border: 1px solid rgba(2, 132, 199, 0.15);
+            border-left: 3px solid #0284c7;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .comment:hover {
+            background: rgba(2, 132, 199, 0.12);
+            border-color: rgba(2, 132, 199, 0.25);
+            box-shadow: 0 4px 12px rgba(2, 132, 199, 0.1);
+        }
+
+        .comment-author {
+            font-weight: 700;
+            color: #1e293b;
+            font-size: 15px;
+            margin-bottom: 6px;
+        }
+
+        .comment-text {
+            color: #1c1e21;
+            font-size: 16px;
+            line-height: 1.6;
+            font-weight: 400;
+        }
+
+        .comment-time {
+            color: rgba(30, 41, 59, 0.6);
+            font-size: 11px;
+            margin-top: 5px;
+        }
+
+        .add-comment-form {
+            margin-top: 15px;
+        }
+
+        .form-group {
+            margin-bottom: 12px;
+        }
+
+        label {
+            display: block;
+            color: #1e293b;
+            font-weight: 700;
+            margin-bottom: 10px;
+            font-size: 16px;
+            letter-spacing: 0.3px;
+        }
+
+        textarea,
+        input[type="file"] {
+            width: 100%;
+            padding: 16px 18px;
+            border: 2px solid rgba(2, 132, 199, 0.15);
+            border-radius: 12px;
+            font-size: 16px;
+            font-family: inherit;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            font-weight: 400;
+            color: #1e293b;
+        }
+
+        textarea:focus,
+        input[type="file"]:focus {
+            outline: none;
+            border-color: #0284c7;
+            box-shadow: 0 0 0 4px rgba(2, 132, 199, 0.15), inset 0 0 0 1px rgba(2, 132, 199, 0.1);
+            background: rgba(255, 255, 255, 0.99);
+            transform: scale(1.01);
+        }
+
+        textarea::placeholder {
+            color: rgba(30, 41, 59, 0.5);
+            font-weight: 500;
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .btn {
+            padding: 14px 28px;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            letter-spacing: 0.5px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #0284c7 0%, #0ea5e9 50%, #06b6d4 100%);
+            color: white;
+            box-shadow: 0 8px 25px rgba(2, 132, 199, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 35px rgba(2, 132, 199, 0.4);
+            background: linear-gradient(135deg, #0272a8 0%, #0c8ad4 50%, #0499c6 100%);
+        }
+
+        .btn-small-action {
+            padding: 8px 14px;
+            font-size: 12px;
+            background: linear-gradient(135deg, #0284c7 0%, #06b6d4 100%);
+            color: white;
+            letter-spacing: normal;
+            font-weight: 600;
+            box-shadow: 0 4px 12px rgba(2, 132, 199, 0.2);
+        }
+
+        .btn-small-action:hover {
+            box-shadow: 0 6px 16px rgba(2, 132, 199, 0.3);
+            transform: translateY(-2px);
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .message {
+            padding: 16px 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            display: none;
+            font-size: 14px;
+            border-left: 4px solid;
+            box-shadow: 0 4px 16px rgba(2, 132, 199, 0.12);
+            animation: slideDown 0.4s ease;
+            font-weight: 500;
+        }
+
+        .message.success {
+            background: linear-gradient(135deg, #f0fdf4 0%, #ecfdf5 100%);
+            color: #166534;
+            border-left-color: #10b981;
+        }
+
+        .message.error {
+            background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
+            color: #991b1b;
+            border-left-color: #ef4444;
+        }
+
+        .files-section {
+            margin-top: 15px;
+            padding: 12px;
+            background: #f0f0f0;
+            border-radius: 8px;
+        }
+
+        .files-title {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 13px;
+        }
+
+        .file-item {
+            background: white;
+            padding: 8px 12px;
+            border-radius: 6px;
+            margin-bottom: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 12px;
+        }
+
+        .file-info {
+            flex: 1;
+        }
+
+        .file-name {
+            font-weight: 600;
+            color: #667eea;
+            cursor: pointer;
+        }
+
+        .file-name:hover {
+            text-decoration: underline;
+        }
+
+        .file-uploader {
+            color: #999;
+            font-size: 11px;
+        }
+
+        .empty-message {
+            text-align: center;
+            color: #999;
+            padding: 40px;
+            font-size: 14px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        @media (max-width: 600px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            .announcement-header {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="top-header">
+        <div class="header-title">📢 Announcements</div>
+        <div class="top-buttons">
+            <div class="notification-badge">
+                <button class="btn-small">🔔 Notifications</button>
+                <span class="badge" id="notificationCount" style="display: none;">0</span>
+            </div>
+            <button class="btn-small" onclick="goBack()">← Back to Dashboard</button>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <div id="message" class="message"></div>
+
+        <div id="announcementsList">Loading announcements...</div>
+    </div>
+
+    <script>
+        // Load announcements
+        async function loadAnnouncements() {
+            try {
+                const response = await fetch('/get-user-announcements');
+                const data = await response.json();
+
+                if (data.success) {
+                    const div = document.getElementById('announcementsList');
+                    
+                    if (data.announcements.length === 0) {
+                        div.innerHTML = '<div class="empty-message">📭 No announcements yet</div>';
+                        return;
+                    }
+
+                    div.innerHTML = data.announcements.map(announcement => {
+                        const timeAgo = getTimeAgo(new Date(announcement.posted_at));
+                        const avatarInitials = announcement.poster_name.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase();
+                        
+                        return `
+                        <div class="announcement">
+                            <!-- Post Header -->
+                            <div class="post-header">
+                                <div class="post-avatar">
+                                    ${announcement.poster_profile_pic ? 
+                                        `<img src="/uploads/${announcement.poster_profile_pic}" alt="${announcement.poster_name}">` : 
+                                        avatarInitials
+                                    }
+                                </div>
+                                <div class="post-author-info">
+                                    <div class="post-author-name">${announcement.poster_name}</div>
+                                    <div class="post-time">${timeAgo}</div>
+                                </div>
+                            </div>
+
+                            <!-- Post Body -->
+                            <div class="post-body">
+                                ${announcement.title ? `<div class="announcement-title">${announcement.title}</div>` : ''}
+                                <div class="announcement-content">${announcement.content}</div>
+                                ${announcement.announcement_image ? 
+                                    `<img src="/uploads/${announcement.announcement_image}" class="post-image" alt="Post image">` : 
+                                    ''
+                                }
+                            </div>
+
+                            <!-- Post Stats -->
+                            ${announcement.likes_count > 0 || announcement.comments.length > 0 ? `
+                                <div class="post-stats">
+                                    ${announcement.likes_count > 0 ? `👍 ${announcement.likes_count} ${announcement.likes_count === 1 ? 'like' : 'likes'}` : ''}
+                                    ${announcement.likes_count > 0 && announcement.comments.length > 0 ? ' • ' : ''}
+                                    ${announcement.comments.length > 0 ? `${announcement.comments.length} ${announcement.comments.length === 1 ? 'comment' : 'comments'}` : ''}
+                                </div>
+                            ` : ''}
+
+                            <!-- Post Actions -->
+                            <div class="post-actions">
+                                <button class="action-btn ${announcement.user_liked ? 'liked' : ''}" onclick="toggleLike(${announcement.id}, this)">
+                                    ${announcement.user_liked ? '👍' : '👍'} Like
+                                </button>
+                                <button class="action-btn" onclick="focusComment(${announcement.id})">
+                                    💬 Comment
+                                </button>
+                                <button class="action-btn" onclick="focusUpload(${announcement.id})">
+                                    📎 Upload
+                                </button>
+                            </div>
+
+                            <!-- Comments Section -->
+                            <div class="comments-section">
+                                <div style="margin-bottom: 15px; max-height: 300px; overflow-y: auto;">
+                                    ${announcement.comments.length > 0 ? 
+                                        announcement.comments.map(comment => `
+                                            <div class="comment">
+                                                <div class="comment-author">${comment.user_email}</div>
+                                                <div class="comment-text">${comment.comment}</div>
+                                                <div class="comment-time">${new Date(comment.posted_at).toLocaleString()}</div>
+                                            </div>
+                                        `).join('')
+                                    : '<p style="color: #999; font-size: 15px; padding: 10px;">Be the first to comment!</p>'
+                                    }
+                                </div>
+
+                                <div class="add-comment-form">
+                                    <form onsubmit="addComment(event, ${announcement.id})">
+                                        <div class="form-group">
+                                            <textarea id="comment_${announcement.id}" placeholder="Write a comment..." required></textarea>
+                                        </div>
+                                        <button type="submit" class="btn btn-primary" style="width: 100%;">💬 Post Comment</button>
+                                    </form>
+
+                                    <form onsubmit="uploadFile(event, ${announcement.id})" style="margin-top: 12px;">
+                                        <div class="form-group">
+                                            <input type="file" id="file_${announcement.id}" name="file">
+                                        </div>
+                                        <button type="submit" class="btn btn-primary" style="width: 100%;">📤 Upload File</button>
+                                    </form>
+
+                                    ${announcement.files && announcement.files.length > 0 ? `
+                                        <div class="files-section">
+                                            <div class="files-title">📎 Attached Files (${announcement.files.length})</div>
+                                            ${announcement.files.map(file => `
+                                                <div class="file-item">
+                                                    <div class="file-info">
+                                                        <a href="/uploads/${file.file_path}" target="_blank" class="file-name">📄 ${file.filename}</a>
+                                                        <div class="file-uploader">Uploaded by ${file.user_email}</div>
+                                                    </div>
+                                                </div>
+                                            `).join('')}
+                                        </div>
+                                    ` : ''}
+                                </div>
+                            </div>
+                        </div>
+                    `}).join('');
+                }
+            } catch (error) {
+                console.error('Error loading announcements:', error);
+            }
+        }
+
+        // Get time ago helper
+        function getTimeAgo(date) {
+            const seconds = Math.floor((new Date() - date) / 1000);
+            const intervals = {
+                year: 31536000,
+                month: 2592000,
+                week: 604800,
+                day: 86400,
+                hour: 3600,
+                minute: 60
+            };
+
+            for (const [unit, secondsInUnit] of Object.entries(intervals)) {
+                const interval = Math.floor(seconds / secondsInUnit);
+                if (interval >= 1) {
+                    return interval === 1 ? `1 ${unit} ago` : `${interval} ${unit}s ago`;
+                }
+            }
+            return 'Just now';
+        }
+
+        // Toggle like
+        async function toggleLike(announcementId, button) {
+            try {
+                const response = await fetch(`/toggle-announcement-like/${announcementId}`, {
+                    method: 'POST'
+                });
+                const data = await response.json();
+                
+                if (data.success) {
+                    loadAnnouncements();
+                }
+            } catch (error) {
+                console.error('Error toggling like:', error);
+            }
+        }
+
+        // Focus comment textarea
+        function focusComment(announcementId) {
+            document.getElementById(`comment_${announcementId}`).focus();
+        }
+
+        // Focus upload input
+        function focusUpload(announcementId) {
+            document.getElementById(`file_${announcementId}`).click();
+        }
+
+        // Add comment
+        async function addComment(event, announcementId) {
+            event.preventDefault();
+            
+            const textarea = event.target.querySelector('textarea');
+            const comment = textarea.value.trim();
+            const messageDiv = document.getElementById('message');
+
+            try {
+                const response = await fetch('/add-announcement-comment', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ announcement_id: announcementId, comment })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    messageDiv.className = 'message success';
+                    messageDiv.textContent = '✓ Comment posted!';
+                    messageDiv.style.display = 'block';
+                    
+                    textarea.value = '';
+                    setTimeout(() => {
+                        loadAnnouncements();
+                        messageDiv.style.display = 'none';
+                    }, 1000);
+                } else {
+                    messageDiv.className = 'message error';
+                    messageDiv.textContent = '✗ ' + data.message;
+                    messageDiv.style.display = 'block';
+                }
+            } catch (error) {
+                messageDiv.className = 'message error';
+                messageDiv.textContent = '✗ Error posting comment';
+                messageDiv.style.display = 'block';
+            }
+        }
+
+        // Upload file
+        async function uploadFile(event, announcementId) {
+            event.preventDefault();
+            
+            const fileInput = event.target.querySelector('input[type="file"]');
+            const messageDiv = document.getElementById('message');
+
+            if (!fileInput.files || !fileInput.files[0]) {
+                messageDiv.className = 'message error';
+                messageDiv.textContent = '✗ Please select a file';
+                messageDiv.style.display = 'block';
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('file', fileInput.files[0]);
+
+            try {
+                const response = await fetch(`/upload-announcement-file/${announcementId}`, {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    messageDiv.className = 'message success';
+                    messageDiv.textContent = '✓ File uploaded!';
+                    messageDiv.style.display = 'block';
+                    
+                    fileInput.value = '';
+                    setTimeout(() => {
+                        loadAnnouncements();
+                        messageDiv.style.display = 'none';
+                    }, 1000);
+                } else {
+                    messageDiv.className = 'message error';
+                    messageDiv.textContent = '✗ ' + data.message;
+                    messageDiv.style.display = 'block';
+                }
+            } catch (error) {
+                messageDiv.className = 'message error';
+                messageDiv.textContent = '✗ Error uploading file';
+                messageDiv.style.display = 'block';
+            }
+        }
+
+        // Go back to dashboard
+        function goBack() {
+            window.location.href = '/user-dashboard';
+        }
+
+        // Load notification count
+        async function loadNotificationCount() {
+            try {
+                const response = await fetch('/get-unread-notifications-count');
+                const data = await response.json();
+
+                if (data.success && data.count > 0) {
+                    document.getElementById('notificationCount').textContent = data.count;
+                    document.getElementById('notificationCount').style.display = 'flex';
+                } else {
+                    document.getElementById('notificationCount').style.display = 'none';
+                }
+            } catch (error) {
+                console.error('Error loading notification count:', error);
+            }
+        }
+
+        // Mark notifications as read
+        async function markAsRead() {
+            try {
+                await fetch('/mark-notifications-read', { method: 'POST' });
+                loadNotificationCount();
+            } catch (error) {
+                console.error('Error marking notifications:', error);
+            }
+        }
+
+        // Initialize
+        loadNotificationCount();
+        loadAnnouncements();
+        
+        // Mark as read after a delay (user has seen the page)
+        setTimeout(markAsRead, 2000);
+        
+        // Refresh every 30 seconds
+        setInterval(() => {
+            loadNotificationCount();
+            loadAnnouncements();
+        }, 30000);
+    </script>
+</body>
+</html>

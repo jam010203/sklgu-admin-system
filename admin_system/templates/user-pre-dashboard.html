@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SKLGU - Complete Your Profile</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 35%, #f093fb 70%, #f5576c 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            padding: 40px 20px 60px;
+            overflow-y: auto;
+            position: relative;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: -10%;
+            right: -5%;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, #00d4ff 0%, transparent 70%);
+            border-radius: 50%;
+            opacity: 0.25;
+            z-index: 0;
+        }
+
+        body::after {
+            content: '';
+            position: fixed;
+            bottom: -10%;
+            left: -10%;
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, #ffd700 0%, transparent 70%);
+            border-radius: 50%;
+            opacity: 0.2;
+            z-index: 0;
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.98);
+            border-radius: 20px;
+            box-shadow: 0 30px 80px rgba(102, 126, 234, 0.4);
+            max-width: 900px;
+            width: 100%;
+            padding: 60px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            backdrop-filter: blur(10px);
+            position: relative;
+            z-index: 10;
+            max-height: calc(100vh - 80px);
+            overflow-y: auto;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .header h1 {
+            color: #667eea;
+            font-size: 36px;
+            margin-bottom: 12px;
+            font-weight: 700;
+        }
+
+        .header p {
+            color: #666;
+            font-size: 16px;
+            line-height: 1.6;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #e0e0e0;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .form-grid.full {
+            grid-template-columns: 1fr;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        label {
+            color: #333;
+            font-weight: 700;
+            margin-bottom: 10px;
+            font-size: 14px;
+            letter-spacing: 0.3px;
+        }
+
+        input[type="text"],
+        input[type="email"],
+        input[type="tel"],
+        input[type="date"],
+        textarea {
+            padding: 16px 18px;
+            border: 2px solid rgba(255, 255, 255, 0.4);
+            border-radius: 12px;
+            font-size: 15px;
+            font-family: inherit;
+            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.75);
+            backdrop-filter: blur(10px);
+            font-weight: 500;
+        }
+
+        input:focus,
+        textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.15), inset 0 0 0 1px rgba(102, 126, 234, 0.1);
+            background: rgba(255, 255, 255, 0.98);
+        }
+
+        input::placeholder,
+        textarea::placeholder {
+            color: #999;
+            font-weight: 500;
+        }
+
+        .file-input-wrapper {
+            position: relative;
+            overflow: hidden;
+            display: inline-block;
+            width: 100%;
+        }
+
+        .file-input-wrapper input[type="file"] {
+            position: absolute;
+            left: -9999px;
+        }
+
+        .file-input-label {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px;
+            border: 2px dashed rgba(102, 126, 234, 0.5);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: rgba(102, 126, 234, 0.08);
+            backdrop-filter: blur(10px);
+        }
+
+        .file-input-label:hover {
+            background: rgba(102, 126, 234, 0.12);
+            border-color: #667eea;
+            transform: translateY(-2px);
+        }
+
+        .file-input-label.active {
+            background: rgba(102, 126, 234, 0.15);
+            border-color: #667eea;
+            box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+        }
+
+        .file-icon {
+            font-size: 32px;
+            margin-right: 10px;
+        }
+
+        .file-text {
+            text-align: left;
+        }
+
+        .file-text h3 {
+            color: #333;
+            font-size: 14px;
+            margin-bottom: 5px;
+        }
+
+        .file-text p {
+            color: #999;
+            font-size: 12px;
+        }
+
+        .file-preview {
+            margin-top: 10px;
+            padding: 10px;
+            background: #e8f5e9;
+            border-radius: 8px;
+            display: none;
+            color: #2e7d32;
+            font-size: 12px;
+        }
+
+        .file-preview.active {
+            display: block;
+        }
+
+        .error-message {
+            color: #e74c3c;
+            font-size: 12px;
+            margin-top: 5px;
+            display: none;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 15px;
+            margin-top: 40px;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 16px 28px;
+            border: none;
+            border-radius: 10px;
+            font-size: 15px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            color: white;
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.35);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 35px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .message {
+            padding: 16px 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            display: none;
+            font-size: 15px;
+            border-left: 4px solid;
+            animation: slideDown 0.4s ease;
+            font-weight: 500;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+        }
+
+        .message.success {
+            background: linear-gradient(135deg, #f0fdf4 0%, #ecfdf5 100%);
+            color: #166534;
+            border-left-color: #10b981;
+        }
+
+        .message.error {
+            background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
+            color: #991b1b;
+            border-left-color: #ef4444;
+        }
+
+        .required {
+            color: #e74c3c;
+        }
+
+        @media (max-width: 900px) {
+            .container {
+                padding: 40px 30px;
+                max-height: none;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 600px) {
+            body {
+                padding: 20px 12px 40px;
+            }
+
+            .container {
+                padding: 30px 20px;
+                border-radius: 16px;
+            }
+
+            .header h1 {
+                font-size: 28px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🏛️ Welcome to SKLGU</h1>
+            <p>Complete your profile to access your dashboard</p>
+        </div>
+
+        <div class="progress-bar">
+            <div class="progress-fill"></div>
+        </div>
+
+        <div id="message" class="message"></div>
+
+        <form id="profileForm">
+            <!-- Personal Information Section -->
+            <h3 style="color: #667eea; margin-bottom: 20px; font-size: 18px;">📋 Personal Information</h3>
+
+            <div class="form-grid full">
+                <div class="form-group">
+                    <label for="fullName">Full Name <span class="required">*</span></label>
+                    <input type="text" id="fullName" name="fullName" placeholder="Enter your full name" required>
+                </div>
+            </div>
+
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="email">Email <span class="required">*</span></label>
+                    <input type="email" id="email" name="email" placeholder="Enter your email address" required>
+                </div>
+                <div class="form-group">
+                    <label for="phoneNo">Phone No. <span class="required">*</span></label>
+                    <input type="tel" id="phoneNo" name="phoneNo" placeholder="e.g., +63 9XX XXX XXXX" required>
+                </div>
+            </div>
+
+            <div class="form-grid full">
+                <div class="form-group">
+                    <label for="completeAddress">Complete Address <span class="required">*</span></label>
+                    <textarea id="completeAddress" name="completeAddress" placeholder="Enter your complete address" rows="3" required></textarea>
+                </div>
+            </div>
+
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="position">Position <span class="required">*</span></label>
+                    <input type="text" id="position" name="position" placeholder="e.g., Chairperson, Secretary" required>
+                </div>
+                <div class="form-group">
+                    <label for="birthdate">Birthdate <span class="required">*</span></label>
+                    <input type="date" id="birthdate" name="birthdate" required>
+                </div>
+            </div>
+
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="barangay">Barangay <span class="required">*</span></label>
+                    <input type="text" id="barangay" name="barangay" placeholder="Enter barangay name" required>
+                </div>
+                <div class="form-group">
+                    <label for="municipality">Municipality <span class="required">*</span></label>
+                    <input type="text" id="municipality" name="municipality" placeholder="Enter municipality name" required>
+                </div>
+            </div>
+
+            <!-- File Upload Section -->
+            <h3 style="color: #667eea; margin-top: 40px; margin-bottom: 20px; font-size: 18px;">📸 Upload Documents</h3>
+
+            <div class="form-group">
+                <label for="profilePicture">Profile Picture <span class="required">*</span></label>
+                <div class="file-input-wrapper">
+                    <input type="file" id="profilePicture" name="profilePicture" accept="image/*" required>
+                    <label for="profilePicture" class="file-input-label" onclick="document.getElementById('profilePicture').click()">
+                        <span class="file-icon">🖼️</span>
+                        <div class="file-text">
+                            <h3>Click to upload or drag and drop</h3>
+                            <p>PNG, JPG, GIF up to 10MB</p>
+                        </div>
+                    </label>
+                    <div id="profilePicturePreview" class="file-preview"></div>
+                </div>
+            </div>
+
+            <div class="form-group" style="margin-top: 20px;">
+                <label for="brgyLogo">Barangay SK Logo <span class="required">*</span></label>
+                <div class="file-input-wrapper">
+                    <input type="file" id="brgyLogo" name="brgyLogo" accept="image/*" required>
+                    <label for="brgyLogo" class="file-input-label" onclick="document.getElementById('brgyLogo').click()">
+                        <span class="file-icon">🏛️</span>
+                        <div class="file-text">
+                            <h3>Click to upload or drag and drop</h3>
+                            <p>PNG, JPG, GIF up to 10MB</p>
+                        </div>
+                    </label>
+                    <div id="brgyLogoPreview" class="file-preview"></div>
+                </div>
+            </div>
+
+            <div class="button-group">
+                <button type="submit" class="btn btn-primary">✓ Complete Profile & Continue</button>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        const form = document.getElementById('profileForm');
+        const progressFill = document.querySelector('.progress-fill');
+        const messageDiv = document.getElementById('message');
+
+        // Update progress bar
+        function updateProgress() {
+            const inputs = form.querySelectorAll('input[required], textarea[required]');
+            const filled = Array.from(inputs).filter(input => {
+                if (input.type === 'file') {
+                    return input.files.length > 0;
+                }
+                return input.value.trim() !== '';
+            }).length;
+
+            const progress = (filled / inputs.length) * 100;
+            progressFill.style.width = progress + '%';
+        }
+
+        // File input handlers
+        function setupFileInput(inputId, previewId) {
+            const input = document.getElementById(inputId);
+            const preview = document.getElementById(previewId);
+            const label = input.parentElement.querySelector('.file-input-label');
+
+            input.addEventListener('change', function() {
+                if (this.files.length > 0) {
+                    preview.textContent = '✓ ' + this.files[0].name + ' uploaded';
+                    preview.classList.add('active');
+                    label.classList.add('active');
+                    updateProgress();
+                }
+            });
+
+            // Drag and drop
+            label.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                label.classList.add('active');
+            });
+
+            label.addEventListener('dragleave', () => {
+                label.classList.remove('active');
+            });
+
+            label.addEventListener('drop', (e) => {
+                e.preventDefault();
+                label.classList.remove('active');
+                input.files = e.dataTransfer.files;
+                if (input.files.length > 0) {
+                    preview.textContent = '✓ ' + input.files[0].name + ' uploaded';
+                    preview.classList.add('active');
+                    label.classList.add('active');
+                    updateProgress();
+                }
+            });
+        }
+
+        // Setup file inputs
+        setupFileInput('profilePicture', 'profilePicturePreview');
+        setupFileInput('brgyLogo', 'brgyLogoPreview');
+
+        // Update progress on input change
+        form.querySelectorAll('input, textarea').forEach(input => {
+            input.addEventListener('input', updateProgress);
+        });
+
+        // Form submission
+        form.addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            const formData = new FormData();
+            formData.append('full_name', document.getElementById('fullName').value);
+            formData.append('email', document.getElementById('email').value);
+            formData.append('phone_no', document.getElementById('phoneNo').value);
+            formData.append('complete_address', document.getElementById('completeAddress').value);
+            formData.append('position', document.getElementById('position').value);
+            formData.append('birthdate', document.getElementById('birthdate').value);
+            formData.append('barangay', document.getElementById('barangay').value);
+            formData.append('municipality', document.getElementById('municipality').value);
+            formData.append('profile_picture', document.getElementById('profilePicture').files[0]);
+            formData.append('brgy_logo', document.getElementById('brgyLogo').files[0]);
+
+            try {
+                const response = await fetch('/complete-profile', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    messageDiv.className = 'message success';
+                    messageDiv.textContent = '✓ Profile completed successfully! Redirecting...';
+                    messageDiv.style.display = 'block';
+                    setTimeout(() => {
+                        window.location.href = '/user-dashboard';
+                    }, 1500);
+                } else {
+                    messageDiv.className = 'message error';
+                    messageDiv.textContent = '✗ ' + data.message;
+                    messageDiv.style.display = 'block';
+                }
+            } catch (error) {
+                messageDiv.className = 'message error';
+                messageDiv.textContent = '✗ Error completing profile';
+                messageDiv.style.display = 'block';
+            }
+        });
+
+        updateProgress();
+    </script>
+</body>
+</html>

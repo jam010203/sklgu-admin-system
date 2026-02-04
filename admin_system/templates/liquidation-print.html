@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Liquidation Report</title>
+    <style>
+        @page { 
+            size: A4; 
+            margin: 10mm;
+        }
+        @media print {
+            * {
+                margin: 0 !important;
+                padding: 0 !important;
+            }
+            html, body {
+                width: 210mm;
+                height: 297mm;
+                margin: 0;
+                padding: 0;
+                background: white;
+            }
+            .controls { display: none !important; }
+            .report { 
+                page-break-inside: avoid;
+                margin: 0 !important;
+                box-shadow: none !important;
+                max-width: 100% !important;
+                padding: 0 !important;
+                border: 2px solid #000 !important;
+            }
+            .report-title {
+                background: white !important;
+            }
+            .label-cell {
+                background: #e8e8e8 !important;
+            }
+            .section-header {
+                background: #d0d0d0 !important;
+            }
+        }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        html, body {
+            width: 100%;
+        }
+        body {
+            font-family: "Segoe UI", "Arial", sans-serif;
+            color: #1a1a1a;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+            overflow-y: auto;
+        }
+        .controls {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+            position: sticky;
+            top: 20px;
+            z-index: 100;
+            justify-content: center;
+        }
+        .btn {
+            padding: 14px 32px;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: 700;
+            font-size: 15px;
+            transition: all 0.3s ease;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .btn-print {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        .btn-print:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.5);
+        }
+        .btn-back {
+            background: white;
+            color: #667eea;
+            border: 2px solid #667eea;
+        }
+        .btn-back:hover {
+            background: #667eea;
+            color: white;
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+        }
+        .report {
+            background: white;
+            border: 3px solid #2d3748;
+            margin: 0 auto 20px;
+            padding: 0;
+            width: 100%;
+            max-width: 210mm;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        .report-title {
+            text-align: center;
+            background: linear-gradient(135deg, #2d3748 0%, #1a202c 100%);
+            color: white;
+            padding: 20px 10px;
+            border-bottom: 4px solid #667eea;
+        }
+        .report-title h1 {
+            font-size: 20px;
+            font-weight: 800;
+            letter-spacing: 2px;
+            margin: 0;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+        .report-title .subtitle {
+            font-size: 12px;
+            font-weight: 600;
+            margin-top: 6px;
+            opacity: 0.95;
+            letter-spacing: 0.5px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        td {
+            border: 1px solid #4a5568;
+            padding: 8px 10px;
+            font-size: 10px;
+            vertical-align: top;
+        }
+        .label-cell {
+            font-weight: 700;
+            width: 20%;
+            background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%);
+            color: #2d3748;
+            border-right: 2px solid #667eea;
+        }
+        .input-cell {
+            width: 30%;
+            background: white;
+            font-weight: 600;
+            color: #1a202c;
+        }
+        .value-cell {
+            width: 15%;
+            background: white;
+            font-weight: 600;
+        }
+        .section-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            font-weight: 800;
+            text-align: center;
+            padding: 8px 10px;
+            font-size: 11px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+        .particulars-table {
+            margin-top: 0;
+        }
+        .particulars-table td {
+            padding: 6px 6px;
+            font-size: 10px;
+        }
+        .particulars-label {
+            font-weight: 800;
+            background: linear-gradient(135deg, #4a5568 0%, #2d3748 100%);
+            color: white;
+            text-align: center;
+            width: 70%;
+        }
+        .amount-label {
+            font-weight: 800;
+            background: linear-gradient(135deg, #4a5568 0%, #2d3748 100%);
+            color: white;
+            text-align: center;
+            width: 30%;
+        }
+        .data-row td {
+            height: 32px;
+            background: white;
+        }
+        .data-row:nth-child(even) td {
+            background: #f7fafc;
+        }
+        .cert-table {
+            margin-top: 0;
+        }
+        .cert-table td {
+            padding: 12px 8px;
+            text-align: center;
+            font-size: 9px;
+            vertical-align: middle;
+            background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%);
+        }
+        .cert-title {
+            font-weight: 800;
+            margin-bottom: 8px;
+            font-size: 10px;
+            color: #667eea;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .cert-desc {
+            font-size: 8px;
+            margin-bottom: 12px;
+            line-height: 1.4;
+            color: #4a5568;
+            font-weight: 600;
+        }
+        .signature-label {
+            font-size: 9px;
+            font-weight: 700;
+            color: #2d3748;
+        }
+        .footer-label {
+            font-weight: 800;
+            margin-bottom: 4px;
+            color: #2d3748;
+            font-size: 10px;
+        }
+        .footer-input {
+            border-bottom: 2px solid #667eea;
+            min-height: 24px;
+        }
+    </style>
+</head>
+<body>
+    <div class="controls">
+        <button class="btn btn-print" onclick="handlePrint()">🖨️ Print</button>
+        <button class="btn btn-back" onclick="goBack()">← Back</button>
+    </div>
+
+    <div class="report">
+        <!-- Header -->
+        <div class="report-title">
+            <h1>LIQUIDATION REPORT</h1>
+            <div class="subtitle">SK of Barangay {{ report.barangay or '' }}, {{ report.municipality or '' }}, {{ report.province or '' }}</div>
+        </div>
+
+        <!-- Top Section -->
+        <table style="margin-bottom: 0;">
+            <tr>
+                <td class="label-cell">Barangay:</td>
+                <td class="input-cell">{{ report.barangay or '' }}</td>
+                <td class="label-cell">City/Municipality:</td>
+                <td class="input-cell">{{ report.municipality or '' }}</td>
+                <td class="label-cell" style="width: 15%;">LR No.:</td>
+                <td class="value-cell" style="width: 20%;">{{ report.lr_no or '' }}</td>
+            </tr>
+            <tr>
+                <td class="label-cell">Province:</td>
+                <td class="input-cell">{{ report.province or '' }}</td>
+                <td class="label-cell">Prepared by:</td>
+                <td colspan="3" class="input-cell"></td>
+            </tr>
+            <tr>
+                <td colspan="6" class="label-cell" style="text-align: center; background: #f5f5f5;">Cash Advance Details</td>
+            </tr>
+            <tr>
+                <td class="label-cell">DV No.:</td>
+                <td class="input-cell">{{ report.cash_advance_dv_no or '' }}</td>
+                <td class="label-cell">Amount:</td>
+                <td class="input-cell">₱{{ '{:,.2f}'.format(report.cash_advance_amount or 0) }}</td>
+                <td class="label-cell">Date:</td>
+                <td class="value-cell">{{ report.cash_advance_date.strftime('%m/%d/%Y') if report.cash_advance_date else '' }}</td>
+            </tr>
+        </table>
+
+        <!-- Particulars Section -->
+        <table class="particulars-table">
+            <thead>
+                <tr>
+                    <td class="particulars-label section-header">PARTICULARS</td>
+                    <td class="amount-label section-header">AMOUNT</td>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in items %}
+                <tr class="data-row">
+                    <td style="width: 70%;">{{ item.particulars or '' }}</td>
+                    <td style="width: 30%; text-align: right; padding-right: 8px;">₱{{ '{:,.2f}'.format(item.amount or 0) }}</td>
+                </tr>
+                {% endfor %}
+                {% if items|length < 12 %}
+                    {% for i in range(12 - items|length) %}
+                    <tr class="data-row">
+                        <td style="width: 70%;"></td>
+                        <td style="width: 30%;"></td>
+                    </tr>
+                    {% endfor %}
+                {% endif %}
+            </tbody>
+        </table>
+
+        <!-- Summary Section -->
+        <table>
+            <tr>
+                <td style="width: 70%; font-weight: 800; text-align: right; padding: 10px 12px; font-size: 11px; background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%); color: #2d3748;">TOTAL AMOUNT SPENT:</td>
+                <td style="width: 30%; text-align: right; padding: 10px 12px; font-weight: 800; font-size: 11px; background: #fff3cd; color: #856404;">₱{{ '{:,.2f}'.format(total_amount or 0) }}</td>
+            </tr>
+            <tr>
+                <td style="width: 70%; font-weight: 700; text-align: right; padding: 10px 12px; font-size: 10px; background: white; color: #4a5568;">AMOUNT OF CASH ADVANCE:</td>
+                <td style="width: 30%; text-align: right; padding: 10px 12px; font-size: 10px; background: white; color: #2d3748; font-weight: 600;">₱{{ '{:,.2f}'.format(report.cash_advance_amount or 0) }}</td>
+            </tr>
+            <tr>
+                <td style="width: 70%; font-weight: 700; text-align: right; padding: 10px 12px; font-size: 10px; background: #f7fafc; color: #4a5568;">AMOUNT REFUNDED (OR NO. {{ report.refunded_or_no or '' }}):</td>
+                <td style="width: 30%; text-align: right; padding: 10px 12px; font-size: 10px; background: #f7fafc; color: #2d3748; font-weight: 600;">₱{{ '{:,.2f}'.format(report.refunded_amount or 0) }}</td>
+            </tr>
+            <tr>
+                <td style="width: 70%; font-weight: 800; text-align: right; padding: 10px 12px; font-size: 11px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">AMOUNT TO BE REIMBURSED:</td>
+                <td style="width: 30%; text-align: right; padding: 10px 12px; font-weight: 800; font-size: 11px; background: #d4edda; color: #155724;">₱{{ '{:,.2f}'.format(report.amount_reimbursed or 0) }}</td>
+            </tr>
+        </table>
+
+        <!-- Certifications -->
+        <table class="cert-table">
+            <tr>
+                <td style="width: 33.33%; border-right: 2px solid #667eea;">
+                    <div class="cert-title">A. Certified:</div>
+                    <div class="cert-desc">Correctness of the above data</div>
+                    <div style="min-height: 35px; border-bottom: 2px solid #667eea; margin: 8px 20px;"></div>
+                    <div class="signature-label">{{ report.certified_a_name or '' }}</div>
+                    <div style="font-size: 8px; margin-top: 3px; color: #4a5568;">Signature over Printed Name</div>
+                    <div style="font-size: 8px; font-weight: 700; color: #2d3748; margin-top: 2px;">Accountable SK Official</div>
+                </td>
+                <td style="width: 33.33%; border-right: 2px solid #667eea;">
+                    <div class="cert-title">B. Certified:</div>
+                    <div class="cert-desc">Purpose of cash advance duly accomplished</div>
+                    <div style="min-height: 35px; border-bottom: 2px solid #667eea; margin: 8px 20px;"></div>
+                    <div class="signature-label">{{ report.certified_b_name or '' }}</div>
+                    <div style="font-size: 8px; margin-top: 3px; color: #4a5568;">Signature over Printed Name</div>
+                    <div style="font-size: 8px; font-weight: 700; color: #2d3748; margin-top: 2px;">SK Chairperson</div>
+                </td>
+                <td style="width: 33.34%;">
+                    <div class="cert-title">C. Certified:</div>
+                    <div class="cert-desc">Supporting documents are complete and proper</div>
+                    <div style="min-height: 35px; border-bottom: 2px solid #667eea; margin: 8px 20px;"></div>
+                    <div class="signature-label">{{ report.certified_c_name or '' }}</div>
+                    <div style="font-size: 8px; margin-top: 3px; color: #4a5568;">Signature over Printed Name</div>
+                    <div style="font-size: 8px; font-weight: 700; color: #2d3748; margin-top: 2px;">SK Treasurer</div>
+                </td>
+            </tr>
+        </table>
+
+        <!-- Footer -->
+        <table style="margin-top: 0;">
+            <tr>
+                <td colspan="3" style="border-right: 2px solid #667eea; padding: 12px; background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%);">
+                    <div class="footer-label" style="font-size: 10px; color: #667eea;">Prepared by:</div>
+                    <div class="footer-input" style="min-height: 35px; background: white; margin: 8px 0;"></div>
+                    <div style="font-size: 9px; margin-top: 4px; text-align: center; font-weight: 600; color: #4a5568;">Signature over Printed Name</div>
+                </td>
+                <td colspan="3" style="padding: 12px; background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%);">
+                    <div class="footer-label" style="font-size: 10px; color: #667eea;">Approved by:</div>
+                    <div class="footer-input" style="min-height: 35px; background: white; margin: 8px 0;"></div>
+                    <div style="font-size: 9px; margin-top: 4px; text-align: center; font-weight: 600; color: #4a5568;">Signature over Printed Name</div>
+                </td>
+            </tr>
+        </table>
+    </div>
+
+    <script>
+        function handlePrint() {
+            window.print();
+        }
+        function goBack() {
+            window.location.href = '/user-dashboard';
+        }
+    </script>
+</body>
+</html>
