@@ -389,19 +389,31 @@ class VoucherBudgetAllocation(db.Model):
 # ==================== Database Initialization ====================
 # Initialize database tables on app startup
 with app.app_context():
-    db.create_all()
-    print("Database tables created successfully!")
-    
-    # Create default admin if none exists
-    if Admin.query.count() == 0:
-        default_admin = Admin(
-            email='admin@sklgu.gov.ph',
-            password_hash=generate_password_hash('admin123'),
-            is_super_admin=True
-        )
-        db.session.add(default_admin)
-        db.session.commit()
-        print("✓ Default admin created: admin@sklgu.gov.ph / admin123")
+    try:
+        db.create_all()
+        print("✓ Database tables created successfully!")
+        
+        # Always ensure default admin exists (important for ephemeral storage)
+        admin_count = Admin.query.count()
+        print(f"Current admin count: {admin_count}")
+        
+        if admin_count == 0:
+            default_admin = Admin(
+                email='admin@sklgu.gov.ph',
+                password_hash=generate_password_hash('admin123'),
+                is_super_admin=True
+            )
+            db.session.add(default_admin)
+            db.session.commit()
+            print("✓ Default admin created: admin@sklgu.gov.ph / admin123")
+        else:
+            # List existing admins
+            admins = Admin.query.all()
+            print(f"✓ Existing admins: {[admin.email for admin in admins]}")
+    except Exception as e:
+        print(f"✗ Database initialization error: {e}")
+        import traceback
+        traceback.print_exc()
 
 
 # ==================== Routes ====================
