@@ -112,7 +112,7 @@ class AccountApproval(db.Model):
 class Announcement(db.Model):
     """System announcements"""
     id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    user_id = db.Column(db.Integer, nullable=True)  # Can be admin_id or user_id
     title = db.Column(db.String(300), nullable=False)
     content = db.Column(db.Text, nullable=False)
     announcement_image = db.Column(db.String(300))
@@ -2631,6 +2631,27 @@ def init_db():
     """Initialize database with tables"""
     with app.app_context():
         db.create_all()
+
+        # Fix announcement table - remove foreign key constraint and make user_id nullable
+        try:
+            # Check if we're using PostgreSQL or SQLite
+            engine = db.session.bind.dialect.name
+            
+            if engine == 'postgresql':
+                # PostgreSQL: Drop foreign key constraint and alter column to allow NULL
+                try:
+                    db.session.execute(text("ALTER TABLE announcement DROP CONSTRAINT IF EXISTS announcement_user_id_fkey"))
+                    db.session.execute(text("ALTER TABLE announcement ALTER COLUMN user_id DROP NOT NULL"))
+                    db.session.commit()
+                    print("✓ Announcement table migrated for PostgreSQL")
+                except Exception as e:
+                    db.session.rollback()
+                    print(f"Announcement PostgreSQL migration (already done or not needed): {e}")
+            else:
+                # SQLite: Cannot easily drop constraints, so we skip if table already exists
+                print("✓ Announcement table schema update (SQLite)")
+        except Exception as exc:
+            print(f"Announcement table migration: {exc}")
 
         # Ensure announcement.view_count exists
         try:
