@@ -26,7 +26,21 @@ app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', secrets.token_hex(32))
 # Get absolute path for database
 db_path = os.path.join(basedir, 'database', 'sklgu_admin.db')
 
-# Ensure database directory exists for local SQLite fallback
+# ---
+# DATABASE CONFIGURATION
+#
+# This app is now intended to use Supabase as the primary database (see SUPABASE_SETUP.md).
+# The SQLAlchemy config below is for legacy/local development only.
+# ---
+# Example Supabase integration (see SUPABASE_SETUP.md):
+# import os
+# from supabase import create_client, Client
+# SUPABASE_URL = os.environ.get("SUPABASE_URL")
+# SUPABASE_KEY = os.environ.get("SUPABASE_KEY")
+# supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
+# def fetch_users():
+#     response = supabase.table("users").select("*").execute()
+#     return response.data
 os.makedirs(os.path.join(basedir, 'database'), exist_ok=True)
 
 # Use persistent database if provided (recommended for production)

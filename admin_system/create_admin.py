@@ -27,7 +27,7 @@ def create_admin(email, password):
         print(f"✓ Super admin created successfully!")
         print(f"  Email: {email}")
         print(f"  Password: {password}")
-        print(f"\nYou can now log in at your Render URL")
+        print(f"\nYou can now log in at your deployment URL")
 
 if __name__ == '__main__':
     # Default admin credentials

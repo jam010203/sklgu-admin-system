@@ -1,0 +1,15 @@
+# .dockerignore for Fly.io deployment
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.db
+*.sqlite3
+instance/
+.env
+*.env
+uploads/
+.git
+.gitignore
+.vscode
+notebooks/

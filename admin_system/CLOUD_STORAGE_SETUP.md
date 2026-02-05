@@ -1,7 +1,7 @@
 # Cloud Storage Setup for Production
 
 ## Problem
-Render uses **ephemeral storage** - uploaded files (profile pictures, logos, announcements) are deleted when the app restarts or redeploys.
+Fly.io uses **ephemeral storage** - uploaded files (profile pictures, logos, announcements) are deleted when the app restarts or redeploys.
 
 ## Current Temporary Fix
 The app now serves a placeholder image when files are not found, preventing errors.
@@ -16,8 +16,8 @@ The app now serves a placeholder image when files are not found, preventing erro
    - API Key
    - API Secret
 
-### Step 2: Add Environment Variables to Render
-In Render Dashboard → Your Service → Environment:
+### Step 2: Add Environment Variables to Fly.io
+In Fly.io Dashboard → Your App → Secrets:
 ```
 CLOUDINARY_CLOUD_NAME=your_cloud_name
 CLOUDINARY_API_KEY=your_api_key

@@ -1,0 +1,31 @@
+# fly.toml file generated for sklgu-admin-system on 2026-02-05T00:00:00Z
+app = "sklgu-admin-system"
+
+[build]
+  image = "python:3.10"
+
+[env]
+  # Add your environment variables here
+  FLASK_ENV = "production"
+  # SUPABASE_URL and SUPABASE_KEY will be set as secrets
+
+[experimental]
+  auto_rollback = true
+
+[[services]]
+  internal_port = 5000
+  protocol = "tcp"
+
+  [[services.ports]]
+    handlers = ["http"]
+    port = 80
+
+  [[services.ports]]
+    handlers = ["tls", "http"]
+    port = 443
+
+  [[services.tcp_checks]]
+    interval = 10000
+    timeout = 2000
+    grace_period = "5s"
+    restart_limit = 0
