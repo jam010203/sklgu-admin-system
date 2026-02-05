@@ -405,6 +405,70 @@ class VoucherBudgetAllocation(db.Model):
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
 
+class PurchaseRequest(db.Model):
+    """Purchase Request"""
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    pr_number = db.Column(db.String(50), unique=True)
+    barangay = db.Column(db.String(200))
+    municipality = db.Column(db.String(200))
+    province = db.Column(db.String(200))
+    pr_date = db.Column(db.Date)
+    purpose = db.Column(db.Text)
+    total_amount = db.Column(db.Float, default=0)
+    requested_by = db.Column(db.String(200))
+    requested_by_position = db.Column(db.String(200))
+    requested_date = db.Column(db.Date)
+    approved_by = db.Column(db.String(200))
+    approved_by_position = db.Column(db.String(200))
+    approved_date = db.Column(db.Date)
+    status = db.Column(db.String(50), default='draft')
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+
+class PurchaseRequestItem(db.Model):
+    """Purchase Request Line Items"""
+    id = db.Column(db.Integer, primary_key=True)
+    pr_id = db.Column(db.Integer, db.ForeignKey('purchase_request.id'), nullable=False)
+    item_no = db.Column(db.Integer)
+    quantity = db.Column(db.Float, default=0)
+    unit_of_measurement = db.Column(db.String(50))
+    item_description = db.Column(db.Text)
+    estimated_unit_cost = db.Column(db.Float, default=0)
+    estimated_amount = db.Column(db.Float, default=0)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+
+class Canvass(db.Model):
+    """Canvass (Request for Price Quotation)"""
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    pr_number = db.Column(db.String(50))
+    canvass_date = db.Column(db.Date)
+    fod = db.Column(db.Text)
+    delivery_days = db.Column(db.Integer)
+    total_amount = db.Column(db.Float, default=0)
+    status = db.Column(db.String(50), default='draft')
+    canvassed_by = db.Column(db.String(200))
+    canvassed_date = db.Column(db.Date)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+
+class CanvassItem(db.Model):
+    """Canvass Line Items"""
+    id = db.Column(db.Integer, primary_key=True)
+    canvass_id = db.Column(db.Integer, db.ForeignKey('canvass.id'), nullable=False)
+    item_no = db.Column(db.Integer)
+    quantity = db.Column(db.Float, default=0)
+    unit = db.Column(db.String(50))
+    articles = db.Column(db.Text)
+    unit_price = db.Column(db.Float, default=0)
+    total = db.Column(db.Float, default=0)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+
 # ==================== Database Initialization ====================
 # Initialize database tables on app startup
 with app.app_context():
@@ -3493,6 +3557,457 @@ def delete_disbursement_voucher(voucher_id):
         return jsonify({'success': True, 'message': 'Voucher deleted successfully'})
     except Exception as e:
         db.session.rollback()
+        return jsonify({'success': False, 'message': str(e)}), 500
+
+
+# ==================== Purchase Request Routes ====================
+
+@app.route('/purchase-request')
+def purchase_request_page():
+    """Purchase Request page"""
+    if 'user_id' not in session:
+        return redirect(url_for('login'))
+    
+    user_id = session['user_id']
+    profile = UserProfile.query.filter_by(user_id=user_id).first()
+    
+    return render_template('purchase-request.html', profile=profile)
+
+
+@app.route('/api/purchase-request', methods=['POST'])
+def create_purchase_request():
+    """Create a new purchase request"""
+    if 'user_id' not in session:
+        return jsonify({'success': False, 'message': 'Unauthorized'}), 401
+    
+    try:
+        user_id = session['user_id']
+        data = request.get_json()
+        
+        # Create purchase request
+        pr = PurchaseRequest(
+            user_id=user_id,
+            pr_number=data.get('pr_number'),
+            barangay=data.get('barangay'),
+            municipality=data.get('municipality'),
+            province=data.get('province'),
+            pr_date=datetime.strptime(data.get('pr_date'), '%Y-%m-%d').date() if data.get('pr_date') else None,
+            purpose=data.get('purpose'),
+            total_amount=float(data.get('total_amount', 0)),
+            requested_by=data.get('requested_by'),
+            requested_by_position=data.get('requested_by_position'),
+            requested_date=datetime.strptime(data.get('requested_date'), '%Y-%m-%d').date() if data.get('requested_date') else None,
+            approved_by=data.get('approved_by'),
+            approved_by_position=data.get('approved_by_position'),
+            approved_date=datetime.strptime(data.get('approved_date'), '%Y-%m-%d').date() if data.get('approved_date') else None,
+            status=data.get('status', 'draft')
+        )
+        
+        db.session.add(pr)
+        db.session.flush()  # Get the ID
+        
+        # Add line items
+        items = data.get('items', [])
+        for item in items:
+            pr_item = PurchaseRequestItem(
+                pr_id=pr.id,
+                item_no=item.get('item_no'),
+                quantity=float(item.get('quantity', 0)),
+                unit_of_measurement=item.get('unit_of_measurement'),
+                item_description=item.get('item_description'),
+                estimated_unit_cost=float(item.get('estimated_unit_cost', 0)),
+                estimated_amount=float(item.get('estimated_amount', 0))
+            )
+            db.session.add(pr_item)
+        
+        db.session.commit()
+        
+        return jsonify({
+            'success': True,
+            'message': 'Purchase request created successfully',
+            'pr_id': pr.id
+        })
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'success': False, 'message': str(e)}), 500
+
+
+@app.route('/api/purchase-request/<int:pr_id>', methods=['GET'])
+def get_purchase_request(pr_id):
+    """Get a purchase request by ID"""
+    if 'user_id' not in session:
+        return jsonify({'success': False, 'message': 'Unauthorized'}), 401
+    
+    try:
+        user_id = session['user_id']
+        pr = PurchaseRequest.query.get_or_404(pr_id)
+        
+        # Verify ownership
+        if pr.user_id != user_id:
+            return jsonify({'success': False, 'message': 'Unauthorized'}), 403
+        
+        # Get line items
+        items = PurchaseRequestItem.query.filter_by(pr_id=pr_id).order_by(PurchaseRequestItem.item_no).all()
+        
+        return jsonify({
+            'success': True,
+            'purchase_request': {
+                'id': pr.id,
+                'pr_number': pr.pr_number,
+                'barangay': pr.barangay,
+                'municipality': pr.municipality,
+                'province': pr.province,
+                'pr_date': pr.pr_date.isoformat() if pr.pr_date else None,
+                'purpose': pr.purpose,
+                'total_amount': pr.total_amount,
+                'requested_by': pr.requested_by,
+                'requested_by_position': pr.requested_by_position,
+                'requested_date': pr.requested_date.isoformat() if pr.requested_date else None,
+                'approved_by': pr.approved_by,
+                'approved_by_position': pr.approved_by_position,
+                'approved_date': pr.approved_date.isoformat() if pr.approved_date else None,
+                'status': pr.status,
+                'created_at': pr.created_at.isoformat()
+            },
+            'items': [{
+                'id': item.id,
+                'item_no': item.item_no,
+                'quantity': item.quantity,
+                'unit_of_measurement': item.unit_of_measurement,
+                'item_description': item.item_description,
+                'estimated_unit_cost': item.estimated_unit_cost,
+                'estimated_amount': item.estimated_amount
+            } for item in items]
+        })
+    except Exception as e:
+        return jsonify({'success': False, 'message': str(e)}), 500
+
+
+@app.route('/api/purchase-request/<int:pr_id>', methods=['PUT'])
+def update_purchase_request(pr_id):
+    """Update a purchase request"""
+    if 'user_id' not in session:
+        return jsonify({'success': False, 'message': 'Unauthorized'}), 401
+    
+    try:
+        user_id = session['user_id']
+        pr = PurchaseRequest.query.get_or_404(pr_id)
+        
+        # Verify ownership
+        if pr.user_id != user_id:
+            return jsonify({'success': False, 'message': 'Unauthorized'}), 403
+        
+        data = request.get_json()
+        
+        # Update purchase request
+        pr.pr_number = data.get('pr_number', pr.pr_number)
+        pr.barangay = data.get('barangay', pr.barangay)
+        pr.municipality = data.get('municipality', pr.municipality)
+        pr.province = data.get('province', pr.province)
+        pr.pr_date = datetime.strptime(data.get('pr_date'), '%Y-%m-%d').date() if data.get('pr_date') else pr.pr_date
+        pr.purpose = data.get('purpose', pr.purpose)
+        pr.total_amount = float(data.get('total_amount', pr.total_amount))
+        pr.requested_by = data.get('requested_by', pr.requested_by)
+        pr.requested_by_position = data.get('requested_by_position', pr.requested_by_position)
+        pr.requested_date = datetime.strptime(data.get('requested_date'), '%Y-%m-%d').date() if data.get('requested_date') else pr.requested_date
+        pr.approved_by = data.get('approved_by', pr.approved_by)
+        pr.approved_by_position = data.get('approved_by_position', pr.approved_by_position)
+        pr.approved_date = datetime.strptime(data.get('approved_date'), '%Y-%m-%d').date() if data.get('approved_date') else pr.approved_date
+        pr.status = data.get('status', pr.status)
+        pr.updated_at = datetime.utcnow()
+        
+        # Delete existing items and add new ones
+        PurchaseRequestItem.query.filter_by(pr_id=pr_id).delete()
+        
+        items = data.get('items', [])
+        for item in items:
+            pr_item = PurchaseRequestItem(
+                pr_id=pr.id,
+                item_no=item.get('item_no'),
+                quantity=float(item.get('quantity', 0)),
+                unit_of_measurement=item.get('unit_of_measurement'),
+                item_description=item.get('item_description'),
+                estimated_unit_cost=float(item.get('estimated_unit_cost', 0)),
+                estimated_amount=float(item.get('estimated_amount', 0))
+            )
+            db.session.add(pr_item)
+        
+        db.session.commit()
+        
+        return jsonify({
+            'success': True,
+            'message': 'Purchase request updated successfully'
+        })
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'success': False, 'message': str(e)}), 500
+
+
+@app.route('/api/purchase-request/<int:pr_id>', methods=['DELETE'])
+def delete_purchase_request(pr_id):
+    """Delete a purchase request"""
+    if 'user_id' not in session:
+        return jsonify({'success': False, 'message': 'Unauthorized'}), 401
+    
+    try:
+        user_id = session['user_id']
+        pr = PurchaseRequest.query.get_or_404(pr_id)
+        
+        # Verify ownership
+        if pr.user_id != user_id:
+            return jsonify({'success': False, 'message': 'Unauthorized'}), 403
+        
+        # Delete associated line items
+        PurchaseRequestItem.query.filter_by(pr_id=pr_id).delete()
+        db.session.delete(pr)
+        db.session.commit()
+        
+        return jsonify({'success': True, 'message': 'Purchase request deleted successfully'})
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'success': False, 'message': str(e)}), 500
+
+
+@app.route('/api/purchase-requests', methods=['GET'])
+def get_purchase_requests():
+    """Get all purchase requests for the current user"""
+    if 'user_id' not in session:
+        return jsonify({'success': False, 'message': 'Unauthorized'}), 401
+    
+    try:
+        user_id = session['user_id']
+        prs = PurchaseRequest.query.filter_by(user_id=user_id).order_by(PurchaseRequest.created_at.desc()).all()
+        
+        return jsonify({
+            'success': True,
+            'purchase_requests': [{
+                'id': pr.id,
+                'pr_number': pr.pr_number,
+                'barangay': pr.barangay,
+                'municipality': pr.municipality,
+                'province': pr.province,
+                'pr_date': pr.pr_date.isoformat() if pr.pr_date else None,
+                'total_amount': pr.total_amount,
+                'status': pr.status,
+                'created_at': pr.created_at.isoformat()
+            } for pr in prs]
+        })
+    except Exception as e:
+        return jsonify({'success': False, 'message': str(e)}), 500
+
+
+# Canvass Routes (Request for Price Quotation)
+@app.route('/canvass')
+def canvass_page():
+    """Canvass page"""
+    if 'user_id' not in session:
+        return redirect(url_for('login'))
+    
+    user_id = session['user_id']
+    profile = UserProfile.query.filter_by(user_id=user_id).first()
+    
+    return render_template('canvass.html', profile=profile)
+
+
+@app.route('/api/canvass', methods=['POST'])
+def create_canvass():
+    """Create a new canvass"""
+    if 'user_id' not in session:
+        return jsonify({'success': False, 'message': 'Unauthorized'}), 401
+    
+    try:
+        user_id = session['user_id']
+        data = request.get_json()
+        
+        # Create canvass
+        canvass = Canvass(
+            user_id=user_id,
+            pr_number=data.get('pr_number'),
+            canvass_date=datetime.strptime(data.get('canvass_date'), '%Y-%m-%d').date() if data.get('canvass_date') else None,
+            fod=data.get('fod'),
+            delivery_days=int(data.get('delivery_days', 0)),
+            total_amount=float(data.get('total_amount', 0)),
+            canvassed_by=data.get('canvassed_by'),
+            canvassed_date=datetime.strptime(data.get('canvassed_date'), '%Y-%m-%d').date() if data.get('canvassed_date') else None,
+            status=data.get('status', 'draft')
+        )
+        
+        db.session.add(canvass)
+        db.session.flush()  # Get the ID
+        
+        # Add line items
+        items = data.get('items', [])
+        for item in items:
+            canvass_item = CanvassItem(
+                canvass_id=canvass.id,
+                item_no=item.get('item_no'),
+                quantity=float(item.get('quantity', 0)),
+                unit=item.get('unit'),
+                articles=item.get('articles'),
+                unit_price=float(item.get('unit_price', 0)),
+                total=float(item.get('total', 0))
+            )
+            db.session.add(canvass_item)
+        
+        db.session.commit()
+        
+        return jsonify({
+            'success': True,
+            'message': 'Canvass created successfully',
+            'canvass_id': canvass.id
+        })
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'success': False, 'message': str(e)}), 500
+
+
+@app.route('/api/canvass/<int:canvass_id>', methods=['GET'])
+def get_canvass(canvass_id):
+    """Get a canvass by ID"""
+    if 'user_id' not in session:
+        return jsonify({'success': False, 'message': 'Unauthorized'}), 401
+    
+    try:
+        user_id = session['user_id']
+        canvass = Canvass.query.get_or_404(canvass_id)
+        
+        # Verify ownership
+        if canvass.user_id != user_id:
+            return jsonify({'success': False, 'message': 'Unauthorized'}), 403
+        
+        # Get line items
+        items = CanvassItem.query.filter_by(canvass_id=canvass_id).order_by(CanvassItem.item_no).all()
+        
+        return jsonify({
+            'success': True,
+            'canvass': {
+                'id': canvass.id,
+                'pr_number': canvass.pr_number,
+                'canvass_date': canvass.canvass_date.isoformat() if canvass.canvass_date else None,
+                'fod': canvass.fod,
+                'delivery_days': canvass.delivery_days,
+                'total_amount': canvass.total_amount,
+                'canvassed_by': canvass.canvassed_by,
+                'canvassed_date': canvass.canvassed_date.isoformat() if canvass.canvassed_date else None,
+                'status': canvass.status,
+                'created_at': canvass.created_at.isoformat()
+            },
+            'items': [{
+                'id': item.id,
+                'item_no': item.item_no,
+                'quantity': item.quantity,
+                'unit': item.unit,
+                'articles': item.articles,
+                'unit_price': item.unit_price,
+                'total': item.total
+            } for item in items]
+        })
+    except Exception as e:
+        return jsonify({'success': False, 'message': str(e)}), 500
+
+
+@app.route('/api/canvass/<int:canvass_id>', methods=['PUT'])
+def update_canvass(canvass_id):
+    """Update a canvass"""
+    if 'user_id' not in session:
+        return jsonify({'success': False, 'message': 'Unauthorized'}), 401
+    
+    try:
+        user_id = session['user_id']
+        canvass = Canvass.query.get_or_404(canvass_id)
+        
+        # Verify ownership
+        if canvass.user_id != user_id:
+            return jsonify({'success': False, 'message': 'Unauthorized'}), 403
+        
+        data = request.get_json()
+        
+        # Update canvass
+        canvass.pr_number = data.get('pr_number', canvass.pr_number)
+        canvass.canvass_date = datetime.strptime(data.get('canvass_date'), '%Y-%m-%d').date() if data.get('canvass_date') else canvass.canvass_date
+        canvass.fod = data.get('fod', canvass.fod)
+        canvass.delivery_days = int(data.get('delivery_days', canvass.delivery_days))
+        canvass.total_amount = float(data.get('total_amount', canvass.total_amount))
+        canvass.canvassed_by = data.get('canvassed_by', canvass.canvassed_by)
+        canvass.canvassed_date = datetime.strptime(data.get('canvassed_date'), '%Y-%m-%d').date() if data.get('canvassed_date') else canvass.canvassed_date
+        canvass.status = data.get('status', canvass.status)
+        canvass.updated_at = datetime.utcnow()
+        
+        # Delete existing items and add new ones
+        CanvassItem.query.filter_by(canvass_id=canvass_id).delete()
+        
+        items = data.get('items', [])
+        for item in items:
+            canvass_item = CanvassItem(
+                canvass_id=canvass.id,
+                item_no=item.get('item_no'),
+                quantity=float(item.get('quantity', 0)),
+                unit=item.get('unit'),
+                articles=item.get('articles'),
+                unit_price=float(item.get('unit_price', 0)),
+                total=float(item.get('total', 0))
+            )
+            db.session.add(canvass_item)
+        
+        db.session.commit()
+        
+        return jsonify({
+            'success': True,
+            'message': 'Canvass updated successfully'
+        })
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'success': False, 'message': str(e)}), 500
+
+
+@app.route('/api/canvass/<int:canvass_id>', methods=['DELETE'])
+def delete_canvass(canvass_id):
+    """Delete a canvass"""
+    if 'user_id' not in session:
+        return jsonify({'success': False, 'message': 'Unauthorized'}), 401
+    
+    try:
+        user_id = session['user_id']
+        canvass = Canvass.query.get_or_404(canvass_id)
+        
+        # Verify ownership
+        if canvass.user_id != user_id:
+            return jsonify({'success': False, 'message': 'Unauthorized'}), 403
+        
+        # Delete associated line items
+        CanvassItem.query.filter_by(canvass_id=canvass_id).delete()
+        db.session.delete(canvass)
+        db.session.commit()
+        
+        return jsonify({'success': True, 'message': 'Canvass deleted successfully'})
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'success': False, 'message': str(e)}), 500
+
+
+@app.route('/api/canvasses', methods=['GET'])
+def get_canvasses():
+    """Get all canvasses for the current user"""
+    if 'user_id' not in session:
+        return jsonify({'success': False, 'message': 'Unauthorized'}), 401
+    
+    try:
+        user_id = session['user_id']
+        canvasses = Canvass.query.filter_by(user_id=user_id).order_by(Canvass.created_at.desc()).all()
+        
+        return jsonify({
+            'success': True,
+            'canvasses': [{
+                'id': c.id,
+                'pr_number': c.pr_number,
+                'canvass_date': c.canvass_date.isoformat() if c.canvass_date else None,
+                'fod': c.fod,
+                'total_amount': c.total_amount,
+                'status': c.status,
+                'created_at': c.created_at.isoformat()
+            } for c in canvasses]
+        })
+    except Exception as e:
         return jsonify({'success': False, 'message': str(e)}), 500
 
 

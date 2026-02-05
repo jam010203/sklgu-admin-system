@@ -1,0 +1,771 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Purchase Request - SKLGU Admin System</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+            padding: 10px;
+        }
+
+        .page-container {
+            width: 210mm;
+            height: 297mm;
+            margin: 0 auto;
+            background-color: white;
+            padding: 10mm 12mm;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 6mm;
+            padding-bottom: 4mm;
+            border-bottom: 2px solid #000;
+        }
+
+        .header h1 {
+            font-size: 16pt;
+            font-weight: bold;
+            letter-spacing: 1px;
+        }
+
+        .info-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12mm;
+            margin-bottom: 6mm;
+        }
+
+        .info-col {
+            display: flex;
+            flex-direction: column;
+            gap: 2mm;
+        }
+
+        .info-group {
+            display: flex;
+            gap: 3mm;
+            align-items: center;
+        }
+
+        .info-label {
+            font-weight: bold;
+            font-size: 8pt;
+            white-space: nowrap;
+            min-width: 28mm;
+        }
+
+        .info-input {
+            flex: 1;
+            padding: 2mm;
+            border: 1px solid #999;
+            border-radius: 1px;
+            font-size: 8pt;
+            background-color: #f9f9f9;
+        }
+
+        .items-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 4mm;
+            font-size: 7pt;
+        }
+
+        .items-table th,
+        .items-table td {
+            border: 1px solid #000;
+            padding: 2mm;
+            text-align: left;
+        }
+
+        .items-table th {
+            background-color: #f0f0f0;
+            font-weight: bold;
+            font-size: 7pt;
+            height: 5mm;
+        }
+
+        .items-table td {
+            height: 12mm;
+            vertical-align: top;
+        }
+
+        .items-table input,
+        .items-table textarea {
+            width: 100%;
+            border: none;
+            background: transparent;
+            font-family: Arial, sans-serif;
+            font-size: 7pt;
+            padding: 0.5mm 0;
+        }
+
+        .items-table input:focus,
+        .items-table textarea:focus {
+            outline: 1px solid #0284c7;
+            background-color: #f9f9f9;
+        }
+
+        .items-table textarea {
+            resize: none;
+            min-height: 10mm;
+        }
+
+        .col-item-no {
+            width: 6mm;
+            text-align: center;
+        }
+
+        .col-qty {
+            width: 8mm;
+            text-align: center;
+        }
+
+        .col-unit {
+            width: 15mm;
+            text-align: center;
+        }
+
+        .col-desc {
+            flex-grow: 1;
+        }
+
+        .col-unit-cost {
+            width: 15mm;
+            text-align: center;
+        }
+
+        .col-amount {
+            width: 15mm;
+            text-align: center;
+        }
+
+        .col-action {
+            width: 10mm;
+            text-align: center;
+        }
+
+        .total-section {
+            text-align: right;
+            margin-bottom: 4mm;
+            padding: 2mm 4mm;
+            border: 1px solid #999;
+            background-color: #f9f9f9;
+            font-size: 8pt;
+            font-weight: bold;
+        }
+
+        .purpose-section {
+            margin-bottom: 4mm;
+        }
+
+        .purpose-label {
+            font-weight: bold;
+            font-size: 8pt;
+            margin-bottom: 1mm;
+        }
+
+        .purpose-textarea {
+            width: 100%;
+            padding: 2mm;
+            border: 1px solid #999;
+            font-family: Arial, sans-serif;
+            font-size: 7pt;
+            min-height: 12mm;
+            resize: none;
+        }
+
+        .signatures-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 6mm;
+            margin-top: 3mm;
+        }
+
+        .signature-box {
+            border: 1px solid #999;
+            padding: 3mm;
+            min-height: 32mm;
+        }
+
+        .signature-title {
+            font-weight: bold;
+            font-size: 8pt;
+            text-align: center;
+            margin-bottom: 2mm;
+        }
+
+        .sig-field {
+            margin-bottom: 1.5mm;
+        }
+
+        .sig-label {
+            font-size: 6pt;
+            color: #666;
+            margin-bottom: 0.5mm;
+        }
+
+        .sig-input {
+            width: 100%;
+            border: none;
+            border-bottom: 1px solid #999;
+            padding: 0.5mm 0;
+            font-size: 7pt;
+            background: transparent;
+        }
+
+        .sig-input:focus {
+            outline: none;
+            background-color: #f9f9f9;
+        }
+
+        .signature-line {
+            margin-top: 2mm;
+            text-align: center;
+        }
+
+        .line {
+            border-top: 1px solid #000;
+            height: 4mm;
+        }
+
+        .line-text {
+            font-size: 6pt;
+            line-height: 2mm;
+            color: #333;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 6px;
+            justify-content: center;
+            margin-top: 8mm;
+            padding: 3mm;
+            background-color: #f5f5f5;
+        }
+
+        .btn {
+            padding: 6px 16px;
+            font-size: 11px;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+
+        .btn-save {
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        .btn-save:hover {
+            background-color: #45a049;
+        }
+
+        .btn-delete {
+            background-color: #f44336;
+            color: white;
+            display: none;
+        }
+
+        .btn-delete:hover {
+            background-color: #da190b;
+        }
+
+        .btn-print {
+            background-color: #2196F3;
+            color: white;
+        }
+
+        .btn-print:hover {
+            background-color: #0b7dda;
+        }
+
+        .btn-back {
+            background-color: #9E9E9E;
+            color: white;
+        }
+
+        .btn-back:hover {
+            background-color: #757575;
+        }
+
+        .btn-add-row {
+            background-color: #FF9800;
+            color: white;
+            padding: 4px 12px;
+            font-size: 10px;
+            margin-bottom: 4px;
+        }
+
+        .btn-add-row:hover {
+            background-color: #e68900;
+        }
+
+        .delete-row-btn {
+            background-color: #f44336;
+            color: white;
+            border: none;
+            padding: 0.5mm 1.5mm;
+            cursor: pointer;
+            font-size: 6pt;
+            border-radius: 1px;
+        }
+
+        .delete-row-btn:hover {
+            background-color: #da190b;
+        }
+
+        .alert {
+            padding: 8px;
+            margin-bottom: 8px;
+            border-radius: 3px;
+            display: none;
+            font-size: 11px;
+        }
+
+        .alert-success {
+            background-color: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+        }
+
+        .alert-error {
+            background-color: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+        }
+
+        @media print {
+            body {
+                background-color: white;
+                padding: 0;
+                margin: 0;
+            }
+
+            .page-container {
+                box-shadow: none;
+                width: 100%;
+                height: auto;
+                margin: 0;
+                padding: 10mm 12mm;
+                page-break-after: always;
+            }
+
+            .button-group,
+            .btn-add-row,
+            .delete-row-btn,
+            .alert {
+                display: none !important;
+            }
+
+            .items-table input,
+            .items-table textarea,
+            .info-input,
+            .purpose-textarea,
+            .sig-input {
+                border: none !important;
+                background-color: transparent !important;
+                outline: none !important;
+            }
+
+            .info-input,
+            .purpose-textarea,
+            .sig-input {
+                border-bottom: 1px solid #000 !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="page-container">
+        <div id="alertMessage" class="alert"></div>
+
+        <div class="header">
+            <h1>PURCHASE REQUEST</h1>
+        </div>
+
+        <div class="info-row">
+            <div class="info-col">
+                <div class="info-group">
+                    <span class="info-label">SK of Barangay:</span>
+                    <input type="text" class="info-input" id="barangay" placeholder="Enter Barangay">
+                </div>
+                <div class="info-group">
+                    <span class="info-label">City/Municipality:</span>
+                    <input type="text" class="info-input" id="municipality" placeholder="Enter Municipality">
+                </div>
+                <div class="info-group">
+                    <span class="info-label">Province:</span>
+                    <input type="text" class="info-input" id="province" placeholder="Enter Province">
+                </div>
+            </div>
+            <div class="info-col">
+                <div class="info-group">
+                    <span class="info-label">PR No.:</span>
+                    <input type="text" class="info-input" id="pr_number" placeholder="2024-06-01">
+                </div>
+                <div class="info-group">
+                    <span class="info-label">Date:</span>
+                    <input type="date" class="info-input" id="pr_date">
+                </div>
+            </div>
+        </div>
+
+        <button class="btn btn-add-row" onclick="addRow()">+ Add Item Row</button>
+
+        <table class="items-table">
+            <thead>
+                <tr>
+                    <th class="col-item-no">Item<br>No.</th>
+                    <th class="col-qty">Qty</th>
+                    <th class="col-unit">Unit of<br>Measurement</th>
+                    <th class="col-desc">Item Description</th>
+                    <th class="col-unit-cost">Estimated<br>Unit Cost</th>
+                    <th class="col-amount">Estimated<br>Amount</th>
+                    <th class="col-action">Action</th>
+                </tr>
+            </thead>
+            <tbody id="itemsTableBody">
+                <!-- Rows will be added dynamically -->
+            </tbody>
+        </table>
+
+        <div class="total-section">
+            Total Estimated Amount: <span id="totalAmount">0.00</span>
+        </div>
+
+        <div class="purpose-section">
+            <div class="purpose-label">Purpose:</div>
+            <textarea class="purpose-textarea" id="purpose" placeholder="Enter the purpose of this purchase request"></textarea>
+        </div>
+
+        <div class="signatures-row">
+            <div class="signature-box">
+                <div class="signature-title">Requested by:</div>
+                <div class="sig-field">
+                    <div class="sig-label">Name</div>
+                    <input type="text" class="sig-input" id="requested_by" placeholder="">
+                </div>
+                <div class="sig-field">
+                    <div class="sig-label">Position/Title</div>
+                    <input type="text" class="sig-input" id="requested_by_position" placeholder="">
+                </div>
+                <div class="sig-field">
+                    <div class="sig-label">Date</div>
+                    <input type="date" class="sig-input" id="requested_date">
+                </div>
+                <div class="signature-line">
+                    <div class="line"></div>
+                    <div class="line-text">Signature Over Printed Name<br>Requesting SK Official<br>Date</div>
+                </div>
+            </div>
+            <div class="signature-box">
+                <div class="signature-title">Approved by:</div>
+                <div class="sig-field">
+                    <div class="sig-label">Name</div>
+                    <input type="text" class="sig-input" id="approved_by" placeholder="">
+                </div>
+                <div class="sig-field">
+                    <div class="sig-label">Position/Title</div>
+                    <input type="text" class="sig-input" id="approved_by_position" placeholder="">
+                </div>
+                <div class="sig-field">
+                    <div class="sig-label">Date</div>
+                    <input type="date" class="sig-input" id="approved_date">
+                </div>
+                <div class="signature-line">
+                    <div class="line"></div>
+                    <div class="line-text">Signature Over Printed Name<br>SK Chairperson<br>Date</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="button-group">
+            <button class="btn btn-back" onclick="location.href='/user-dashboard?tab=procurement-steps'">← Back to Procurement</button>
+            <button class="btn btn-save" onclick="savePurchaseRequest()">Save</button>
+            <button class="btn btn-delete" onclick="deletePurchaseRequest()" id="deleteBtn">Delete</button>
+            <button class="btn btn-print" onclick="printPurchaseRequest()">Print</button>
+        </div>
+    </div>
+
+    <script>
+        let currentPrId = null;
+        let rowCounter = 0;
+
+        function initializeTable() {
+            for (let i = 0; i < 3; i++) {
+                addRow();
+            }
+        }
+
+        function addRow() {
+            rowCounter++;
+            const tbody = document.getElementById('itemsTableBody');
+            const row = document.createElement('tr');
+            row.setAttribute('data-row-id', rowCounter);
+
+            row.innerHTML = `
+                <td class="col-item-no" style="text-align: center;">${rowCounter}</td>
+                <td class="col-qty"><input type="number" class="qty-input" step="0.01" min="0" value="0" onchange="calculateRow(this)"></td>
+                <td class="col-unit"><input type="text" class="unit-input" placeholder="UNIT" value="UNIT"></td>
+                <td class="col-desc"><textarea class="desc-input" placeholder="Item description"></textarea></td>
+                <td class="col-unit-cost"><input type="number" class="unit-cost-input" step="0.01" min="0" value="0" onchange="calculateRow(this)"></td>
+                <td class="col-amount"><input type="number" class="amount-input" step="0.01" min="0" value="0" onchange="calculateTotal()" style="text-align: right;"></td>
+                <td class="col-action" style="text-align: center;">
+                    <button class="delete-row-btn" onclick="deleteRow(this)">×</button>
+                </td>
+            `;
+
+            tbody.appendChild(row);
+        }
+
+        function deleteRow(btn) {
+            const row = btn.closest('tr');
+            row.remove();
+            renumberRows();
+            calculateTotal();
+        }
+
+        function renumberRows() {
+            const rows = document.querySelectorAll('#itemsTableBody tr');
+            rows.forEach((row, index) => {
+                row.querySelector('td:first-child').textContent = index + 1;
+            });
+        }
+
+        function calculateRow(input) {
+            const row = input.closest('tr');
+            const qty = parseFloat(row.querySelector('.qty-input').value) || 0;
+            const unitCost = parseFloat(row.querySelector('.unit-cost-input').value) || 0;
+            const amount = qty * unitCost;
+
+            row.querySelector('.amount-input').value = amount.toFixed(2);
+            calculateTotal();
+        }
+
+        function calculateTotal() {
+            const amounts = document.querySelectorAll('.amount-input');
+            let total = 0;
+
+            amounts.forEach(input => {
+                total += parseFloat(input.value) || 0;
+            });
+
+            document.getElementById('totalAmount').textContent = total.toFixed(2);
+        }
+
+        function collectFormData() {
+            const items = [];
+            const rows = document.querySelectorAll('#itemsTableBody tr');
+
+            rows.forEach((row, index) => {
+                const qty = parseFloat(row.querySelector('.qty-input').value) || 0;
+                const unit = row.querySelector('.unit-input').value;
+                const desc = row.querySelector('.desc-input').value;
+                const unitCost = parseFloat(row.querySelector('.unit-cost-input').value) || 0;
+                const amount = parseFloat(row.querySelector('.amount-input').value) || 0;
+
+                if (qty > 0 || desc.trim() !== '') {
+                    items.push({
+                        item_no: index + 1,
+                        quantity: qty,
+                        unit_of_measurement: unit,
+                        item_description: desc,
+                        estimated_unit_cost: unitCost,
+                        estimated_amount: amount
+                    });
+                }
+            });
+
+            const totalText = document.getElementById('totalAmount').textContent.replace(/,/g, '');
+            const totalAmount = parseFloat(totalText) || 0;
+
+            return {
+                pr_number: document.getElementById('pr_number').value,
+                barangay: document.getElementById('barangay').value,
+                municipality: document.getElementById('municipality').value,
+                province: document.getElementById('province').value,
+                pr_date: document.getElementById('pr_date').value,
+                purpose: document.getElementById('purpose').value,
+                total_amount: totalAmount,
+                requested_by: document.getElementById('requested_by').value,
+                requested_by_position: document.getElementById('requested_by_position').value,
+                requested_date: document.getElementById('requested_date').value,
+                approved_by: document.getElementById('approved_by').value,
+                approved_by_position: document.getElementById('approved_by_position').value,
+                approved_date: document.getElementById('approved_date').value,
+                status: 'draft',
+                items: items
+            };
+        }
+
+        function showAlert(message, type) {
+            const alertDiv = document.getElementById('alertMessage');
+            alertDiv.textContent = message;
+            alertDiv.className = `alert alert-${type}`;
+            alertDiv.style.display = 'block';
+
+            setTimeout(() => {
+                alertDiv.style.display = 'none';
+            }, 5000);
+        }
+
+        async function savePurchaseRequest() {
+            const data = collectFormData();
+
+            if (!data.barangay || !data.municipality || !data.province) {
+                showAlert('Please fill in Barangay, Municipality, and Province', 'error');
+                return;
+            }
+
+            if (data.items.length === 0) {
+                showAlert('Please add at least one item', 'error');
+                return;
+            }
+
+            try {
+                const url = currentPrId
+                    ? `/api/purchase-request/${currentPrId}`
+                    : '/api/purchase-request';
+                const method = currentPrId ? 'PUT' : 'POST';
+
+                const response = await fetch(url, {
+                    method: method,
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    showAlert('Purchase request saved successfully!', 'success');
+                    if (result.pr_id) {
+                        currentPrId = result.pr_id;
+                        document.getElementById('deleteBtn').style.display = 'inline-block';
+                    }
+                } else {
+                    showAlert('Error: ' + result.message, 'error');
+                }
+            } catch (error) {
+                showAlert('Error saving purchase request: ' + error.message, 'error');
+            }
+        }
+
+        async function deletePurchaseRequest() {
+            if (!currentPrId) {
+                showAlert('No purchase request to delete', 'error');
+                return;
+            }
+
+            if (!confirm('Are you sure you want to delete this purchase request?')) {
+                return;
+            }
+
+            try {
+                const response = await fetch(`/api/purchase-request/${currentPrId}`, {
+                    method: 'DELETE'
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    showAlert('Purchase request deleted successfully!', 'success');
+                    setTimeout(() => {
+                        location.href = '/user-dashboard';
+                    }, 1500);
+                } else {
+                    showAlert('Error: ' + result.message, 'error');
+                }
+            } catch (error) {
+                showAlert('Error deleting purchase request: ' + error.message, 'error');
+            }
+        }
+
+        function printPurchaseRequest() {
+            window.print();
+        }
+
+        async function loadPurchaseRequest(prId) {
+            try {
+                const response = await fetch(`/api/purchase-request/${prId}`);
+                const result = await response.json();
+
+                if (result.success) {
+                    const pr = result.purchase_request;
+
+                    document.getElementById('pr_number').value = pr.pr_number || '';
+                    document.getElementById('barangay').value = pr.barangay || '';
+                    document.getElementById('municipality').value = pr.municipality || '';
+                    document.getElementById('province').value = pr.province || '';
+                    document.getElementById('pr_date').value = pr.pr_date || '';
+                    document.getElementById('purpose').value = pr.purpose || '';
+                    document.getElementById('requested_by').value = pr.requested_by || '';
+                    document.getElementById('requested_by_position').value = pr.requested_by_position || '';
+                    document.getElementById('requested_date').value = pr.requested_date || '';
+                    document.getElementById('approved_by').value = pr.approved_by || '';
+                    document.getElementById('approved_by_position').value = pr.approved_by_position || '';
+                    document.getElementById('approved_date').value = pr.approved_date || '';
+
+                    document.getElementById('itemsTableBody').innerHTML = '';
+                    rowCounter = 0;
+
+                    result.items.forEach(item => {
+                        rowCounter++;
+                        const tbody = document.getElementById('itemsTableBody');
+                        const row = document.createElement('tr');
+
+                        row.innerHTML = `
+                            <td class="col-item-no" style="text-align: center;">${item.item_no}</td>
+                            <td class="col-qty"><input type="number" class="qty-input" step="0.01" min="0" value="${item.quantity}" onchange="calculateRow(this)"></td>
+                            <td class="col-unit"><input type="text" class="unit-input" value="${item.unit_of_measurement || ''}"></td>
+                            <td class="col-desc"><textarea class="desc-input">${item.item_description || ''}</textarea></td>
+                            <td class="col-unit-cost"><input type="number" class="unit-cost-input" step="0.01" min="0" value="${item.estimated_unit_cost}" onchange="calculateRow(this)"></td>
+                            <td class="col-amount"><input type="number" class="amount-input" step="0.01" min="0" value="${item.estimated_amount}" onchange="calculateTotal()" style="text-align: right;"></td>
+                            <td class="col-action" style="text-align: center;">
+                                <button class="delete-row-btn" onclick="deleteRow(this)">×</button>
+                            </td>
+                        `;
+
+                        tbody.appendChild(row);
+                    });
+
+                    calculateTotal();
+                    currentPrId = prId;
+                    document.getElementById('deleteBtn').style.display = 'inline-block';
+                }
+            } catch (error) {
+                showAlert('Error loading purchase request: ' + error.message, 'error');
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const prId = urlParams.get('id');
+
+            if (prId) {
+                loadPurchaseRequest(prId);
+            } else {
+                initializeTable();
+            }
+
+            if (!document.getElementById('pr_date').value) {
+                document.getElementById('pr_date').value = new Date().toISOString().split('T')[0];
+            }
+        });
+    </script>
+</body>
+</html>

@@ -598,6 +598,16 @@
             opacity: 1;
         }
 
+        .procurement-card[onclick] {
+            cursor: pointer;
+        }
+
+        .procurement-card[onclick]:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 24px 50px rgba(2, 132, 199, 0.25);
+            border-color: rgba(14, 165, 233, 0.5);
+        }
+
         .procurement-label {
             display: inline-flex;
             align-items: center;
@@ -1239,7 +1249,6 @@
             <li><a onclick="switchTab('procurement-steps')" class="menu-link">Procurement Process</a></li>
             <li><a onclick="switchTab('inventory')" class="menu-link">Inventory</a></li>
             <li><a href="/disbursement-voucher" class="menu-link">Disbursement Voucher</a></li>
-            <li><a onclick="switchTab('procurement-steps')" class="menu-link">Procurement Process</a></li>
             <li class="menu-section">Records</li>
             <li><a onclick="switchTab('minutes')" class="menu-link">Meetings</a></li>
             <li><a onclick="switchTab('resolutions')" class="menu-link">Resolutions</a></li>
@@ -1383,12 +1392,12 @@
                 </div>
                 <p style="color: #666; margin-bottom: 20px;">A modern, guided view of the standard procurement flow. Track each stage at a glance.</p>
                 <div class="procurement-grid">
-                    <div class="procurement-card">
+                    <div class="procurement-card" onclick="window.location.href='/purchase-request'">
                         <span class="procurement-label">Step 1</span>
                         <div class="procurement-title">PURCHASE REQUEST</div>
                         <div class="procurement-desc">Initiate the procurement need with complete specifications.</div>
                     </div>
-                    <div class="procurement-card">
+                    <div class="procurement-card" onclick="window.location.href='/canvass'">
                         <span class="procurement-label">Step 2</span>
                         <div class="procurement-title">CANVASS</div>
                         <div class="procurement-desc">Collect quotations and evaluate supplier offers.</div>
@@ -4343,7 +4352,27 @@
             window.location.href = '/voucher-history';
         }
 
+        // Check for tab parameter in URL and switch to it
+        function loadTabFromUrl() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const tabParam = urlParams.get('tab');
+            if (tabParam) {
+                const tabElement = document.getElementById(tabParam);
+                if (tabElement) {
+                    document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+                    document.querySelectorAll('.menu-link').forEach(link => link.classList.remove('active'));
+                    tabElement.classList.add('active');
+                    
+                    const menuLink = document.querySelector(`[onclick*="'${tabParam}'"]`);
+                    if (menuLink) {
+                        menuLink.classList.add('active');
+                    }
+                }
+            }
+        }
+
         // Load analytics on page load
+        loadTabFromUrl();
         loadBudgetAnalytics();
     </script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.js"></script>
