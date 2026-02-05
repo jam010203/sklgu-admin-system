@@ -2635,7 +2635,10 @@ def init_db():
         # Fix announcement table - remove foreign key constraint and make user_id nullable
         try:
             # Check if we're using PostgreSQL or SQLite
-            engine = db.session.bind.dialect.name
+            try:
+                engine = db.engine.dialect.name
+            except:
+                engine = 'sqlite'
             
             if engine == 'postgresql':
                 # PostgreSQL: Drop foreign key constraint and alter column to allow NULL
