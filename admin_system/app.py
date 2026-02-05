@@ -540,10 +540,9 @@ def login():
                 return redirect(url_for('admin_dashboard'))
             
             # Try user login
-            # First check if email belongs to an admin account
-            admin_check = Admin.query.filter_by(email=email).first()
-            if admin_check:
-                # Admin account trying to use user login
+            # First check if email starts with "admin" (case-insensitive)
+            if email.lower().startswith('admin'):
+                # Admin email trying to use user login
                 if request.is_json:
                     return jsonify({'success': False, 'message': 'Admin accounts must use Admin Login'}), 401
                 return render_template('login.html', error='Admin accounts must use Admin Login')

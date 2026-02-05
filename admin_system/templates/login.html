@@ -386,6 +386,7 @@
 
                 <div class="form-options">
                     <label class="remember-me">
+                        <input type="checkbox" id="userRememberMe" name="remember_me" class="remember-checkbox">
                         <span class="checkmark">✓</span>
                         <span>Remember Me</span>
                     </label>
@@ -420,6 +421,7 @@
 
                 <div class="form-options">
                     <label class="remember-me">
+                        <input type="checkbox" id="adminRememberMe" name="remember_me" class="remember-checkbox">
                         <span class="checkmark">✓</span>
                         <span>Remember Me</span>
                     </label>
@@ -432,6 +434,57 @@
     </div>
 
     <script>
+        // Remember Me functionality - loads saved email on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            const userEmail = localStorage.getItem('rememberedUserEmail');
+            const userRemember = localStorage.getItem('userRememberMe') === 'true';
+            const adminEmail = localStorage.getItem('rememberedAdminEmail');
+            const adminRemember = localStorage.getItem('adminRememberMe') === 'true';
+
+            // Restore user login fields
+            if (userEmail) {
+                document.querySelector('#userLoginForm input[name="email"]').value = userEmail;
+            }
+            if (userRemember) {
+                document.getElementById('userRememberMe').checked = true;
+            }
+
+            // Restore admin login fields
+            if (adminEmail) {
+                document.querySelector('#adminLoginForm input[name="email"]').value = adminEmail;
+            }
+            if (adminRemember) {
+                document.getElementById('adminRememberMe').checked = true;
+            }
+        });
+
+        // Save Remember Me preference on form submission
+        document.getElementById('userLoginForm').addEventListener('submit', function() {
+            const email = this.querySelector('input[name="email"]').value;
+            const rememberMe = document.getElementById('userRememberMe').checked;
+            
+            if (rememberMe) {
+                localStorage.setItem('rememberedUserEmail', email);
+                localStorage.setItem('userRememberMe', 'true');
+            } else {
+                localStorage.removeItem('rememberedUserEmail');
+                localStorage.setItem('userRememberMe', 'false');
+            }
+        });
+
+        document.getElementById('adminLoginForm').addEventListener('submit', function() {
+            const email = this.querySelector('input[name="email"]').value;
+            const rememberMe = document.getElementById('adminRememberMe').checked;
+            
+            if (rememberMe) {
+                localStorage.setItem('rememberedAdminEmail', email);
+                localStorage.setItem('adminRememberMe', 'true');
+            } else {
+                localStorage.removeItem('rememberedAdminEmail');
+                localStorage.setItem('adminRememberMe', 'false');
+            }
+        });
+
         function switchTab(tab) {
             const userForm = document.getElementById('userLoginForm');
             const adminForm = document.getElementById('adminLoginForm');
