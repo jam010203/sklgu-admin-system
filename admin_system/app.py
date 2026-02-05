@@ -1188,18 +1188,36 @@ def post_announcement():
         return jsonify({'success': False, 'message': 'Unauthorized'}), 401
 
     try:
-        data = request.get_json(silent=True) or {}
-        title = data.get('title', '').strip()
-        content = data.get('content', '').strip()
+        data = request.get_json(silent=True)
+        if data:
+            title = data.get('title', '').strip()
+            content = data.get('content', '').strip()
+        else:
+            title = request.form.get('title', '').strip()
+            content = request.form.get('content', '').strip()
 
         if not title or not content:
             return jsonify({'success': False, 'message': 'Title and content are required'}), 400
+
+        image_file = request.files.get('announcement_image')
+        image_name = None
+        if image_file and image_file.filename:
+            safe_name = secure_filename(image_file.filename)
+            if not safe_name:
+                return jsonify({'success': False, 'message': 'Invalid image filename'}), 400
+            file_ext = safe_name.rsplit('.', 1)[1].lower() if '.' in safe_name else 'jpg'
+            stored_name = secure_filename(
+                f"announcement_{session['admin_id']}_{secrets.token_hex(8)}.{file_ext}"
+            )
+            image_file.save(os.path.join(app.config['UPLOAD_FOLDER'], stored_name))
+            image_name = stored_name
 
         # Use admin_id as user_id for announcements
         announcement = Announcement(
             user_id=session['admin_id'],
             title=title,
-            content=content
+            content=content,
+            announcement_image=image_name
         )
         db.session.add(announcement)
         db.session.commit()
@@ -3073,6 +3091,7 @@ def get_announcements_details():
             'like_count': len(likes),
             'likes': like_list,
             'comments': comment_list,
+            'announcement_image': ann.announcement_image,
             'posted_at': ann.created_at.isoformat(),
             'created_at': ann.created_at.isoformat()
         })
