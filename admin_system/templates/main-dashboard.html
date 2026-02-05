@@ -1700,7 +1700,7 @@
                         <div style="background: linear-gradient(135deg, #ccf0f5 0%, #f0fdfb 100%); padding: 20px; border-radius: 12px; border: 2px solid #a8e6e1; margin-bottom: 20px;">
                             <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 12px;">
                                 <h4 style="margin: 0; color: #0891b2; flex: 1;">🔐 Current Password</h4>
-                                <button type="button" onclick="copyPasswordToClipboard('${user.password}')" style="padding: 8px 12px; background: #0891b2; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 11px; font-weight: 600; transition: all 0.3s ease;">Copy</button>
+                                <button type="button" onclick="copyPasswordToClipboard('${user.password}', this)" style="padding: 8px 12px; background: #0891b2; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 11px; font-weight: 600; transition: all 0.3s ease;">Copy</button>
                             </div>
                             <div style="background: white; padding: 12px; border-radius: 8px; border: 1px solid #a8e6e1; font-family: 'Courier New', monospace; font-weight: 600; color: #0891b2; font-size: 14px; word-break: break-all;">
                                 ${user.password}
@@ -1731,17 +1731,18 @@
         }
 
         // Copy password to clipboard
-        function copyPasswordToClipboard(password) {
+        function copyPasswordToClipboard(password, button) {
             navigator.clipboard.writeText(password).then(() => {
-                const btn = event.target;
-                const originalText = btn.textContent;
-                btn.textContent = 'Copied!';
-                btn.style.background = '#10b981';
+                if (!button) return;
+                const originalText = button.textContent;
+                const originalBg = button.style.background;
+                button.textContent = 'Copied!';
+                button.style.background = '#10b981';
                 setTimeout(() => {
-                    btn.textContent = originalText;
-                    btn.style.background = '#0891b2';
+                    button.textContent = originalText;
+                    button.style.background = originalBg || '#0891b2';
                 }, 2000);
-            }).catch(err => {
+            }).catch(() => {
                 alert('Failed to copy password');
             });
         }
@@ -1764,7 +1765,10 @@
                                 <span style="background: ${labelColor}; color: white; padding: 2px 8px; border-radius: 999px; font-size: 10px; letter-spacing: 0.04em;">${label}</span>
                                 <span>${entry.changed_by.toUpperCase()} • ${new Date(entry.changed_at).toLocaleString()}</span>
                             </div>
-                            <div style="font-size: 13px; color: #555; margin-top: 4px;">Password: <strong style="color: #0891b2; font-family: 'Courier New', monospace;">${entry.password}</strong></div>
+                            <div style="display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-top: 6px; flex-wrap: wrap;">
+                                <div style="font-size: 13px; color: #555;">Password: <strong style="color: #0891b2; font-family: 'Courier New', monospace;">${entry.password}</strong></div>
+                                <button type="button" onclick="copyPasswordToClipboard('${entry.password}', this)" style="padding: 6px 10px; background: #0891b2; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 11px; font-weight: 600; transition: all 0.3s ease;">Copy</button>
+                            </div>
                         </div>
                     `;
                     }).join('');
