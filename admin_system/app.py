@@ -540,6 +540,14 @@ def login():
                 return redirect(url_for('admin_dashboard'))
             
             # Try user login
+            # First check if email belongs to an admin account
+            admin_check = Admin.query.filter_by(email=email).first()
+            if admin_check:
+                # Admin account trying to use user login
+                if request.is_json:
+                    return jsonify({'success': False, 'message': 'Admin accounts must use Admin Login'}), 401
+                return render_template('login.html', error='Admin accounts must use Admin Login')
+            
             user = User.query.filter_by(email=email).first()
             if user and check_password_hash(user.password_hash, password):
                 session['user_id'] = user.id
