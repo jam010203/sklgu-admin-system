@@ -2833,11 +2833,14 @@ def get_users():
     result = []
     for user in users:
         profile = UserProfile.query.filter_by(user_id=user.id).first()
+        approval = AccountApproval.query.filter_by(user_id=user.id).first()
         result.append({
             'id': user.id,
             'email': user.email,
             'full_name': profile.full_name if profile else '',
             'barangay': profile.barangay if profile else '',
+            'municipality': profile.municipality if profile else '',
+            'approval_status': approval.status if approval else 'pending',
             'profile_picture': normalize_upload_filename(profile.profile_picture) if profile and profile.profile_picture else '',
             'created_at': user.created_at.isoformat()
         })
