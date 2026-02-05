@@ -728,9 +728,21 @@ def create_user():
         email = data.get('email')
         password = data.get('password')
         
-        # Validate input
-        if not email or not password:
-            return jsonify({'success': False, 'message': 'Email and password required'}), 400
+        # Auto-generate password if not provided or empty
+        if not password:
+            # Generate random password with format: RandomChars123
+            import random
+            import string
+            random_part = ''.join(random.choices(string.ascii_letters + string.digits, k=8))
+            password = f"{random_part}123"
+        else:
+            # Ensure password ends with 123
+            if not password.endswith('123'):
+                password = f"{password}123"
+        
+        # Validate email
+        if not email:
+            return jsonify({'success': False, 'message': 'Email required'}), 400
         
         # Check if user already exists
         if User.query.filter_by(email=email).first():
@@ -744,6 +756,15 @@ def create_user():
         )
         db.session.add(new_user)
         db.session.commit()
+        
+        # Store password in plain text in PasswordHistory for admin viewing
+        password_history = PasswordHistory(
+            user_id=new_user.id,
+            password_plain=password,
+            changed_by='admin',
+            changed_at=datetime.utcnow()
+        )
+        db.session.add(password_history)
         
         # Log user creation in database
         admin = Admin.query.get(session['admin_id'])
@@ -759,13 +780,14 @@ def create_user():
         db.session.commit()
         
         # Also print to console for immediate visibility
-        print(f"[ADMIN LOG] User created: {email} (ID: {new_user.id}) by Admin: {admin_email} (ID: {session['admin_id']}) at {datetime.utcnow().isoformat()}")
+        print(f"[ADMIN LOG] User created: {email} (ID: {new_user.id}) Password: {password} by Admin: {admin_email} (ID: {session['admin_id']}) at {datetime.utcnow().isoformat()}")
         
         return jsonify({
             'success': True, 
             'message': 'User account created successfully',
             'user_id': new_user.id,
-            'email': new_user.email
+            'email': new_user.email,
+            'password': password
         })
     
     except Exception as e:
@@ -2430,19 +2452,24 @@ def get_user_passwords(user_id):
 
 @app.route('/get-user-full-details/<int:user_id>')
 def get_user_full_details(user_id):
-    """Admin fetches full user details and profile"""
+    """Admin fetches full user details, profile, and password"""
     if 'admin_id' not in session:
         return jsonify({'success': False, 'message': 'Unauthorized'}), 401
 
     user = User.query.get_or_404(user_id)
     profile = UserProfile.query.filter_by(user_id=user_id).first()
     approval = AccountApproval.query.filter_by(user_id=user_id).order_by(AccountApproval.created_at.desc()).first()
+    
+    # Get the current password from PasswordHistory (most recent)
+    password_history = PasswordHistory.query.filter_by(user_id=user_id).order_by(PasswordHistory.changed_at.desc()).first()
+    current_password = password_history.password_plain if password_history else 'N/A'
 
     return jsonify({
         'success': True,
         'user': {
             'id': user.id,
             'email': user.email,
+            'password': current_password,
             'created_at': user.created_at.isoformat(),
             'approval_status': approval.status if approval else 'pending',
             'profile': {

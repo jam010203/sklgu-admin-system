@@ -10,6 +10,7 @@
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         body {
@@ -96,7 +97,7 @@
             align-items: center;
             gap: 12px;
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             font-size: 14px;
             pointer-events: auto;
             position: relative;
@@ -105,6 +106,7 @@
 
         .sidebar-menu a:hover {
             background: rgba(255, 255, 255, 0.2);
+            transform: translateX(4px);
         }
 
         .sidebar-menu a.active {
@@ -155,7 +157,7 @@
             border-radius: 8px;
             cursor: pointer;
             font-weight: 700;
-            transition: all 0.3s ease;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             text-transform: uppercase;
             letter-spacing: 0.5px;
             font-size: 13px;
@@ -173,10 +175,23 @@
             display: none;
             position: relative;
             z-index: 1;
+            animation: fadeInUp 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         .tab-content.active {
             display: block;
+            animation: fadeInUp 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         .card {
@@ -186,7 +201,7 @@
             margin-bottom: 30px;
             box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
             border: 1px solid #f0f0f0;
-            transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
             position: relative;
             overflow: hidden;
             z-index: 1;
@@ -293,7 +308,7 @@
         .form-group {
             margin-bottom: 24px;
             position: relative;
-            transition: all 0.3s ease;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         .form-group:hover input,
@@ -322,7 +337,7 @@
             border: 1px solid #a8e6e1;
             border-radius: 10px;
             font-size: 14px;
-            transition: all 0.3s ease;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             font-family: inherit;
             background: #f0fdfb;
             font-weight: 500;
@@ -356,7 +371,7 @@
             font-size: 14px;
             font-weight: 700;
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             text-transform: uppercase;
             letter-spacing: 0.8px;
             pointer-events: auto;
@@ -489,7 +504,7 @@
             margin-bottom: 16px;
             border-left: 4px solid #0891b2;
             box-shadow: 0 2px 10px rgba(6, 182, 212, 0.08);
-            transition: all 0.3s ease;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         .announcement-item:hover {
@@ -748,7 +763,7 @@
             padding: 16px;
             text-align: left;
             cursor: pointer;
-            transition: all 0.2s ease;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             display: flex;
             flex-direction: column;
             gap: 6px;
@@ -786,8 +801,8 @@
             display: flex;
             flex-direction: column;
             gap: 12px;
-            box-shadow: 0 8px 20px rgba(2, 136, 209, 0.08);
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            box-shadow: 0 8px 20px rgba(6, 182, 212, 0.08);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         .user-card:hover {
@@ -1002,10 +1017,17 @@
                         <input type="email" id="newUserEmail" placeholder="user@sklgu.gov.ph" required>
                     </div>
                     <div class="form-group">
-                        <label for="newUserPassword">Initial Password</label>
-                        <input type="text" id="newUserPassword" placeholder="Enter initial password" required>
+                        <label for="newUserPassword">Initial Password (Optional - auto-generates if left blank, always ends with 123)</label>
+                        <input type="text" id="newUserPassword" placeholder="Leave blank to auto-generate">
                     </div>
                     <button type="submit" class="btn btn-primary">Create Account</button>
+                    <div id="generatedPasswordDisplay" style="margin-top: 20px; padding: 15px; background: #f0fdfb; border: 1px solid #a8e6e1; border-radius: 8px; display: none;">
+                        <p style="font-size: 13px; color: #0891b2; margin-bottom: 8px; text-transform: uppercase; font-weight: 600;">Auto-Generated Password</p>
+                        <div style="display: flex; gap: 10px; align-items: center;">
+                            <input type="text" id="autoGenPassword" readonly style="flex: 1; padding: 10px; background: white; border: 1px solid #a8e6e1; border-radius: 6px; font-weight: 600; color: #0891b2;">
+                            <button type="button" onclick="copyToClipboard('autoGenPassword')" style="padding: 10px 15px; background: #0891b2; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 12px; font-weight: 600; transition: all 0.3s ease;">Copy</button>
+                        </div>
+                    </div>
                 </form>
             </div>
         </div>
@@ -1491,14 +1513,15 @@
             e.preventDefault();
             
             const email = document.getElementById('newUserEmail').value;
-            const password = document.getElementById('newUserPassword').value;
+            let password = document.getElementById('newUserPassword').value;
             const messageDiv = document.getElementById('generateMessage');
+            const passwordDisplay = document.getElementById('generatedPasswordDisplay');
 
             try {
                 const response = await fetch('/create-user', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ email, password })
+                    body: JSON.stringify({ email, password: password || '' })
                 });
 
                 const data = await response.json();
@@ -1506,18 +1529,44 @@
                 if (data.success) {
                     messageDiv.className = 'message success';
                     messageDiv.textContent = '✓ User account created successfully!';
+                    messageDiv.style.display = 'block';
+                    
+                    // Display the auto-generated password
+                    document.getElementById('autoGenPassword').value = data.password;
+                    passwordDisplay.style.display = 'block';
+                    
                     document.getElementById('generateForm').reset();
+                    document.getElementById('newUserPassword').value = '';
                 } else {
                     messageDiv.className = 'message error';
                     messageDiv.textContent = '✗ ' + data.message;
+                    messageDiv.style.display = 'block';
+                    passwordDisplay.style.display = 'none';
                 }
-                messageDiv.style.display = 'block';
             } catch (error) {
                 messageDiv.className = 'message error';
                 messageDiv.textContent = '✗ Error creating account';
                 messageDiv.style.display = 'block';
+                passwordDisplay.style.display = 'none';
             }
         });
+
+        // Copy to clipboard function
+        function copyToClipboard(elementId) {
+            const element = document.getElementById(elementId);
+            element.select();
+            document.execCommand('copy');
+            
+            // Show feedback
+            const btn = event.target;
+            const originalText = btn.textContent;
+            btn.textContent = 'Copied!';
+            btn.style.background = '#10b981';
+            setTimeout(() => {
+                btn.textContent = originalText;
+                btn.style.background = '#0891b2';
+            }, 2000);
+        }
 
         // Load pending accounts
         async function loadPendingAccounts() {
@@ -1626,7 +1675,7 @@
                     if (profile && profile.is_completed) {
                         profileHtml = `
                             <div style="background: #f9f9f9; padding: 20px; border-radius: 8px; margin-top: 15px;">
-                                <h4 style="margin-bottom: 15px; color: #0096d8;">📋 Profile Information</h4>
+                                <h4 style="margin-bottom: 15px; color: #0891b2;">📋 Profile Information</h4>
                                 ${profile.profile_picture ? `<img src="/uploads/${profile.profile_picture}" style="width: 100px; height: 100px; border-radius: 50%; object-fit: cover; margin-bottom: 15px;">` : ''}
                                 <p><strong>Full Name:</strong> ${profile.full_name}</p>
                                 <p><strong>Position:</strong> ${profile.position}</p>
@@ -1647,10 +1696,21 @@
                             <p><strong>Account Status:</strong> <span class="badge badge-${user.approval_status === 'approved' ? 'success' : user.approval_status === 'rejected' ? 'rejected' : 'pending'}">${user.approval_status.toUpperCase()}</span></p>
                             <p><strong>Created:</strong> ${new Date(user.created_at).toLocaleString()}</p>
                         </div>
+                        
+                        <div style="background: linear-gradient(135deg, #ccf0f5 0%, #f0fdfb 100%); padding: 20px; border-radius: 12px; border: 2px solid #a8e6e1; margin-bottom: 20px;">
+                            <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 12px;">
+                                <h4 style="margin: 0; color: #0891b2; flex: 1;">🔐 Current Password</h4>
+                                <button type="button" onclick="copyPasswordToClipboard('${user.password}')" style="padding: 8px 12px; background: #0891b2; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 11px; font-weight: 600; transition: all 0.3s ease;">Copy</button>
+                            </div>
+                            <div style="background: white; padding: 12px; border-radius: 8px; border: 1px solid #a8e6e1; font-family: 'Courier New', monospace; font-weight: 600; color: #0891b2; font-size: 14px; word-break: break-all;">
+                                ${user.password}
+                            </div>
+                        </div>
+                        
                         ${profileHtml}
                         <div style="background: #f9fafb; padding: 20px; border-radius: 8px; margin-top: 20px; border: 1px solid #eee;">
                             <div style="display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap;">
-                                <h4 style="margin: 0; color: #0096d8;">Password Change History</h4>
+                                <h4 style="margin: 0; color: #0891b2;">Password Change History</h4>
                                 <button class="view-password-btn" onclick="loadPasswordHistory(${user.id})">Refresh</button>
                             </div>
                             <div id="passwordHistoryList" style="margin-top: 12px; color: #666;">Loading password history...</div>
@@ -1670,6 +1730,22 @@
             }
         }
 
+        // Copy password to clipboard
+        function copyPasswordToClipboard(password) {
+            navigator.clipboard.writeText(password).then(() => {
+                const btn = event.target;
+                const originalText = btn.textContent;
+                btn.textContent = 'Copied!';
+                btn.style.background = '#10b981';
+                setTimeout(() => {
+                    btn.textContent = originalText;
+                    btn.style.background = '#0891b2';
+                }, 2000);
+            }).catch(err => {
+                alert('Failed to copy password');
+            });
+        }
+
         async function loadPasswordHistory(userId) {
             try {
                 const response = await fetch(`/get-user-passwords/${userId}`);
@@ -1683,12 +1759,12 @@
                         const label = index === 0 ? 'NEW' : 'OLD';
                         const labelColor = index === 0 ? '#22c55e' : '#94a3b8';
                         return `
-                        <div style="background: #fff; border: 1px solid #eee; border-left: 4px solid #0096d8; padding: 10px; border-radius: 6px; margin-bottom: 8px;">
+                        <div style="background: #fff; border: 1px solid #a8e6e1; border-left: 4px solid #0891b2; padding: 10px; border-radius: 6px; margin-bottom: 8px; transition: all 0.3s ease;">
                             <div style="font-weight: 600; font-size: 12px; color: #333; display: flex; gap: 8px; align-items: center;">
                                 <span style="background: ${labelColor}; color: white; padding: 2px 8px; border-radius: 999px; font-size: 10px; letter-spacing: 0.04em;">${label}</span>
                                 <span>${entry.changed_by.toUpperCase()} • ${new Date(entry.changed_at).toLocaleString()}</span>
                             </div>
-                            <div style="font-size: 13px; color: #555; margin-top: 4px;">Password: <strong>${entry.password}</strong></div>
+                            <div style="font-size: 13px; color: #555; margin-top: 4px;">Password: <strong style="color: #0891b2; font-family: 'Courier New', monospace;">${entry.password}</strong></div>
                         </div>
                     `;
                     }).join('');
