@@ -2583,10 +2583,19 @@ def uploaded_file(filename):
         print(f"Path traversal blocked: {real_path}")
         return jsonify({'success': False, 'message': 'Invalid path'}), 400
     
-    # Check if file exists
+    # Check if file exists - if not, serve placeholder
     if not os.path.exists(file_path):
-        print(f"File not found: {file_path}")
-        return jsonify({'success': False, 'message': f'File not found: {filename}'}), 404
+        print(f"File not found: {file_path} - serving placeholder")
+        # Return a 1x1 transparent placeholder image for images
+        file_ext = filename.rsplit('.', 1)[1].lower() if '.' in filename else ''
+        if file_ext in ['jpg', 'jpeg', 'png', 'gif', 'webp', 'jfif', 'jpe', 'bmp']:
+            # Return a base64 encoded 1x1 transparent PNG as placeholder
+            from flask import Response
+            import base64
+            placeholder = base64.b64decode('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==')
+            return Response(placeholder, mimetype='image/png', headers={'Cache-Control': 'no-cache'})
+        else:
+            return jsonify({'success': False, 'message': f'File not found: {filename}'}), 404
     
     # Determine MIME type based on file extension
     file_ext = filename.rsplit('.', 1)[1].lower() if '.' in filename else ''
