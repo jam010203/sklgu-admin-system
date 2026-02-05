@@ -650,33 +650,33 @@
         }
 
         .member-card {
-            background: rgba(255, 255, 255, 0.95);
-            border-radius: 18px;
-            padding: 18px;
-            border: 1px solid var(--border);
-            box-shadow: 0 12px 30px rgba(15, 23, 42, 0.1);
+            background: white;
+            border-radius: 12px;
+            padding: 0;
+            border: 1px solid #e0e7ff;
+            box-shadow: 0 2px 8px rgba(15, 23, 42, 0.08);
             display: flex;
             flex-direction: column;
-            gap: 12px;
+            overflow: hidden;
+            transition: all 0.3s ease;
         }
 
-        .member-header {
-            display: flex;
-            align-items: center;
-            gap: 12px;
+        .member-card:hover {
+            box-shadow: 0 4px 16px rgba(15, 23, 42, 0.12);
+            transform: translateY(-2px);
         }
 
         .member-avatar {
-            width: 54px;
-            height: 54px;
-            border-radius: 16px;
-            background: rgba(99, 102, 241, 0.12);
+            width: 100%;
+            height: 200px;
+            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
             display: flex;
             align-items: center;
             justify-content: center;
             font-weight: 700;
-            color: var(--primary);
+            color: white;
             overflow: hidden;
+            font-size: 48px;
         }
 
         .member-avatar img {
@@ -685,19 +685,40 @@
             object-fit: cover;
         }
 
+        .member-header {
+            background: linear-gradient(135deg, #0891b2 0%, #06b6d4 100%);
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
         .member-name {
             font-weight: 700;
-            color: var(--text);
+            color: white;
+            font-size: 16px;
+            margin: 0;
         }
 
         .member-role {
-            font-size: 12px;
-            color: var(--muted);
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.9);
+            margin: 0;
         }
 
         .member-meta {
-            display: grid;
-            gap: 6px;
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            font-size: 13px;
+            color: #475569;
+            flex-grow: 1;
+        }
+
+        .member-meta span {
+            line-height: 1.5;
+        }
             font-size: 13px;
             color: #475569;
         }
@@ -2108,7 +2129,7 @@
             if (!container) return;
 
             if (!list.length) {
-                container.innerHTML = '<div style="text-align: center; color: #999; padding: 20px;">No members found</div>';
+                container.innerHTML = '<div style="text-align: center; color: #999; padding: 40px 20px; grid-column: 1/-1;">No members found</div>';
                 return;
             }
 
@@ -2116,22 +2137,18 @@
                 const initials = (member.full_name || 'User').split(' ').map(part => part[0]).join('').slice(0, 2).toUpperCase();
                 const avatar = member.profile_picture
                     ? `<img src="/uploads/${member.profile_picture}" alt="${member.full_name}">`
-                    : `<span>${initials}</span>`;
-                const statusClass = getStatusClass(member.barangay_budget_status);
+                    : initials;
                 return `
                     <div class="member-card">
+                        <div class="member-avatar">${avatar}</div>
                         <div class="member-header">
-                            <div class="member-avatar">${avatar}</div>
-                            <div>
-                                <div class="member-name">${member.full_name || 'Unnamed Member'}</div>
-                                <div class="member-role">${member.position || 'Position not set'}</div>
-                            </div>
+                            <div class="member-name">${member.full_name || 'Unnamed Member'}</div>
+                            <div class="member-role">${member.position || 'Position not set'}</div>
                         </div>
                         <div class="member-meta">
-                            <span>🏘 Barangay: ${member.barangay || 'N/A'}</span>
-                            <span>🏛 Municipality: ${member.municipality || 'N/A'}</span>
+                            <div><strong>Barangay:</strong> ${member.barangay || 'N/A'}</div>
+                            <div><strong>Municipality:</strong> ${member.municipality || 'N/A'}</div>
                         </div>
-                        <span class="status-pill ${statusClass}">${member.barangay_budget_status || 'No Budget Data'}</span>
                     </div>
                 `;
             }).join('');
