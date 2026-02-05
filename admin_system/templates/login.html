@@ -83,14 +83,33 @@
             font-size: 14px;
             color: #64748b;
             margin-bottom: 40px;
-            display: flex;
-            align-items: center;
-            gap: 5px;
         }
 
-        .notification-icon {
-            color: #f59e0b;
-            font-size: 18px;
+        .email-domain-hint {
+            font-size: 12px;
+            color: #0891b2;
+            margin-top: 5px;
+            font-style: italic;
+            margin-bottom: 24px;
+        }
+
+        .government-footer {
+            margin-top: 40px;
+            text-align: center;
+            padding-top: 24px;
+            border-top: 1px solid #e2e8f0;
+        }
+
+        .government-tag {
+            font-size: 14px;
+            font-weight: 600;
+            color: #1e293b;
+            margin-bottom: 8px;
+        }
+
+        .government-subtitle {
+            font-size: 12px;
+            color: #64748b;
         }
 
         .form-group {
@@ -118,6 +137,7 @@
             color: #94a3b8;
             font-size: 18px;
             z-index: 1;
+            display: none;
         }
 
         .form-input {
@@ -352,7 +372,6 @@
             <div class="welcome-text">Welcome Back :)</div>
             <div class="welcome-subtext">
                 Inovision is where ideas turn into solutions, and vision becomes innovation.
-                <span class="notification-icon">🔔</span>
             </div>
 
             <!-- Login Type Toggle -->
@@ -371,15 +390,16 @@
                 <div class="form-group">
                     <label class="form-label">Email Address</label>
                     <div class="input-wrapper">
-                        <span class="input-icon">✉️</span>
-                        <input type="email" name="email" class="form-input" placeholder="Justin@ghostlamp.io" required>
+                        <span class="input-icon"></span>
+                        <input type="email" name="email" class="form-input" placeholder="yourname@sklgu.gov.ph" required>
                     </div>
+                    <div class="email-domain-hint">Only @sklgu.gov.ph email addresses are allowed</div>
                 </div>
 
                 <div class="form-group">
                     <label class="form-label">Password</label>
                     <div class="input-wrapper">
-                        <span class="input-icon">🔒</span>
+                        <span class="input-icon"></span>
                         <input type="password" name="password" class="form-input" placeholder="••••••••••" required>
                     </div>
                 </div>
@@ -387,7 +407,6 @@
                 <div class="form-options">
                     <label class="remember-me">
                         <input type="checkbox" id="userRememberMe" name="remember_me" class="remember-checkbox">
-                        <span class="checkmark">✓</span>
                         <span>Remember Me</span>
                     </label>
                     <a href="#" class="forgot-password">Forget Password?</a>
@@ -406,15 +425,16 @@
                 <div class="form-group">
                     <label class="form-label">Admin Email Address</label>
                     <div class="input-wrapper">
-                        <span class="input-icon">✉️</span>
+                        <span class="input-icon"></span>
                         <input type="email" name="email" class="form-input" placeholder="admin@sklgu.gov.ph" required>
                     </div>
+                    <div class="email-domain-hint">Only @sklgu.gov.ph email addresses are allowed</div>
                 </div>
 
                 <div class="form-group">
                     <label class="form-label">Admin Password</label>
                     <div class="input-wrapper">
-                        <span class="input-icon">🔒</span>
+                        <span class="input-icon"></span>
                         <input type="password" name="password" class="form-input" placeholder="••••••••••" required>
                     </div>
                 </div>
@@ -422,7 +442,6 @@
                 <div class="form-options">
                     <label class="remember-me">
                         <input type="checkbox" id="adminRememberMe" name="remember_me" class="remember-checkbox">
-                        <span class="checkmark">✓</span>
                         <span>Remember Me</span>
                     </label>
                     <a href="#" class="forgot-password">Forget Password?</a>
@@ -430,6 +449,11 @@
 
                 <button type="submit" class="login-btn">Login Now</button>
             </form>
+
+            <div class="government-footer">
+                <div class="government-tag">You're about to make government work amazing!</div>
+                <div class="government-subtitle">Sangguniang Kabataan Local Government Unit</div>
+            </div>
         </div>
     </div>
 

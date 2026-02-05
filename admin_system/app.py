@@ -530,17 +530,27 @@ def login():
                     return jsonify({'success': False, 'message': 'Email and password are required'}), 400
                 return render_template('login.html', error='Email and password are required')
 
-            # Try admin login first
-            admin = Admin.query.filter_by(email=email).first()
-            if admin and check_password_hash(admin.password_hash, password):
-                session['admin_id'] = admin.id
-                session['admin_email'] = admin.email
+            # Validate email domain (required for both user and admin)
+            if not email.lower().endswith('@sklgu.gov.ph'):
                 if request.is_json:
-                    return jsonify({'success': True, 'redirect': url_for('admin_dashboard')}), 200
-                return redirect(url_for('admin_dashboard'))
+                    return jsonify({'success': False, 'message': 'Email must be a @sklgu.gov.ph account'}), 401
+                return render_template('login.html', error='Only @sklgu.gov.ph email addresses are allowed')
+
+            # Determine login type (admin or user)
+            login_type = request.form.get('login_type', 'user') if not request.is_json else data.get('login_type', 'user')
+            
+            # Try admin login first if admin tab
+            if login_type == 'admin':
+                admin = Admin.query.filter_by(email=email).first()
+                if admin and check_password_hash(admin.password_hash, password):
+                    session['admin_id'] = admin.id
+                    session['admin_email'] = admin.email
+                    if request.is_json:
+                        return jsonify({'success': True, 'redirect': url_for('admin_dashboard')}), 200
+                    return redirect(url_for('admin_dashboard'))
             
             # Try user login
-            # First check if email starts with "admin" (case-insensitive)
+            # First check if email starts with "admin" (case-insensitive) - admin accounts must use admin tab
             if email.lower().startswith('admin'):
                 # Admin email trying to use user login
                 if request.is_json:
