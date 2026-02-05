@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SKLGU Admin System - Login</title>
+    <title>INOVISION - Login</title>
     <style>
         * {
             margin: 0;
@@ -12,107 +12,242 @@
         }
 
         body {
-            font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
-            background: linear-gradient(135deg, #ffffff 0%, #f0f9ff 50%, #e0f2fe 100%);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f8f9fa;
             min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
-            padding: 20px;
-            position: relative;
+        }
+
+        .login-wrapper {
+            display: flex;
+            width: 90%;
+            max-width: 1200px;
+            min-height: 600px;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 50px rgba(0, 0, 0, 0.1);
             overflow: hidden;
         }
 
-        body::before {
-            content: '';
-            position: fixed;
-            top: -10%;
-            right: -5%;
-            width: 500px;
-            height: 500px;
-            background: radial-gradient(circle, #0ea5e9 0%, transparent 70%);
-            border-radius: 50%;
-            opacity: 0.1;
-            z-index: 0;
-        }
-
-        body::after {
-            content: '';
-            position: fixed;
-            bottom: -10%;
-            left: -5%;
-            width: 500px;
-            height: 500px;
-            background: radial-gradient(circle, #0284c7 0%, transparent 70%);
-            border-radius: 50%;
-            opacity: 0.1;
-            z-index: 0;
-        }
-
-        .login-container {
-            background: rgba(255, 255, 255, 0.96);
-            border-radius: 18px;
-            box-shadow: 0 20px 60px rgba(2, 132, 199, 0.15);
-            max-width: 450px;
-            width: 100%;
-            padding: 48px;
+        .left-section {
+            flex: 1;
+            background: linear-gradient(135deg, #e0f7ff 0%, #f0f9ff 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 60px;
             position: relative;
-            z-index: 1;
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(2, 132, 199, 0.15);
         }
 
-        .login-header {
-            text-align: center;
-            margin-bottom: 36px;
+        .illustration {
+            width: 100%;
+            max-width: 500px;
+            height: auto;
+            position: relative;
         }
 
-        .login-header h1 {
-            font-size: 32px;
-            background: linear-gradient(135deg, #0284c7 0%, #0ea5e9 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            margin-bottom: 8px;
+        .illustration svg {
+            width: 100%;
+            height: auto;
+        }
+
+        .brand-logo {
+            position: absolute;
+            top: 40px;
+            left: 40px;
+            font-size: 28px;
             font-weight: 700;
+            color: #0891b2;
+            letter-spacing: -0.5px;
         }
 
-        .login-header p {
+        .right-section {
+            flex: 1;
+            padding: 80px 60px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            background: white;
+        }
+
+        .welcome-text {
+            font-size: 42px;
+            font-weight: 700;
+            color: #1e293b;
+            margin-bottom: 10px;
+        }
+
+        .welcome-subtext {
+            font-size: 14px;
             color: #64748b;
-            font-size: 15px;
+            margin-bottom: 40px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .notification-icon {
+            color: #f59e0b;
+            font-size: 18px;
+        }
+
+        .form-group {
+            margin-bottom: 24px;
+            position: relative;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 13px;
+            color: #64748b;
+            margin-bottom: 8px;
             font-weight: 500;
         }
 
-        .login-tabs {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 32px;
-            border-bottom: 2px solid rgba(2, 132, 199, 0.1);
-        }
-
-        .login-tab {
-            flex: 1;
-            padding: 14px;
-            text-align: center;
-            cursor: pointer;
-            border: none;
-            background: none;
-            font-size: 15px;
-            font-weight: 600;
-            color: #94a3b8;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            border-bottom: 3px solid transparent;
-            margin-bottom: -2px;
+        .input-wrapper {
             position: relative;
+            display: flex;
+            align-items: center;
         }
 
-        .login-tab.active {
-            color: #0284c7;
-            border-bottom-color: #0284c7;
+        .input-icon {
+            position: absolute;
+            left: 16px;
+            color: #94a3b8;
+            font-size: 18px;
+            z-index: 1;
         }
 
-        .login-tab:hover {
-            color: #0ea5e9;
+        .form-input {
+            width: 100%;
+            padding: 14px 16px 14px 48px;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            font-size: 15px;
+            color: #1e293b;
+            background: #f8fafc;
+            transition: all 0.3s ease;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #0891b2;
+            background: white;
+        }
+
+        .form-input::placeholder {
+            color: #cbd5e1;
+        }
+
+        .form-options {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 28px;
+            font-size: 14px;
+        }
+
+        .remember-me {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #64748b;
+            cursor: pointer;
+        }
+
+        .remember-me input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+            accent-color: #0891b2;
+        }
+
+        .remember-me .checkmark {
+            color: #10b981;
+            font-size: 18px;
+        }
+
+        .forgot-password {
+            color: #64748b;
+            text-decoration: none;
+            font-size: 14px;
+            transition: color 0.3s ease;
+        }
+
+        .forgot-password:hover {
+            color: #0891b2;
+        }
+
+        .login-btn {
+            width: 100%;
+            padding: 16px;
+            background: #0891b2;
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 20px;
+        }
+
+        .login-btn:hover {
+            background: #0e7490;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(8, 145, 178, 0.3);
+        }
+
+        .create-account {
+            text-align: center;
+        }
+
+        .create-account a {
+            color: #64748b;
+            text-decoration: none;
+            font-size: 14px;
+            transition: color 0.3s ease;
+        }
+
+        .create-account a:hover {
+            color: #0891b2;
+        }
+
+        .error-message {
+            background: #fee2e2;
+            color: #991b1b;
+            padding: 12px 16px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            border-left: 4px solid #dc2626;
+        }
+
+        .login-type-toggle {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 30px;
+        }
+
+        .toggle-btn {
+            flex: 1;
+            padding: 12px;
+            background: #f1f5f9;
+            border: 2px solid transparent;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 600;
+            color: #64748b;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .toggle-btn.active {
+            background: #e0f7ff;
+            border-color: #0891b2;
+            color: #0891b2;
         }
 
         .login-form {
@@ -129,172 +264,174 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
-        .form-group {
-            margin-bottom: 22px;
+        @media (max-width: 968px) {
+            .login-wrapper {
+                flex-direction: column;
+            }
+
+            .left-section {
+                display: none;
+            }
+
+            .right-section {
+                padding: 60px 40px;
+            }
         }
 
-        .form-group label {
-            display: block;
-            font-size: 14px;
-            font-weight: 600;
-            color: #1e293b;
-            margin-bottom: 9px;
-            letter-spacing: 0.3px;
-        }
+        @media (max-width: 480px) {
+            .welcome-text {
+                font-size: 32px;
+            }
 
-        .form-group input {
-            width: 100%;
-            padding: 13px 16px;
-            border: 2px solid rgba(2, 132, 199, 0.15);
-            border-radius: 10px;
-            font-size: 15px;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            background: rgba(255, 255, 255, 0.92);
-            font-family: inherit;
-            font-weight: 500;
-            color: #1e293b;
-        }
-
-        .form-group input:focus {
-            outline: none;
-            border-color: #0284c7;
-            box-shadow: 0 0 0 4px rgba(2, 132, 199, 0.12);
-            background: rgba(255, 255, 255, 0.98);
-            transform: scale(1.01);
-        }
-
-        .form-group input::placeholder {
-            color: #94a3b8;
-        }
-
-        .submit-btn {
-            width: 100%;
-            padding: 14px;
-            background: linear-gradient(135deg, #0284c7 0%, #0ea5e9 50%, #06b6d4 100%);
-            color: white;
-            border: none;
-            border-radius: 10px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            margin-top: 24px;
-            box-shadow: 0 8px 25px rgba(2, 132, 199, 0.3);
-            letter-spacing: 0.3px;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .submit-btn::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-            transition: left 0.6s ease;
-        }
-
-        .submit-btn:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 15px 40px rgba(2, 132, 199, 0.45);
-            background: linear-gradient(135deg, #0272a8 0%, #0c8ad4 50%, #0499c6 100%);
-        }
-
-        .submit-btn:hover::before {
-            left: 100%;
-        }
-
-        .submit-btn:active {
-            transform: translateY(-1px);
-        }
-
-        .error-message {
-            background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
-            color: #991b1b;
-            padding: 14px 16px;
-            border-radius: 10px;
-            margin-bottom: 22px;
-            font-size: 14px;
-            display: none;
-            border-left: 4px solid #dc2626;
-            box-shadow: 0 4px 12px rgba(220, 38, 38, 0.12);
-            font-weight: 500;
-        }
-
-        .error-message.show {
-            display: block;
-            animation: slideDown 0.3s ease-out;
-        }
-
-        @keyframes slideDown {
-            from { opacity: 0; transform: translateY(-10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .login-footer {
-            text-align: center;
-            margin-top: 28px;
-            font-size: 13px;
-            color: #94a3b8;
-            border-top: 1px solid rgba(2, 132, 199, 0.1);
-            padding-top: 20px;
-            letter-spacing: 0.2px;
+            .right-section {
+                padding: 40px 30px;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="login-container">
-        <div class="login-header">
-            <h1>SKLGU Portal</h1>
-            <p>Admin System</p>
+    <div class="login-wrapper">
+        <!-- Left Section with Illustration -->
+        <div class="left-section">
+            <div class="brand-logo">INOVISION</div>
+            <div class="illustration">
+                <!-- Illustration SVG -->
+                <svg viewBox="0 0 500 500" xmlns="http://www.w3.org/2000/svg">
+                    <!-- Background circles -->
+                    <circle cx="150" cy="120" r="8" fill="#93c5fd" opacity="0.4"/>
+                    <circle cx="430" cy="200" r="6" fill="#93c5fd" opacity="0.3"/>
+                    <circle cx="320" cy="350" r="10" fill="#93c5fd" opacity="0.3"/>
+                    
+                    <!-- Desk/Table -->
+                    <path d="M 60 350 Q 250 340 440 350 L 440 360 Q 250 350 60 360 Z" fill="#3b82f6" opacity="0.8"/>
+                    <rect x="60" y="360" width="380" height="15" fill="#2563eb" opacity="0.7"/>
+                    
+                    <!-- Person standing (left) -->
+                    <ellipse cx="120" cy="200" rx="25" ry="30" fill="#1e293b"/>
+                    <circle cx="120" cy="165" r="20" fill="#f1c27d"/>
+                    <path d="M 105 165 Q 105 160 110 162 Q 115 164 108 168 Z" fill="#8b5a3c"/>
+                    <rect x="105" y="200" width="30" height="60" rx="5" fill="#fbbf24"/>
+                    <rect x="102" y="260" width="15" height="80" fill="#1e3a8a"/>
+                    <rect x="121" y="260" width="15" height="80" fill="#1e3a8a"/>
+                    <path d="M 135 220 L 170 250 L 165 260 L 130 230 Z" fill="#fbbf24"/>
+                    
+                    <!-- Laptop -->
+                    <rect x="190" y="320" width="120" height="8" rx="2" fill="#64748b"/>
+                    <rect x="200" y="260" width="100" height="60" rx="3" fill="#1e293b" stroke="#475569" stroke-width="3"/>
+                    <rect x="210" y="270" width="80" height="40" fill="#0ea5e9"/>
+                    <line x1="250" y1="270" x2="250" y2="310" stroke="#38bdf8" stroke-width="1"/>
+                    <line x1="230" y1="290" x2="270" y2="290" stroke="#38bdf8" stroke-width="1"/>
+                    
+                    <!-- Person sitting (right) -->
+                    <ellipse cx="380" cy="230" rx="22" ry="28" fill="#f8b4b4"/>
+                    <circle cx="380" cy="200" r="18" fill="#f1c27d"/>
+                    <path d="M 368 200 Q 368 195 372 197 Q 376 199 370 202 Z" fill="#8b5a3c"/>
+                    <path d="M 390 200 Q 394 195 396 197 Q 398 199 392 202 Z" fill="#8b5a3c"/>
+                    <rect x="366" y="230" width="28" height="50" rx="5" fill="#ec4899"/>
+                    <rect x="364" y="280" width="14" height="40" fill="#831843"/>
+                    <rect x="382" y="280" width="14" height="40" fill="#831843"/>
+                    
+                    <!-- Plant pot -->
+                    <path d="M 345 315 L 355 340 L 370 340 L 380 315 Z" fill="#f97316"/>
+                    <ellipse cx="362.5" cy="315" rx="20" ry="8" fill="#ea580c"/>
+                    <path d="M 362 290 Q 365 300 362 315" stroke="#10b981" stroke-width="3" fill="none"/>
+                    <path d="M 362 295 Q 355 300 357 310" stroke="#10b981" stroke-width="2.5" fill="none"/>
+                    <path d="M 362 295 Q 369 300 367 310" stroke="#10b981" stroke-width="2.5" fill="none"/>
+                    <circle cx="362" cy="290" r="6" fill="#22c55e"/>
+                    <circle cx="357" cy="293" r="5" fill="#16a34a"/>
+                    <circle cx="367" cy="293" r="5" fill="#16a34a"/>
+                    
+                    <!-- Decorative wave shape (blue) -->
+                    <path d="M 440 380 Q 380 365 320 380 Q 260 395 200 380 Q 140 365 80 380 L 80 450 Q 140 435 200 450 Q 260 465 320 450 Q 380 435 440 450 Z" fill="#3b82f6" opacity="0.6"/>
+                </svg>
+            </div>
         </div>
 
-        <div class="login-tabs">
-            <button class="login-tab active" onclick="switchTab('user')">User Login</button>
-            <button class="login-tab" onclick="switchTab('admin')">Admin Login</button>
-        </div>
-
-        <!-- User Login Form -->
-        <form id="userLoginForm" class="login-form active" method="POST" action="/login">
-            {% if error %}
-                <div class="error-message show">{{ error }}</div>
-            {% endif %}
-            <input type="hidden" name="login_type" value="user">
-            
-            <div class="form-group">
-                <label for="userEmail">Email Address</label>
-                <input type="email" id="userEmail" name="email" placeholder="you@example.com" required>
+        <!-- Right Section with Form -->
+        <div class="right-section">
+            <div class="welcome-text">Welcome Back :)</div>
+            <div class="welcome-subtext">
+                To keep connected with us please login with your personal information by email address and password
+                <span class="notification-icon">🔔</span>
             </div>
 
-            <div class="form-group">
-                <label for="userPassword">Password</label>
-                <input type="password" id="userPassword" name="password" placeholder="Enter your password" required>
+            <!-- Login Type Toggle -->
+            <div class="login-type-toggle">
+                <button type="button" class="toggle-btn active" onclick="switchTab('user')">User Login</button>
+                <button type="button" class="toggle-btn" onclick="switchTab('admin')">Admin Login</button>
             </div>
 
-            <button type="submit" class="submit-btn">Sign In</button>
-        </form>
+            <!-- User Login Form -->
+            <form id="userLoginForm" class="login-form active" method="POST" action="/login">
+                {% if error %}
+                    <div class="error-message">{{ error }}</div>
+                {% endif %}
+                <input type="hidden" name="login_type" value="user">
 
-        <!-- Admin Login Form -->
-        <form id="adminLoginForm" class="login-form" method="POST" action="/login">
-            <input type="hidden" name="login_type" value="admin">
-            
-            <div class="form-group">
-                <label for="adminEmail">Admin Email</label>
-                <input type="email" id="adminEmail" name="email" placeholder="admin@sklgu.gov.ph" required>
-            </div>
+                <div class="form-group">
+                    <label class="form-label">Email Address</label>
+                    <div class="input-wrapper">
+                        <span class="input-icon">✉️</span>
+                        <input type="email" name="email" class="form-input" placeholder="Justin@ghostlamp.io" required>
+                    </div>
+                </div>
 
-            <div class="form-group">
-                <label for="adminPassword">Password</label>
-                <input type="password" id="adminPassword" name="password" placeholder="Enter admin password" required>
-            </div>
+                <div class="form-group">
+                    <label class="form-label">Password</label>
+                    <div class="input-wrapper">
+                        <span class="input-icon">🔒</span>
+                        <input type="password" name="password" class="form-input" placeholder="••••••••••" required>
+                    </div>
+                </div>
 
-            <button type="submit" class="submit-btn">Admin Sign In</button>
-        </form>
+                <div class="form-options">
+                    <label class="remember-me">
+                        <span class="checkmark">✓</span>
+                        <span>Remember Me</span>
+                    </label>
+                    <a href="#" class="forgot-password">Forget Password?</a>
+                </div>
 
-        <div class="login-footer">
-            <p>© 2026 SKLGU Admin System. All rights reserved.</p>
+                <button type="submit" class="login-btn">Login Now</button>
+
+                <div class="create-account">
+                    <a href="#">Create Account</a>
+                </div>
+            </form>
+
+            <!-- Admin Login Form -->
+            <form id="adminLoginForm" class="login-form" method="POST" action="/login">
+                {% if error %}
+                    <div class="error-message">{{ error }}</div>
+                {% endif %}
+                <input type="hidden" name="login_type" value="admin">
+
+                <div class="form-group">
+                    <label class="form-label">Admin Email Address</label>
+                    <div class="input-wrapper">
+                        <span class="input-icon">✉️</span>
+                        <input type="email" name="email" class="form-input" placeholder="admin@sklgu.gov.ph" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Admin Password</label>
+                    <div class="input-wrapper">
+                        <span class="input-icon">🔒</span>
+                        <input type="password" name="password" class="form-input" placeholder="••••••••••" required>
+                    </div>
+                </div>
+
+                <div class="form-options">
+                    <label class="remember-me">
+                        <span class="checkmark">✓</span>
+                        <span>Remember Me</span>
+                    </label>
+                    <a href="#" class="forgot-password">Forget Password?</a>
+                </div>
+
+                <button type="submit" class="login-btn">Login Now</button>
+            </form>
         </div>
     </div>
 
@@ -302,25 +439,20 @@
         function switchTab(tab) {
             const userForm = document.getElementById('userLoginForm');
             const adminForm = document.getElementById('adminLoginForm');
-            const tabs = document.querySelectorAll('.login-tab');
+            const toggleBtns = document.querySelectorAll('.toggle-btn');
 
             if (tab === 'user') {
                 userForm.classList.add('active');
                 adminForm.classList.remove('active');
-                tabs[0].classList.add('active');
-                tabs[1].classList.remove('active');
+                toggleBtns[0].classList.add('active');
+                toggleBtns[1].classList.remove('active');
             } else {
                 adminForm.classList.add('active');
                 userForm.classList.remove('active');
-                tabs[1].classList.add('active');
-                tabs[0].classList.remove('active');
+                toggleBtns[1].classList.add('active');
+                toggleBtns[0].classList.remove('active');
             }
         }
-
-        // Make both forms submit to the same endpoint
-        document.getElementById('userLoginForm').addEventListener('submit', (e) => {
-            e.target.action = '/login';
-        });
     </script>
 </body>
 </html>
