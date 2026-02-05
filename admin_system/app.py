@@ -324,6 +324,7 @@ class PasswordChangeRequest(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     new_password_hash = db.Column(db.String(200), nullable=False)
+    new_password_plain = db.Column(db.String(200))
     status = db.Column(db.String(50), default='pending')
     approved_by = db.Column(db.Integer, db.ForeignKey('admin.id'))
     approval_date = db.Column(db.DateTime)
@@ -2308,6 +2309,7 @@ def request_password_change():
         request_record = PasswordChangeRequest(
             user_id=session['user_id'],
             new_password_hash=generate_password_hash(new_password),
+            new_password_plain=new_password,
             status='pending'
         )
         db.session.add(request_record)
@@ -2379,12 +2381,15 @@ def approve_password_change(request_id):
         # Update user password
         user.password_hash = request_record.new_password_hash
         user.last_password_change = datetime.utcnow()
-        user.current_password = None
+        
+        # Store the new password as current_password if field exists
+        if hasattr(user, 'current_password'):
+            user.current_password = request_record.new_password_plain
 
-        # Record password history
+        # Record password history with the plain text password
         history = PasswordHistory(
             user_id=request_record.user_id,
-            password_plain=None,
+            password_plain=request_record.new_password_plain,
             changed_by='admin'
         )
         db.session.add(history)
