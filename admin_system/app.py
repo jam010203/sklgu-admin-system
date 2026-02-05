@@ -528,7 +528,7 @@ def login():
             if not email or not password:
                 if request.is_json:
                     return jsonify({'success': False, 'message': 'Email and password are required'}), 400
-                return render_template('admin-login.html', error='Email and password are required')
+                return render_template('login.html', error='Email and password are required')
 
             # Try admin login first
             admin = Admin.query.filter_by(email=email).first()
@@ -560,15 +560,15 @@ def login():
             # Invalid credentials
             if request.is_json:
                 return jsonify({'success': False, 'message': 'Invalid email or password'}), 401
-            return render_template('admin-login.html', error='Invalid email or password')
+            return render_template('login.html', error='Invalid email or password')
         
         except Exception as e:
             print(f"Login error: {e}")
             if request.is_json:
                 return jsonify({'success': False, 'message': f'An error occurred: {str(e)}'}), 500
-            return render_template('admin-login.html', error='An error occurred during login')
+            return render_template('login.html', error='An error occurred during login')
 
-    return render_template('admin-login.html')
+    return render_template('login.html')
 
 
 @app.route('/user-dashboard')
